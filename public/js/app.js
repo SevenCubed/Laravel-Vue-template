@@ -1917,11 +1917,11 @@ var default_layout = "default";
   data: function data() {
     return {
       questions: [{
-        title: "Vue Version",
+        title: "",
         id: 1,
         details: "lorem"
       }, {
-        title: "CSS not working",
+        title: "",
         id: 2,
         details: "lorem"
       }]

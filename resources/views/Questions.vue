@@ -12,8 +12,8 @@ export default {
   data() {
     return {
       questions: [
-        { title: "Vue Version", id: 1, details: "lorem" },
-        { title: "CSS not working", id: 2, details: "lorem" },
+        { title: "", id: 1, details: "lorem" },
+        { title: "", id: 2, details: "lorem" },
       ],
     };
   },
