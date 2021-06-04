@@ -25,7 +25,7 @@ class CategoryFactory extends Factory
             'name' => $this->faker->word,
             'slug' => $this->faker->word,
             'image' => $this->faker->imageUrl,
-            'description' => $this->faker->sentence,
+            'description' => $this->faker->realText(50),
         ];
     }
 }
