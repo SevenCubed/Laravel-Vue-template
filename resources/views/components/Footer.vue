@@ -1,5 +1,5 @@
 <template>
- <div>
+ <div class="footer">
     <button class="button is-small" @click="redirect">Redirect</button>
     <button class="button is-small" @click="back">Back</button>
     <button class="button is-small" @click="forward">Go Forward</button>

@@ -1,18 +1,20 @@
 <template>
   <div id="main">
-    <div id="nav">
+    <Header />
+    <div id="nav" class="section">
       <router-link to="/">Home</router-link>
       <router-link :to="{ name: 'About' }">About</router-link>
-            <router-link :to="{ name: 'Questions' }">Questions</router-link>
-
-    </div>
+      <router-link :to="{ name: 'Questions' }">Questions</router-link>
     <router-view />
-<Footer />
   </div>
+      <Footer />
+
+</div>
 </template>
 <script>
 
 import Footer from '../views/components/Footer.vue'
+import Header from '../views/components/Header.vue'
 
 export default {
   // methods:{
@@ -28,10 +30,13 @@ export default {
   // },
   components: {
     Footer,
+    Header,
   }
 }
 </script>
 
 <style>
-/* See app.css */
+.mainbody{
+  padding-top: 60px;
+}
 </style>
