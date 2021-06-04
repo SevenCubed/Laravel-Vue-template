@@ -18,27 +18,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // User::factory(10)
-        // ->hasProducts(5)
-        // // ->hasOrders(2)
-        // ->create();
-        
-        $users = User::factory(10)->make();
-        $products = Product::factory(5)->make();
-        $orders = Order::factory(5)->make();
-        $categories = Category::factory(4)->make();
-        // $products->each(function (Product $p) use ($users)
-        //     {$p->user()->associate(
-        //         $users->random(rand(1, 5))->pluck('id')->toArray()
-        //         );
-        //     });
-    echo '\nBREAK';
-    echo $users;
-    echo $products;
-    // Product::factory(10)
-        // ->forUser()
-        // ->hasOrders(1)
-        // ->hasCategories(1)
-        // ->create();
+        $users = User::factory(50)->create();
+        $categories = Category::factory(5)->create();
+        $products = Product::factory(20)->make();
+        $orders = Order::factory(10)->make();
+        $products->each(function (Product $p) use ($users, $categories) {
+            $p->user()->associate($users->random());
+            $p->save();
+            $p->categories()->sync($categories->random());
+        });
+        $orders->each(function (Order $o) use ($users, $products) {
+            $o->user()->associate($users->random());
+            $o->product()->associate($products->random());
+            $o->save();
+        });
     }
 }

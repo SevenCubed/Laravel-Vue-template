@@ -6,20 +6,28 @@
             <router-link :to="{ name: 'Questions' }">Questions</router-link>
 
     </div>
-    <button @click="redirect">Redirect</button>
-    <button @click="back">Back</button>
-    <button @click="forward">Go Forward</button>
     <router-view />
+<Footer />
   </div>
 </template>
 <script>
+
+import Footer from '../views/components/Footer.vue'
+
 export default {
-  methods:{
-    redirect(){},
-    back(){
-      this.$router.go(-1)
-    },
-    forward(){},
+  // methods:{
+  //   redirect(){
+  //     this.$router.push({ name: 'Home'})
+  //   },
+  //   back(){
+  //     this.$router.go(-1)
+  //   },
+  //   forward(){
+  //     this.$router.go(+1)
+  //   },
+  // },
+  components: {
+    Footer,
   }
 }
 </script>
