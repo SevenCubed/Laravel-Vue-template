@@ -21,7 +21,12 @@
       <router-link :to="{ name: 'About' }" class="navbar-item">
         About
       </router-link>
-
+      <router-link :to="{ name: 'Vuex Test' }" class="navbar-item">
+        Vuex Test
+      </router-link>
+            <router-link :to="{ name: 'Questions' }" class="navbar-item">
+        Questions
+      </router-link>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
           More
@@ -62,7 +67,20 @@
 </template>
 
 <script setup>
-
+export default{
+data(){
+  return {
+    // testlist: [
+    //   {name:'Big Un Blocker', max: 4},
+    //   {name:'Orc Thrower', max: 2},
+    //   {name:'Orc Blitzers', max: 4},
+    //   {name:'Orc Linemen', max: 12},
+    //   {name:'Goblin', max: 12},
+    //   {name:'Troll', max: 1},
+    // ]
+  }
+},
+}
 </script>
 
 <style lang="scss" scoped>

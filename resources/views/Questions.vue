@@ -1,23 +1,39 @@
 <template>
   <div>
+    <div v-if!="questions">No questions</div>
+    <div v-if="questions">
     <div v-for="question in questions" :key="question.id" class="test">
      <h2> {{question.title}}?</h2>
+     <!-- Hot refresh? 
+     Watch options?
+     Devtools mutations?
+     List of installed packages?
+     Separate store files?
+     action: ()=>{} vs action(){} syntax?
+     {commit}?-->
     </div>
+  </div>
   </div>
 </template>
 <script>
 const default_layout = "default";
+import {mapGetters} from 'vuex';
+
 export default {
   computed: {},
   data() {
     return {
-      questions: [
-        { title: "", id: 1, details: "lorem" },
-        { title: "", id: 2, details: "lorem" },
-      ],
+      questions: [],
     };
   },
-  components: {},
+  mounted(){
+  this.$store.dispatch('fetchUsers')
+  },
+  components: {
+    ...mapGetters([
+      'users'
+    ])
+  },
 };
 </script>
 <style scoped>
