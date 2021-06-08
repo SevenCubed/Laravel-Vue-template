@@ -1934,12 +1934,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
 var default_layout = "default";
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2420,19 +2414,16 @@ vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vuex__WEBPACK_IMPORTED_MODULE_3__.d
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_3__.default.Store({
   state: {
     testlist: [{
-      name: 'Big Un Blocker',
-      max: 4
-    }, {
       name: 'Orc Thrower',
       max: 2
     }, {
-      name: 'Orc Blitzers',
+      name: 'Orc Blitzer',
       max: 4
     }, {
-      name: 'Orc Linemen',
+      name: 'Orc Lineman',
       max: 12
     }, {
-      name: 'Goblin',
+      name: 'Goblin Lineman',
       max: 12
     }, {
       name: 'Troll',

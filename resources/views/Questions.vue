@@ -4,13 +4,7 @@
     <div v-if="questions">
     <div v-for="question in questions" :key="question.id" class="test">
      <h2> {{question.title}}?</h2>
-     <!-- Hot refresh? 
-     Watch options?
-     Devtools mutations?
-     List of installed packages?
-     Separate store files?
-     action: ()=>{} vs action(){} syntax?
-     {commit}?-->
+
     </div>
   </div>
   </div>

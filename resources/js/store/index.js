@@ -7,11 +7,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         testlist: [
-            {name:'Big Un Blocker', max: 4},
             {name:'Orc Thrower', max: 2},
-            {name:'Orc Blitzers', max: 4},
-            {name:'Orc Linemen', max: 12},
-            {name:'Goblin', max: 12},
+            {name:'Orc Blitzer', max: 4},
+            {name:'Orc Lineman', max: 12},
+            {name:'Goblin Lineman', max: 12},
             {name:'Troll', max: 1},
           ],
           todos: [
