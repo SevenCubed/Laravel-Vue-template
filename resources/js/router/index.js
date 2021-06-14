@@ -1,10 +1,15 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Test from "../../views/Test.vue";
 import Questions from "../../views/Questions.vue";
 import NotFound from "../../views/NotFound.vue";
-import SubTest from "../../views/components/SubTest.vue";
+import Products from "../../views/Products.vue";
+import SubProduct from "../../views/components/SubProduct.vue";
 import TestingVuex from "../../views/components/TestingVuex.vue";
+import Register from "../../views/Register.vue";
+import Login from "../../views/Login.vue";
+import Dashboard from "../../views/Dashboard.vue";
+
+
 
 Vue.use(VueRouter);
 
@@ -14,9 +19,19 @@ export default new VueRouter({
             path: "/"
         },
         {
-            path: "/test",
-            name: "About",
-            component: Test
+            path: "/login",
+            name: "Login",
+            component: Login,
+        },
+        {
+            path: "/register",
+            name: "Register",
+            component: Register,
+        },
+        {
+            path: "/dashboard",
+            name: "Dashboard",
+            component: Dashboard,
         },
         {
             path: "/vuextest",
@@ -30,11 +45,17 @@ export default new VueRouter({
             component: Questions
         },
         {
-            path: "/test/:id",
-            name: 'TestDetails',
-            component: SubTest,
+            path: "/products",
+            name: "Products",
+            component: Products
+        },
+        {
+            path: "/products/:id",
+            name: 'ProductDetails',
+            component: SubProduct,
             props: true
         },
+
         //redirects
         {
             path: '/all-tests',

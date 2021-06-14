@@ -2,6 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AuthenticationController;
+use Illuminate\Auth\Middleware\Authenticate;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +17,17 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+// DON'T FORGET TO *USE* THE CONTROLLERS ABOVE, OR YOU GET 500 ERRORS
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/users', 'UserController@index')->name('users');
-//Laravel 6 syntax, no good
+//Authentication
+Route::post('register', [AuthenticationController::class, 'register'])->name('register');
+Route::post('login', [AuthenticationController::class, 'login'])->name('login');
+
+//Users
+Route::get('/users', [UserController::class, 'index'])->name('users');
+Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+
+//Products
+Route::get('/products', [ProductController::class, 'index'])->name('products');

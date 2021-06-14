@@ -17,16 +17,16 @@
       <router-link to="/" class="navbar-item">
         Home
       </router-link>
-
-      <router-link :to="{ name: 'About' }" class="navbar-item">
-        About
-      </router-link>
       <router-link :to="{ name: 'Vuex Test' }" class="navbar-item">
         Vuex Test
       </router-link>
             <router-link :to="{ name: 'Questions' }" class="navbar-item">
         Questions
       </router-link>
+                <router-link :to="{ name: 'Products' }" class="navbar-item">
+        Products
+      </router-link>
+      <a class="navbar-item">If you get a 500 server error, check if you added the Controller to the namespace</a>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
           More
@@ -53,12 +53,12 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
-          <a class="button is-primary">
-            <strong>Sign up</strong>
-          </a>
-          <a class="button is-light">
-            Log in
-          </a>
+            <router-link class="button is-primary" :to="{ name: 'Register' }">
+              Register</router-link>
+
+            <router-link class="button is-primary" :to="{ name: 'Login' }">
+              Login
+              </router-link>
         </div>
       </div>
     </div>
@@ -70,14 +70,6 @@
 export default{
 data(){
   return {
-    // testlist: [
-    //   {name:'Big Un Blocker', max: 4},
-    //   {name:'Orc Thrower', max: 2},
-    //   {name:'Orc Blitzers', max: 4},
-    //   {name:'Orc Linemen', max: 12},
-    //   {name:'Goblin', max: 12},
-    //   {name:'Troll', max: 1},
-    // ]
   }
 },
 }

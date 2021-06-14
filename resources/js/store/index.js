@@ -6,16 +6,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        testlist: [
-            {name:'Orc Thrower', max: 2},
-            {name:'Orc Blitzer', max: 4},
-            {name:'Orc Lineman', max: 12},
-            {name:'Goblin Lineman', max: 12},
-            {name:'Troll', max: 1},
-          ],
-          todos: [
-
-          ],
+        testlist: [],
+          todos: [],
+          users: [],
+          products: [],
     },
     mutations: {
         addPlayer: (state, payload) => {
@@ -29,7 +23,10 @@ export default new Vuex.Store({
 
         fetchUsers(state, users) {
             return state.users = users;
-        }
+        },
+        fetchProducts(state, products) {
+            return state.products = products;
+        },
     },
     getters: {
             changeTest: state => {
@@ -42,7 +39,7 @@ export default new Vuex.Store({
                 return changeTest;
         },
         users: state => {
-            return state.posts;
+            return state.users;
         }
     },
     actions: {
@@ -62,13 +59,54 @@ export default new Vuex.Store({
             const res = await axios.post(
                 'https://jsonplaceholder.typicode.com/todos', {title, completed:false}
             );
-
             commit('addTodo', res.data);
         },
         fetchUsers({commit}) {
-            axios.get('api/users')
+            const res = axios.get('api/users')
+            .catch(function (error) {
+                if (error.response) {
+                  // The request was made and the server responded with a status code
+                  // that falls out of the range of 2xx
+                  console.log(error.response.data);
+                  console.log(error.response.status);
+                  console.log(error.response.headers);
+                } else if (error.request) {
+                  // The request was made but no response was received
+                  // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                  // http.ClientRequest in node.js
+                  console.log(error.request);
+                } else {
+                  // Something happened in setting up the request that triggered an Error
+                  console.log('Error', error.message);
+                }
+                console.log(error.config);
+              })
             .then(res=> {
                 commit('fetchUsers', res.data)
+            })
+        },
+        fetchProducts({commit}) {
+            const res = axios.get('api/products')
+            .catch(function (error) {
+                if (error.response) {
+                  // The request was made and the server responded with a status code
+                  // that falls out of the range of 2xx
+                  console.log(error.response.data);
+                  console.log(error.response.status);
+                  console.log(error.response.headers);
+                } else if (error.request) {
+                  // The request was made but no response was received
+                  // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                  // http.ClientRequest in node.js
+                  console.log(error.request);
+                } else {
+                  // Something happened in setting up the request that triggered an Error
+                  console.log('Error', error.message);
+                }
+                console.log(error.config);
+              })
+            .then(res => {
+                commit('fetchProducts', res.data)
             })
         }
     }

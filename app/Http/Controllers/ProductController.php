@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\User;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
 
-class UserController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::all();
+        return Product::all();//->with('user'); Resource collection
     }
 
     /**
@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //for the PAGE on which to create
+        //
     }
 
     /**
@@ -35,13 +35,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => $request['password']
-       ]);
-
-        return response()->json(['status' => 'success','message' => 'Image was uploaded successfully'],200);
+        //
     }
 
     /**
