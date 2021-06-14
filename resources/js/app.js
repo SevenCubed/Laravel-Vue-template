@@ -13,6 +13,10 @@ import router from "./router";
 //Import Bulma CSS
 import "./../../node_modules/Bulma/CSS/bulma.css";
 
+//Axios stuff for Sanctum auth
+import axios from 'axios';
+axios.defaults.withCredentials = true;
+
 new Vue({
     el: "#app",
     store,

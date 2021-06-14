@@ -16,6 +16,8 @@ x  When displaying data from server, compute from state data or from getter? Get
 x  How to inject data into a Model view? -> Use a Resource
 x  mass import components for the router? It's possible
 x  What's best for authentication? Sanctum +vuex
+
+? mutations naming/capsing convention
  -->
     </div>
   </div>
