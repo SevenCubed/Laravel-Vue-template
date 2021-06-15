@@ -28,17 +28,21 @@ class AuthenticationController extends Controller
     }
     
     public function login(Request $request){
-        $request->validate([
+        $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required']
         ]);
 
-        if(Auth::attempt($request->only('email', 'password'))){
-            return response()->json(Auth::user(), 200);
+        if(Auth::attempt($credentials)){
+            return response()->json(Auth::user(), 200); //200 = success
         }
         //TODO Probably fold this into the custom validation?
         throw ValidationException::withMessages([
             'email' =>['Incorrect credentials']
         ]);
+    }
+
+    public function logout(Request $request){
+        Auth::logout();
     }
 }

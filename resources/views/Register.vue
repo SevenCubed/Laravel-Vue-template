@@ -14,7 +14,7 @@
         <label for="password">Password</label>
         <input type="password" placeholder="Password" v-model="form.password" name="password">
     </div>
-    <div><button @click.prevent="saveForm" class="button" type="submit">Register</button></div>
+    <div><button @click.prevent="register" class="button" type="submit">Register</button></div>
 </div>
 </template>
 
@@ -31,11 +31,9 @@ data() {
     }
 },
 methods:{
-    saveForm(){
-        axios.post('api/register', this.form)
-        .then(()=> console.log('form saved'))
-        .catch((error) =>  this.errors = error.response.data)
-        .finally(() => {this.$router.push({ name: "Dashboard"})})
+    register(){
+            this.$store.dispatch('authentication/registerUser', this.form)
+
         }
 }
 }

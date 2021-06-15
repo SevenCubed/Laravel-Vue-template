@@ -10,12 +10,14 @@
         <input type="password" placeholder="Password" v-model="form.password" name="password">
     </div>
     <div>
-        <button @click.prevent="loginUser" type="submit" class="button">Login</button>
+        <button @click="login" type="submit" class="button">Login</button>
+        <!-- .prevent only necessary for <form> tags -->
     </div>
     </div>
 </template>
 
 <script>
+  import axios from 'axios'
 
 export default {
     data() {
@@ -27,11 +29,14 @@ export default {
             errors: []
         }
     },
+    computed: {
+        user() {
+            return this.$store.getters['authentication/activeUser']
+        }
+    },
     methods: {
-        loginUser(){ //Should probably refactor this into Vuex
-            axios.post('api/login', this.form)
-            .then((res) => {console.log(res)})
-            .catch((error) => {this.errors = error.response.data.errors;})
+        login() {
+            this.$store.dispatch('authentication/loginUser', this.form)
         }
     },
 };

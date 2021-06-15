@@ -1,6 +1,8 @@
 <template>
     <div>
 <h1 class="title">Dashboard</h1>
+{{user.name}}
+{{user.email}}
     </div>
 </template>
 
@@ -9,14 +11,18 @@
 export default {
     data() {
         return{
-            user: null,
         }    
     },
-    mounted(){
-        axios.get('/api/user').then((res)=>{
-            this.user = res.data;
-        })
-    }
+        computed: {
+        user() {
+            return this.$store.getters['authentication/activeUser']
+        },
+        },
+    // mounted(){
+    //     axios.get('/api/user').then((res)=>{
+    //         this.user = res.data;
+    //     })
+    // }
 };
 </script>
 

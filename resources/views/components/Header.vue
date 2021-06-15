@@ -53,12 +53,20 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
+          <div v-if="!authenticated">
             <router-link class="button is-primary" :to="{ name: 'Register' }">
               Register</router-link>
-
             <router-link class="button is-primary" :to="{ name: 'Login' }">
               Login
+              </router-link></div>
+              <div v-if="authenticated">
+            <router-link class="button is-primary" :to="{ name: 'Dashboard' }">
+              Dashboard</router-link>
+              <router-link class="button is-primary" @click="logout" :to="{ name: 'Logout' }">
+              Logout*
               </router-link>
+              </div>
+
         </div>
       </div>
     </div>
@@ -68,10 +76,19 @@
 
 <script setup>
 export default{
-data(){
-  return {
-  }
-},
+      data(){
+      return {}
+      },
+      computed: {
+        authenticated() {
+          return this.$store.getters['authentication/authenticated']
+        },
+      },
+          methods: {
+        logout() {
+            this.$store.dispatch('authentication/logoutUser')
+        }
+    },
 }
 </script>
 

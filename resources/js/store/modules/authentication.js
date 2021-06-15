@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from '../../router'
 
 export default {
     namespaced: true,
@@ -11,41 +12,47 @@ export default {
         authenticated(state) {
             return state.authenticated
         },
-        user(state) {
+        activeUser(state) {
             return state.user
         },
     },
     mutations: {
-        setAuthenticated(state, value) {
-            state.authenticated = value
+        loginUser(state, user) {
+            state.authenticated = true;
+            state.user = user;
         },
-        setUser(state, value) {
-            state.user = value
+        logoutUser(state) {
+            state.authenticated = false;
+            state.user = null;
         },
     },
     actions: {    
-        async signIn({ dispatch }, credentials) {
-            await axios.get('/sanctum/csrf-cookie')
-            await axios.post('/login', credentials) //problem
-
-            return dispatch('me')
+        loginUser( {commit, state}, user ) {
+            axios
+            .post('api/login',{
+            email: user.email,
+            password: user.password
+            })
+            .then(response => {
+                console.log(response.data)
+                commit('loginUser', response.data)
+                router.push({ name: 'Dashboard'})
+            })
         },
-        async signOut({ dispatch }) {
-            await axios.post('/logout')
-
-            return dispatch('me')
+        registerUser( {commit}, user) {
+                axios.post('api/register', user)
+                .catch((error) =>  this.errors = error.response.data)
+                .then(() => { //currently doesn't care about errors, that's a problem
+                    commit('loginUser', user)
+                    router.push({ name: "Dashboard"})})
         },
-
-        me({ commit }) {
-
-            return axios.get('/api/user').then((response) => {
-
-                commit('setAuthenticated', true)
-                commit('setUser', response.data)
-            }).catch(() => {
-                commit('setAuthenticated', false)
-                commit('setUser', null)
+        logoutUser( {commit}) {
+            axios
+            .post('api/logout')
+            .then(() => {
+                commit('logoutUser')
+                router.push({ name: 'Login'})
             })
         }
-    },
+    }
 }

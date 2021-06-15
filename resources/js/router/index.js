@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from "../store";
 import Questions from "../../views/Questions.vue";
 import NotFound from "../../views/NotFound.vue";
 import Products from "../../views/Products.vue";
@@ -13,7 +14,8 @@ import Dashboard from "../../views/Dashboard.vue";
 
 Vue.use(VueRouter);
 
-export default new VueRouter({
+
+const router = new VueRouter({
     routes: [
         {
             path: "/"
@@ -32,6 +34,7 @@ export default new VueRouter({
             path: "/dashboard",
             name: "Dashboard",
             component: Dashboard,
+            meta: { requiresAuth: true },
         },
         {
             path: "/vuextest",
@@ -47,7 +50,8 @@ export default new VueRouter({
         {
             path: "/products",
             name: "Products",
-            component: Products
+            component: Products,
+            meta: { requiresAuth: true },
         },
         {
             path: "/products/:id",
@@ -68,5 +72,22 @@ export default new VueRouter({
             component: NotFound,
 
         },
-    ]
+    ],
+    
 });
+
+
+router.beforeEach((to, from, next) => {
+    const authUser = store.getters["authentication/authenticated"];
+    const reqAuth = to.matched.some((record) => record.meta.requiresAuth);
+    const loginQuery = { path: "/login", query: { redirect: to.fullPath } };
+
+    if (reqAuth && !authUser) {
+          next(loginQuery);
+    }
+     else {
+      next(); // make sure to always call next()!
+    }
+});
+
+export default router;
