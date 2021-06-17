@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     products(){
-        return this.$store.getters.products.products //TODO refactor to getter!
+        return this.$store.getters.products.products
     },
     users(){
         return this.$store.state.users

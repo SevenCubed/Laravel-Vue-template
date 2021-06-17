@@ -2032,7 +2032,7 @@ var default_layout = "default";
   },
   computed: {
     products: function products() {
-      return this.$store.getters.products.products; //TODO refactor to getter!
+      return this.$store.getters.products.products;
     },
     users: function users() {
       return this.$store.state.users;
