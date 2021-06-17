@@ -2032,7 +2032,7 @@ var default_layout = "default";
   },
   computed: {
     products: function products() {
-      return this.$store.state.products; //TODO refactor to getter!
+      return this.$store.getters.products.products; //TODO refactor to getter!
     },
     users: function users() {
       return this.$store.state.users;
@@ -2397,11 +2397,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['product'],
+  props: ['initProduct'],
+  data: function data() {
+    return {
+      product: this.initProduct
+    };
+  },
   computed: {
     name: function name() {
       return this.product.name.charAt(0).toUpperCase() + this.product.name.slice(1);
+    }
+  },
+  created: function created() {
+    var _this = this;
+
+    if (this.product === undefined) {
+      axios.get("api/products/".concat(this.$route.params.id)).then(function (res) {
+        _this.product = res.data.data;
+        console.log('product was undefined, fetching data directly');
+      });
     }
   }
 });
@@ -2599,10 +2615,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_10__.default({
   }, {
     path: "/products",
     name: "Products",
-    component: _views_Products_vue__WEBPACK_IMPORTED_MODULE_3__.default,
-    meta: {
-      requiresAuth: true
-    }
+    component: _views_Products_vue__WEBPACK_IMPORTED_MODULE_3__.default // meta: { requiresAuth: true },
+
   }, {
     path: "/products/:id",
     name: 'ProductDetails',
@@ -2681,18 +2695,6 @@ vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.d
     products: []
   },
   mutations: {
-    addPlayer: function addPlayer(state, payload) {
-      state.testlist.forEach(function (player) {
-        player.max += payload;
-      });
-      return testlist;
-    },
-    setTodos: function setTodos(state, todos) {
-      return state.todos = todos;
-    },
-    addTodo: function addTodo(state, todo) {
-      return state.todos.unshift(todo);
-    },
     fetchUsers: function fetchUsers(state, users) {
       return state.users = users;
     },
@@ -2701,25 +2703,14 @@ vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.d
     }
   },
   getters: {
-    changeTest: function changeTest(state) {
-      var changeTest = state.testlist.map(function (player) {
-        return {
-          name: '**' + player.name + '**',
-          max: player.max / 2
-        };
-      });
-      return changeTest;
-    },
     users: function users(state) {
       return state.users;
+    },
+    products: function products(state) {
+      return state.products;
     }
   },
   actions: {
-    addPlayer: function addPlayer(context, payload) {
-      setTimeout(function () {
-        context.commit('addPlayer', payload);
-      }, 2000);
-    },
     fetchTodos: function fetchTodos() {
       var _this = this;
 
@@ -2746,34 +2737,8 @@ vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.d
         }, _callee);
       }))();
     },
-    addTodo: function addTodo(_ref, title) {
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        var commit, res;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                commit = _ref.commit;
-                _context2.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default().post('https://jsonplaceholder.typicode.com/todos', {
-                  title: title,
-                  completed: false
-                });
-
-              case 3:
-                res = _context2.sent;
-                commit('addTodo', res.data);
-
-              case 5:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2);
-      }))();
-    },
-    fetchUsers: function fetchUsers(_ref2) {
-      var commit = _ref2.commit;
+    fetchUsers: function fetchUsers(_ref) {
+      var commit = _ref.commit;
       var res = axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/users')["catch"](function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
@@ -2796,9 +2761,9 @@ vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.d
         commit('fetchUsers', res.data);
       });
     },
-    fetchProducts: function fetchProducts(_ref3) {
-      var commit = _ref3.commit;
-      var res = axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/products')["catch"](function (error) {
+    fetchProducts: function fetchProducts(_ref2) {
+      var commit = _ref2.commit;
+      var products = axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/products')["catch"](function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -2816,8 +2781,9 @@ vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.d
         }
 
         console.log(error.config);
-      }).then(function (res) {
-        commit('fetchProducts', res.data);
+      }).then(function (products) {
+        console.log(products.data.data);
+        commit('fetchProducts', products.data.data);
       });
     }
   }
@@ -5660,7 +5626,7 @@ var render = function() {
                     attrs: {
                       to: {
                         name: "ProductDetails",
-                        params: { id: product.id, product: product }
+                        params: { id: product.id, initProduct: product }
                       }
                     }
                   },
@@ -5669,7 +5635,7 @@ var render = function() {
                       _vm._v(
                         _vm._s(_vm._f("capitalize")(product.name)) +
                           " by " +
-                          _vm._s(_vm.users[product.user_id].name)
+                          _vm._s(product.user.name)
                       )
                     ])
                   ]
@@ -6123,13 +6089,12 @@ var render = function() {
                         ),
                         _vm._v(" "),
                         _c(
-                          "router-link",
+                          "button",
                           {
                             staticClass: "button is-primary",
-                            attrs: { to: { name: "Logout" } },
                             on: { click: _vm.logout }
                           },
-                          [_vm._v("\n              Logout*\n              ")]
+                          [_vm._v("\n              Logout\n              ")]
                         )
                       ],
                       1
@@ -6237,11 +6202,15 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("h1", { staticClass: "title is-6" }, [_vm._v(_vm._s(_vm.name))]),
-    _vm._v("\r\n€" + _vm._s(_vm.product.price) + "\r\n"),
-    _c("p", [_vm._v(_vm._s(_vm.product.description))])
-  ])
+  return _vm.product
+    ? _c("div", [
+        _c("h1", { staticClass: "title is-6" }, [_vm._v(_vm._s(_vm.name))]),
+        _vm._v("\r\n€" + _vm._s(_vm.product.price) + "\r\n"),
+        _c("p", [_vm._v(_vm._s(_vm.product.description))]),
+        _vm._v(" "),
+        _c("p", [_vm._v(_vm._s(_vm.product.user.name))])
+      ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true

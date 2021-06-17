@@ -51,7 +51,7 @@ const router = new VueRouter({
             path: "/products",
             name: "Products",
             component: Products,
-            meta: { requiresAuth: true },
+           // meta: { requiresAuth: true },
         },
         {
             path: "/products/:id",

@@ -17,54 +17,29 @@ export default new Vuex.Store({
           products: [],
     },
     mutations: {
-        addPlayer: (state, payload) => {
-            state.testlist.forEach( player => {
-                player.max+=payload
-            })
-            return testlist
-        },
-        setTodos: (state, todos) => (state.todos = todos),
-        addTodo: (state, todo) => state.todos.unshift(todo),
-
         fetchUsers(state, users) {
             return state.users = users;
         },
         fetchProducts(state, products) {
             return state.products = products;
         },
+
     },
     getters: {
-            changeTest: state => {
-                const changeTest = state.testlist.map( player => {
-                    return {
-                        name: '**'+ player.name + '**',
-                        max: player.max /2
-                    }
-                });
-                return changeTest;
-        },
         users: state => {
             return state.users;
-        }
+        },
+        products: state => {
+            return state.products
+        },
     },
     actions: {
-        addPlayer: (context, payload) => {
-           setTimeout(function(){
-               context.commit('addPlayer', payload);
-           },2000) 
-        },
         async fetchTodos() {
             const res = await axios.get(
                 'https://jsonplaceholder.typicode.com/todos'
             )
             console.log(res.data);
             this.commit('setTodos', res.data);
-        },
-        async addTodo({ commit }, title) {
-            const res = await axios.post(
-                'https://jsonplaceholder.typicode.com/todos', {title, completed:false}
-            );
-            commit('addTodo', res.data);
         },
         fetchUsers({commit}) {
             const res = axios.get('api/users')
@@ -91,7 +66,7 @@ export default new Vuex.Store({
             })
         },
         fetchProducts({commit}) {
-            const res = axios.get('api/products')
+            const products = axios.get('api/products')
             .catch(function (error) {
                 if (error.response) {
                   // The request was made and the server responded with a status code
@@ -110,8 +85,9 @@ export default new Vuex.Store({
                 }
                 console.log(error.config);
               })
-            .then(res => {
-                commit('fetchProducts', res.data)
+            .then(products => {
+                console.log(products.data.data)
+                commit('fetchProducts', products.data.data)
             })
         }
     }

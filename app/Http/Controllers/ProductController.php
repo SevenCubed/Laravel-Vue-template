@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductCollection;
 
 class ProductController extends Controller
 {
+    // public function __construct()
+    // {
+    //   $this->middleware('auth:api');
+    // }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +20,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();//->with('user'); Resource collection
+        return new ProductCollection(Product::all());
     }
 
     /**
@@ -44,9 +50,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        //
+        return new ProductResource($product);
     }
 
     /**

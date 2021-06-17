@@ -62,9 +62,9 @@
               <div v-if="authenticated">
             <router-link class="button is-primary" :to="{ name: 'Dashboard' }">
               Dashboard</router-link>
-              <router-link class="button is-primary" @click="logout" :to="{ name: 'Logout' }">
-              Logout*
-              </router-link>
+              <button class="button is-primary" @click="logout">
+              Logout
+              </button>
               </div>
 
         </div>
