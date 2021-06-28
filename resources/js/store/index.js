@@ -2,6 +2,7 @@ import axios from "axios";
 import Vue from "vue";
 import Vuex from "vuex";
 import authentication from "./modules/authentication";
+import products from "./modules/products";
 
 
 Vue.use(Vuex);
@@ -9,6 +10,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         authentication,
+        products
     },
     state: {
         testlist: [],

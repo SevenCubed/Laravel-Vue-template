@@ -6,6 +6,7 @@ import NotFound from "../../views/NotFound.vue";
 import Products from "../../views/Products.vue";
 import SubProduct from "../../views/components/SubProduct.vue";
 import TestingVuex from "../../views/components/TestingVuex.vue";
+import AddProduct from "../../views/components/AddProduct.vue";
 import Register from "../../views/Register.vue";
 import Login from "../../views/Login.vue";
 import Dashboard from "../../views/Dashboard.vue";
@@ -46,6 +47,11 @@ const router = new VueRouter({
             path: "/questions",
             name: "Questions",
             component: Questions
+        },
+        {
+            path: "/add-product",
+            name: "Add Product",
+            component: AddProduct
         },
         {
             path: "/products",

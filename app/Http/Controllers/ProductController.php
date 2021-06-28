@@ -41,9 +41,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Product::create([
+            'name' => $request['name'],
+            'description' => $request['description'],
+            'price' => $request['price'],
+            'user_id' => $request['user'],
+            'status' => 'open',
+            
+       ]);
+    return response()->json(['status' => 'success','message' => 'Image was uploaded successfully'],200);    
     }
-
+        
     /**
      * Display the specified resource.
      *

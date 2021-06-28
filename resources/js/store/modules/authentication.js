@@ -33,6 +33,7 @@ export default {
             email: user.email,
             password: user.password
             })
+            .catch((error) =>  this.errors = error.response.data)
             .then(response => {
                 console.log(response.data)
                 commit('loginUser', response.data)

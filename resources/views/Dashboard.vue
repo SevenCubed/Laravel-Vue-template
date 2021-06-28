@@ -3,6 +3,9 @@
 <h1 class="title">Dashboard</h1>
 {{user.name}}
 {{user.email}}
+      <router-link :to="{ name: 'Add Product' }" class="navbar-item">
+        Add New Product
+      </router-link>
     </div>
 </template>
 

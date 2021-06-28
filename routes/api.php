@@ -31,5 +31,6 @@ Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
 
 //Products
-Route::get('/products', [ProductController::class, 'index'])->name('products');
-Route::get('products/{product}',[ProductController::class, 'show'])->name('showProduct');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('products/{product}',[ProductController::class, 'show'])->name('products.show');
+Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');

@@ -11,7 +11,6 @@
                 </li>
         </ul>
         <h3 class="title">Testing Todo List</h3>
-        <AddTodo />
         <ul> <li v-for="todo in todos">{{todo.title}}</li>
                </ul>
     </div>
@@ -20,7 +19,6 @@
 <script setup>
 import {mapActions} from "vuex";
 import {mapGetters} from "vuex";
-import AddTodo from "./AddTodo.vue";
 
 export default {
     computed: {
@@ -41,7 +39,6 @@ export default {
         ])
     },
     components:{
-        AddTodo,
     }
 }
 </script>
