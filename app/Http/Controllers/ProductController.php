@@ -20,6 +20,7 @@ class ProductController extends Controller
      */
     public function index()
     {
+        // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
         return new ProductCollection(Product::all());
     }
 
@@ -60,6 +61,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
         return new ProductResource($product);
     }
 
