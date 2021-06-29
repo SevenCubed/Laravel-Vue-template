@@ -6,11 +6,12 @@ export default {
 
     state: {
         authenticated: false,
-        user: null
+        token: localStorage.getItem('token') || '', //is this okay? state isn't immutable this way
+        user: null,
     },
     getters: {
         authenticated(state) {
-            return state.authenticated
+            return !!state.token
         },
         activeUser(state) {
             return state.user
@@ -20,10 +21,15 @@ export default {
         loginUser(state, user) {
             state.authenticated = true;
             state.user = user;
+            state.token = user.token;
         },
         logoutUser(state) {
             state.authenticated = false;
             state.user = null;
+            state.token = ''
+        },
+        activeUser(state, user) {
+            state.user = user;
         },
     },
     actions: {    
@@ -36,24 +42,39 @@ export default {
             .catch((error) =>  this.errors = error.response.data)
             .then(response => {
                 console.log(response.data)
+                const token = response.data.token
+                localStorage.setItem('token', token)
                 commit('loginUser', response.data)
                 router.push({ name: 'Dashboard'})
+
             })
         },
-        registerUser( {commit}, user) {
+        registerUser( {commit, state}, user) {
                 axios.post('api/register', user)
                 .catch((error) =>  this.errors = error.response.data)
-                .then(() => { //currently doesn't care about errors, that's a problem
+                .then(response => { //currently doesn't care about errors, that's a problem\
+                    console.log(response)
+                    const token = response.data.token
+                    localStorage.setItem('token', token)
                     commit('loginUser', user)
                     router.push({ name: "Dashboard"})})
         },
-        logoutUser( {commit}) {
+        logoutUser( {commit, state}) {
             axios
             .post('api/logout')
-            .then(() => {
+            .then(() => {                
+                localStorage.removeItem('token')
                 commit('logoutUser')
-                router.push({ name: 'Login'})
+                router.push({ name: 'Home'})
             })
-        }
-    }
-}
+        },
+        activeUser( {commit}, token ) {
+            axios
+            .post('api/activeUser', token)
+            .catch((error) =>  this.errors = error.response.data)
+            .then(response => { 
+                console.log(response)
+                commit('activeUser', response)
+            })
+        },
+}}

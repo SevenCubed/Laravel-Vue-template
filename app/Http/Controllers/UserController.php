@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
 
+
 class UserController extends Controller
 {
     /**
@@ -36,13 +37,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => $request['password']
-       ]);
 
-        return response()->json(['status' => 'success','message' => 'Image was uploaded successfully'],200);
     }
 
     /**

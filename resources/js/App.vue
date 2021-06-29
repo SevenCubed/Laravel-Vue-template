@@ -15,14 +15,22 @@ import Header from '../views/components/Header.vue'
 //import TestingVuex from './components/TestingVuex.vue';
 
 export default {
-data(){
-return{}
-},
+  data(){
+    return{
+
+    }
+  },
   components: {
     Footer,
     Header,
-  }
+  },
+  created() {
+    const token = localStorage.getItem('token');
+    console.log(token);
+    this.$store.dispatch('authentication/activeUser', token)
+  },
 }
+
 </script>
 
 <style>

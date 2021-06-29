@@ -1878,6 +1878,11 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Footer: _views_components_Footer_vue__WEBPACK_IMPORTED_MODULE_0__.default,
     Header: _views_components_Header_vue__WEBPACK_IMPORTED_MODULE_1__.default
+  },
+  created: function created() {
+    var token = localStorage.getItem('token');
+    console.log(token);
+    this.$store.dispatch('authentication/activeUser', token);
   }
 });
 
@@ -2833,11 +2838,13 @@ __webpack_require__.r(__webpack_exports__);
   namespaced: true,
   state: {
     authenticated: false,
+    token: localStorage.getItem('token') || '',
+    //is this okay? state isn't immutable this way
     user: null
   },
   getters: {
     authenticated: function authenticated(state) {
-      return state.authenticated;
+      return !!state.token;
     },
     activeUser: function activeUser(state) {
       return state.user;
@@ -2847,10 +2854,15 @@ __webpack_require__.r(__webpack_exports__);
     loginUser: function loginUser(state, user) {
       state.authenticated = true;
       state.user = user;
+      state.token = user.token;
     },
     logoutUser: function logoutUser(state) {
       state.authenticated = false;
       state.user = null;
+      state.token = '';
+    },
+    activeUser: function activeUser(state, user) {
+      state.user = user;
     }
   },
   actions: {
@@ -2866,6 +2878,8 @@ __webpack_require__.r(__webpack_exports__);
         return _this.errors = error.response.data;
       }).then(function (response) {
         console.log(response.data);
+        var token = response.data.token;
+        localStorage.setItem('token', token);
         commit('loginUser', response.data);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: 'Dashboard'
@@ -2875,11 +2889,15 @@ __webpack_require__.r(__webpack_exports__);
     registerUser: function registerUser(_ref2, user) {
       var _this2 = this;
 
-      var commit = _ref2.commit;
+      var commit = _ref2.commit,
+          state = _ref2.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/register', user)["catch"](function (error) {
         return _this2.errors = error.response.data;
-      }).then(function () {
-        //currently doesn't care about errors, that's a problem
+      }).then(function (response) {
+        //currently doesn't care about errors, that's a problem\
+        console.log(response);
+        var token = response.data.token;
+        localStorage.setItem('token', token);
         commit('loginUser', user);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: "Dashboard"
@@ -2887,12 +2905,25 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     logoutUser: function logoutUser(_ref3) {
-      var commit = _ref3.commit;
+      var commit = _ref3.commit,
+          state = _ref3.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/logout').then(function () {
+        localStorage.removeItem('token');
         commit('logoutUser');
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
-          name: 'Login'
+          name: 'Home'
         });
+      });
+    },
+    activeUser: function activeUser(_ref4, token) {
+      var _this3 = this;
+
+      var commit = _ref4.commit;
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/activeUser', token)["catch"](function (error) {
+        return _this3.errors = error.response.data;
+      }).then(function (response) {
+        console.log(response);
+        commit('activeUser', response);
       });
     }
   }

@@ -25,6 +25,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('register', [AuthenticationController::class, 'register'])->name('register');
 Route::post('login', [AuthenticationController::class, 'login'])->name('login');
 Route::post('logout', [AuthenticationController::class, 'logout'])->name('logout');
+Route::post('activeUser', [AuthenticationController::class, 'activeUser'])->name('activeUser');
 
 //Users
 Route::get('/users', [UserController::class, 'index'])->name('users');

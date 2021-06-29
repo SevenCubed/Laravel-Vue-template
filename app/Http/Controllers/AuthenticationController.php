@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 
 
 //This could probably be inside a User Controller, but I'm opting to keep it outside for now, to keep the learning process somewhat organized.
@@ -24,6 +26,7 @@ class AuthenticationController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'token' => Str::random(60),
         ]);
     }
     
@@ -44,5 +47,10 @@ class AuthenticationController extends Controller
 
     public function logout(Request $request){
         Auth::logout();
+    }
+
+    public function activeUser(Request $request){
+        $user = User::firstWhere('token', $request->token);
+        return $user;
     }
 }
