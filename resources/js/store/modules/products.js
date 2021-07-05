@@ -9,9 +9,6 @@ export default {
     mutations: {},
     actions: {
         addProduct({ commit }, product) {
-            console.log("DEBUG");
-            console.log(product);
-            console.log("DEBUG");
             axios.post("api/products/store", product).catch(function(error) {
                 if (error.response) {
                     // The request was made and the server responded with a status code

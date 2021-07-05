@@ -2499,13 +2499,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {};
   },
   mounted: function mounted() {
     this.$store.dispatch("fetchCategories");
-    console.log(categories);
   },
   computed: {
     categories: function categories() {
@@ -2872,11 +2872,20 @@ vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vuex__WEBPACK_IMPORTED_MODULE_4__.d
     products: _modules_products__WEBPACK_IMPORTED_MODULE_2__.default
   },
   state: {
+    //https://dev.to/messerli90/build-an-advanced-search-and-filter-with-vuex-in-nuxt-3jn8
+    //https://www.youtube.com/watch?v=OjS6SWS6G5c
     testlist: [],
     todos: [],
     users: [],
     products: [],
+    filteredProducts: [],
     categories: [],
+    filter: {
+      search: '',
+      price: [],
+      user: [],
+      categories: []
+    },
     isLoading: false
   },
   mutations: {
@@ -3131,9 +3140,6 @@ __webpack_require__.r(__webpack_exports__);
   actions: {
     addProduct: function addProduct(_ref, product) {
       var commit = _ref.commit;
-      console.log("DEBUG");
-      console.log(product);
-      console.log("DEBUG");
       axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/products/store", product)["catch"](function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
@@ -6054,8 +6060,6 @@ var render = function() {
       _vm._v(" "),
       _vm._m(0),
       _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
       _c("h1", { staticClass: "is-size-6 has-text-weight-bold" }, [
         _vm._v("Categories")
       ]),
@@ -6081,8 +6085,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("ul", { staticClass: "is-size-7" }, [
-      _c("li", [_vm._v("CR json?")])
+    return _c("div", { staticClass: "content" }, [
+      _c("ul", { staticClass: "is-size-7" })
     ])
   }
 ]

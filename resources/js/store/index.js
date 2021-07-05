@@ -12,11 +12,20 @@ export default new Vuex.Store({
         products
     },
     state: {
+        //https://dev.to/messerli90/build-an-advanced-search-and-filter-with-vuex-in-nuxt-3jn8
+        //https://www.youtube.com/watch?v=OjS6SWS6G5c
         testlist: [],
         todos: [],
         users: [],
         products: [],
+        filteredProducts: [],
         categories: [],
+        filter: {
+            search: '',
+            price: [],
+            user: [],
+            categories: [],
+        },
         isLoading: false,
     },
     mutations: {
