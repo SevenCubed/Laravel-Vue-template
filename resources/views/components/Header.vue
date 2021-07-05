@@ -17,12 +17,7 @@
       <router-link to="/" class="navbar-item">
         Home
       </router-link>
-      <router-link :to="{ name: 'Vuex Test' }" class="navbar-item">
-        Vuex Test
-      </router-link>
-            <router-link :to="{ name: 'Questions' }" class="navbar-item">
-        Questions
-      </router-link>
+
                 <router-link :to="{ name: 'Products' }" class="navbar-item">
         Products
       </router-link>

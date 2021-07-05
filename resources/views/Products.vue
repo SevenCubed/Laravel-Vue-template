@@ -1,35 +1,55 @@
 <template>
-    <div>
-        <h2 class="title">Products</h2>
-        <div v-if="products">
-            <div v-for="product in products" :key="product.id" class="test">
-                <router-link
-                    :to="{
-                        name: 'ProductDetails',
-                        params: { id: product.id, initProduct: product }
-                    }"
-                >
-                    <h1 class="title is-6">
-                        {{ product.name | capitalize }} by
-                        {{ product.user.name }}
-                    </h1>
-                </router-link>
-            </div>
-        </div>
+<div>
+    <div v-if='isLoading'>
+        <Spinner line-fg-color="#777777" size="large" message="Loading products..."/>
     </div>
+    <div v-else>
+        <div class="columns">
+            <div class="column is-2">
+                <SearchFilter />
+                <div class="section has-text-left">
+                    <h1 class="title is-size-6">Extra</h1>
+                    <p class="is-size-7"> A section to add any other tidbits, that don't fall into categories or search filters
+                    </p>
+                </div>
+            </div>
+            <div class="column is-9">
+                <h2 class="title">Products</h2>
+                <div class="columns is-variable is-multiline is-1">
+                    <ProductCard v-for="product in products" :key="product.id" :product="product"/>
+                </div>
+            </div>
+            <div class="column is-1">
+                <!-- Empty filler -->
+            </div>
+       </div>
+    </div>
+</div>
 </template>
 <script>
 const default_layout = "default";
 
+import ProductCard from '../views/components/ProductCard.vue'
+import Spinner from 'vue-simple-spinner' //Custom package
+import SearchFilter from '../views/components/SearchFilter.vue'
+
 export default {
     data() {
         return {};
+    },
+    components: {
+        ProductCard,
+        Spinner,
+        SearchFilter,
     },
     mounted() {
         this.$store.dispatch("fetchUsers");
         this.$store.dispatch("fetchProducts");
     },
     computed: {
+        isLoading () {
+            return this.$store.getters.isLoading;
+        },
         products() {
             return this.$store.getters.products.products;
         },
@@ -38,6 +58,8 @@ export default {
         }
     },
     methods: {},
+
+
     // CR :: filters?
     filters: {
         capitalize: function(value) {

@@ -16,6 +16,9 @@
         <textarea type="description" placeholder="???" v-model="form.description"></textarea>
     </div>
     <div>
+            <input type="file" @change="selectFile">
+    </div>
+    <div>
         <button @click.prevent="register" class="button" type="submit">Add</button></div>
     {{user}}
 </div>
@@ -30,6 +33,7 @@ export default {
                 description: '',
                 price: '',
                 user: '',
+                file: '',
             },
         errors: [],
         }
@@ -44,7 +48,11 @@ export default {
                     this.form.user = this.user;   
         console.log(this.form)
             this.$store.dispatch('products/addProduct', this.form)
-            }
+            },
+            selectFile(event) {
+            // `files` is always an array because the file input may be in multiple mode
+            this.form.file = event.target.files[0];
+        }
     }
 }
 </script>

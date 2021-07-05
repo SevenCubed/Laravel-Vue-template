@@ -17,6 +17,7 @@ class ProductSeeder extends Seeder
         Product::factory(10)
         ->forUser(1)
         ->hasOrders(1)
+        ->hasImages(1)
         ->hasCategories(1)
         ->create();
     }

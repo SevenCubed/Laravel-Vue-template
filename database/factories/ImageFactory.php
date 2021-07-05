@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Product;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProductFactory extends Factory
+class ImageFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Product::class;
+    protected $model = Image::class;
 
     /**
      * Define the model's default state.
@@ -21,11 +21,8 @@ class ProductFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'name' => $this->faker->word(),
-            'status' => 'open',
-            'price' => $this->faker->randomNumber(2),
-            'description' => $this->faker->realText(1000),
+        return [ 
+            'product_image_path' => $this->faker->imageUrl(640, 480, true),
         ];
     }
 }

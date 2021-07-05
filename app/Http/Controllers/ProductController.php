@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
@@ -22,6 +23,11 @@ class ProductController extends Controller
     {
         // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
         return new ProductCollection(Product::all());
+    }
+
+    public function categories()
+    {
+        return Category::all();
     }
 
     /**
@@ -50,7 +56,6 @@ class ProductController extends Controller
             'status' => 'open',
             
        ]);
-    return response()->json(['status' => 'success','message' => 'Image was uploaded successfully'],200);    
     }
         
     /**

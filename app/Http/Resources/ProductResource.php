@@ -21,9 +21,12 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'status' => $this->status,
-            'user' => new UserResource($this->user),
-            // 'created_at' => $this->created_at,
-            // 'updated_at' => $this->updated_at,
+            // 'user' => new UserResource($this->user),
+            'user' => ['id' => $this->user->id, 'name' => $this->user->name, 'created_at' => $this->user->created_at],
+            'card_image' => $this->images[0]->product_image_path,
+            'categories' => $this->categories,
+            'created_at' => $this->created_at->format('j F Y, H:i'),
+            'updated_at' => $this->updated_at,
         ];
     }
 }

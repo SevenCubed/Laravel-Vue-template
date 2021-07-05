@@ -1,10 +1,10 @@
 <template>
-  <div id="main">
+  <div id="main" class="has-background-white-ter">
     <Header />
     <div id="nav" class="section">
     <router-view />
   </div>
-      <Footer />
+  <Footer />
 
 </div>
 </template>

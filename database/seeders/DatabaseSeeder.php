@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\Image;
+
 
 
 class DatabaseSeeder extends Seeder
@@ -25,6 +27,9 @@ class DatabaseSeeder extends Seeder
         $products->each(function (Product $p) use ($users, $categories) {
             $p->user()->associate($users->random());
             $p->save();
+            $image = Image::factory()->make();
+            $image->product()->associate($p);
+            $image->save();
             $p->categories()->sync($categories->random());
         });
         $orders->each(function (Order $o) use ($users, $products) {

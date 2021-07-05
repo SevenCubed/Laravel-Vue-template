@@ -70,11 +70,11 @@ export default {
         },
         activeUser( {commit}, token ) {
             axios
-            .post('api/activeUser', token)
+            .post('api/activeUser',  {'token':  token})
             .catch((error) =>  this.errors = error.response.data)
             .then(response => { 
-                console.log(response)
-                commit('activeUser', response)
+                console.log(response.data)
+                commit('activeUser', response.data)
             })
         },
 }}

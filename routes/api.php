@@ -31,6 +31,9 @@ Route::post('activeUser', [AuthenticationController::class, 'activeUser'])->name
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
 
+//Categories
+Route::get('/categories', [ProductController::class, 'categories'])->name('products.index');
+
 //Products
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('products/{product}',[ProductController::class, 'show'])->name('products.show');
