@@ -20,7 +20,7 @@ export default new Vuex.Store({
         products: [],
         filteredProducts: [],
         categories: [],
-        filter: {
+        filters: {
             search: '',
             price: [],
             user: [],
@@ -34,17 +34,36 @@ export default new Vuex.Store({
             return (state.users = users);
         },
         fetchProducts(state, products) {
-            return (state.products = products);
+            state.products = products;
+            state.filteredProducts = products.products
         },
         fetchCategories(state, categories) {
             return (state.categories = categories);
         },
-        loadingStatus (state, status) {
+        loadingStatus(state, status) {
             state.isLoading = status
+        },
+        SET_FILTER_CATEGORY(state, category) {
+            state.filters.categories = category //I'll improve this later for multiples
+        },
+        SET_FILTER_PRICE(state, price) { //I feel like I SHOULD be able to consolidate this with the category mutation, by just adding some kind of "payload type" parameter
+            state.filters.price = price
+        },
+        FILTER_PRODUCTS(state) {
+            state.filteredProducts = state.products.products;
+            if (state.filters.categories.length){
+            state.filteredProducts = state.filteredProducts.filter(product => {
+               //return product.categories === state.filters.categories
+               return state.filters.categories.includes(product.categories)
+            });
+            }
+            if (state.filters.price.length) { 
+                state.filteredProducts = state.filteredProducts.filter(product => product.price >= state.filters.price[0] && product.price <= state.filters.price[1]); 
+            }
         },
     },
     getters: {
-        isLoading (state) {
+        isLoading(state) {
             return state.isLoading;
         },
         users: state => {
@@ -52,6 +71,9 @@ export default new Vuex.Store({
         },
         products: state => {
             return state.products;
+        },
+        filteredProducts: state => {
+            return state.filteredProducts;
         },
         categories: state => {
             return state.categories;
@@ -63,7 +85,7 @@ export default new Vuex.Store({
             const res = axios
                 .get("api/users")
                 // CR :: .then komt voor .catch
-                .catch(function(error) {
+                .catch(function (error) {
                     if (error.response) {
                         // The request was made and the server responded with a status code
                         // that falls out of the range of 2xx
@@ -85,11 +107,11 @@ export default new Vuex.Store({
                     commit("fetchUsers", res.data);
                 });
         },
-        fetchProducts({ commit }) {
+        fetchProducts({ commit, state }) {
             commit('loadingStatus', true)
             const products = axios
                 .get("api/products")
-                .catch(function(error) {
+                .catch(function (error) {
                     if (error.response) {
                         // The request was made and the server responded with a status code
                         // that falls out of the range of 2xx
@@ -114,9 +136,9 @@ export default new Vuex.Store({
                 });
         },
         fetchCategories({ commit }) { //I imagine an actual published commerce website would just write these out in HTML, since they have all of them from the get-go
-                axios
+            axios
                 .get("api/categories")
-                .catch(function(error) {
+                .catch(function (error) {
                     if (error.response) {
                         // The request was made and the server responded with a status code
                         // that falls out of the range of 2xx
@@ -137,6 +159,17 @@ export default new Vuex.Store({
                 .then(response => {
                     commit("fetchCategories", response.data);
                 });
-        }
+        },
+        async filterCategory({ commit, dispatch }, category) {
+            await commit('SET_FILTER_CATEGORY', category)
+            dispatch('filterProducts')
+        },
+        async filterPrice({ commit, dispatch }, price) {
+            await commit('SET_FILTER_PRICE', price)
+            dispatch('filterProducts')
+        },
+        async filterProducts({ commit }) {
+            await commit('FILTER_PRODUCTS')
+        },
     }
 });

@@ -21,8 +21,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('id', '>', 10)->get(); //insert filters
-
+        $products = Product::all(); 
         // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
         return new ProductCollection($products);
     }

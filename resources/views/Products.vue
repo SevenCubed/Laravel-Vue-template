@@ -35,7 +35,8 @@ import SearchFilter from '../views/components/SearchFilter.vue'
 
 export default {
     data() {
-        return {};
+        return {
+        }
     },
     components: {
         ProductCard,
@@ -51,23 +52,18 @@ export default {
             return this.$store.getters.isLoading;
         },
         products() {
-            return this.$store.getters.products.products;
+            return this.$store.getters.filteredProducts;
         },
         users() {
             return this.$store.state.users;
         }
     },
-    methods: {},
+    methods: {
+
+    },
 
 
-    // CR :: filters?
-    filters: {
-        capitalize: function(value) {
-            if (!value) return "";
-            value = value.toString();
-            return value.charAt(0).toUpperCase() + value.slice(1);
-        }
-    }
+    // CRx :: filters? - This was something I used to force the names to capitalize. It turns out to be deprecated + Bulma allows for a simple CSS class to do this for me in is-capitalized
 };
 </script>
 <style scoped>

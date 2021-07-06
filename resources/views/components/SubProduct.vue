@@ -6,7 +6,7 @@
         <nav class="breadcrumb">
             <ul>
                 <li><router-link :to="{ name: 'Products' }">Products</router-link></li>
-                <li><router-link class="is-capitalized" :to="{ name: 'Products' }">{{product.categories[0].name}}</router-link></li>
+                <li><router-link class="is-capitalized" :to="{ name: 'Products' }">{{product.categories}}</router-link></li>
                 <li class="is-active is-capitalized"><a href="#">{{product.name}}</a></li>
             </ul>
         </nav>
