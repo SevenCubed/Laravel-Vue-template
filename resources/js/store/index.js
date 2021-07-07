@@ -49,16 +49,24 @@ export default new Vuex.Store({
         SET_FILTER_PRICE(state, price) { //I feel like I SHOULD be able to consolidate this with the category mutation, by just adding some kind of "payload type" parameter
             state.filters.price = price
         },
+        SET_FILTERS(state, filters) {
+            state.filters = filters //Or I just update all the filters
+        },
         FILTER_PRODUCTS(state) {
             state.filteredProducts = state.products.products;
-            if (state.filters.categories.length){
-            state.filteredProducts = state.filteredProducts.filter(product => {
-               //return product.categories === state.filters.categories
-               return state.filters.categories.includes(product.categories)
-            });
+            if (state.filters.categories.length) { //Filter categories
+                state.filteredProducts = state.filteredProducts.filter(product => {
+                    //return product.categories === state.filters.categories
+                    return state.filters.categories.includes(product.categories)
+                });
             }
-            if (state.filters.price.length) { 
-                state.filteredProducts = state.filteredProducts.filter(product => product.price >= state.filters.price[0] && product.price <= state.filters.price[1]); 
+            if (state.filters.price.length) { //Filter prices
+                state.filteredProducts = state.filteredProducts.filter(product => {
+                    //return product.price >= state.filters.price[0] && product.price <= state.filters.price[1]
+                    return state.filters.price.some(range => {
+                        return product.price >= range[0] && product.price <= range[1]
+                    })
+                });
             }
         },
     },
@@ -166,6 +174,10 @@ export default new Vuex.Store({
         },
         async filterPrice({ commit, dispatch }, price) {
             await commit('SET_FILTER_PRICE', price)
+            dispatch('filterProducts')
+        },
+        async updateFilters({ commit, dispatch }, filters) {
+            await commit('SET_FILTERS', filters)
             dispatch('filterProducts')
         },
         async filterProducts({ commit }) {

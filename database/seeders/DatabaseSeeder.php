@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $users = User::factory(50)->create();
-        $categories = Category::factory(5)->create();
-        $products = Product::factory(20)->make();
-        $orders = Order::factory(10)->make();
+        $categories = Category::factory(15)->create();
+        $products = Product::factory(100)->make();
+        $orders = Order::factory(20)->make();
         $products->each(function (Product $p) use ($users, $categories) {
             $p->user()->associate($users->random());
             $p->save();
