@@ -23,6 +23,7 @@ class ProductController extends Controller
     {
         $products = Product::all(); 
         // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
+        // AFAIK the Resource Collection is already in json. It definitely seems to be that way in Tools->Network->Request->Response
         return new ProductCollection($products);
     }
 

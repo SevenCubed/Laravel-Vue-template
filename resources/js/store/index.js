@@ -21,10 +21,10 @@ export default new Vuex.Store({
         filteredProducts: [],
         categories: [],
         filters: {
-            search: '',
+            categories: [],
             price: [],
             user: [],
-            categories: [],
+            search: '',
         },
         isLoading: false,
     },
@@ -49,20 +49,29 @@ export default new Vuex.Store({
         SET_FILTER_PRICE(state, price) { //I feel like I SHOULD be able to consolidate this with the category mutation, by just adding some kind of "payload type" parameter
             state.filters.price = price
         },
+        SET_FILTER_SEARCH(state, search){
+            state.filters.search = search
+        },
         SET_FILTERS(state, filters) {
             state.filters = filters //Or I just update all the filters
         },
         FILTER_PRODUCTS(state) {
             state.filteredProducts = state.products.products;
-            if (state.filters.categories.length) { //Filter categories
+            if(state.filters.search !== ''){
+                const search = state.filters.search.toLowerCase();
                 state.filteredProducts = state.filteredProducts.filter(product => {
-                    //return product.categories === state.filters.categories
+                    return (product.name !== null && product.name.toLowerCase().includes(search)) //Search in name..
+                        || (product.description !== null && product.description.toLowerCase().includes(search)) //Or description..
+                });
+            }
+            if (state.filters.categories.length) { //Filter categories by filtering the list based on if the products include the filtered categories
+                state.filteredProducts = state.filteredProducts.filter(product => {
                     return state.filters.categories.includes(product.categories)
                 });
             }
-            if (state.filters.price.length) { //Filter prices
+            if (state.filters.price.length) { //Filter prices by checking if the products are within any of the selected ranges. 
+                //Kind of dumb, why would someone only want to search 0-5 AND 10-100, but not 5-10? I'll rework this to a slider later, but the logic remains the same.
                 state.filteredProducts = state.filteredProducts.filter(product => {
-                    //return product.price >= state.filters.price[0] && product.price <= state.filters.price[1]
                     return state.filters.price.some(range => {
                         return product.price >= range[0] && product.price <= range[1]
                     })
@@ -175,13 +184,18 @@ export default new Vuex.Store({
         async filterPrice({ commit, dispatch }, price) {
             await commit('SET_FILTER_PRICE', price)
             dispatch('filterProducts')
+        },        
+        async filterSearch({commit, dispatch}, search) {
+            await commit('SET_FILTER_SEARCH', search)
+            dispatch('filterProducts')
         },
         async updateFilters({ commit, dispatch }, filters) {
             await commit('SET_FILTERS', filters)
             dispatch('filterProducts')
-        },
+        },        
         async filterProducts({ commit }) {
             await commit('FILTER_PRODUCTS')
         },
+
     }
 });
