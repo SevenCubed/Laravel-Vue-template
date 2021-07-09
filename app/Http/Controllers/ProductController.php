@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
 use App\Models\Category;
+use App\Models\Image;
 
 class ProductController extends Controller
 {
@@ -50,13 +51,26 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        Product::create([
+        $request->validate([
+            'name' => 'required',
+            'files'=> 'required',
+        ]);
+        // $name = $request['user'] . '.' . time();
+        // $request['files']->save(public_path('img/'), $name);
+        // $image = Image::create(['product_image_path' => 'img'.$name]);
+        $product = Product::create([
             'name' => $request['name'],
             'description' => $request['description'],
             'price' => $request['price'],
             'user_id' => $request['user'],
             'status' => 'open',
-            
+       ]);
+       $product->categories()->sync(Category::all()->random());
+       $name = $product->id . '-' . time();
+       $request['files']->move(public_path('img/'), $name);
+       $image = Image::create([
+           'product_image_path' => ('img/'.$name),
+           'product_id' => $product->id,
        ]);
     }
         

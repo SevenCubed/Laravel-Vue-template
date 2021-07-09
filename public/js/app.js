@@ -1882,7 +1882,10 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var token = localStorage.getItem('token');
     console.log(token);
-    this.$store.dispatch('authentication/activeUser', token);
+
+    if (!!token) {
+      this.$store.dispatch('authentication/activeUser', token);
+    }
   }
 });
 
@@ -2049,6 +2052,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
+/*
+TODO:
+Default sort by date, youngest first
+Add sorting/ordering
+Paginate
+*/
 var default_layout = "default";
 
  //Custom package
@@ -2064,8 +2074,15 @@ var default_layout = "default";
     SearchFilter: _views_components_SearchFilter_vue__WEBPACK_IMPORTED_MODULE_2__.default
   },
   mounted: function mounted() {
-    this.$store.dispatch("fetchUsers");
-    this.$store.dispatch("fetchProducts");
+    if (!this.users.length) {
+      console.log('Users empty, fetching...');
+      this.$store.dispatch("fetchUsers");
+    }
+
+    if (!this.products.length) {
+      console.log('Products empty, fetching...');
+      this.$store.dispatch("fetchProducts");
+    }
   },
   computed: {
     isLoading: function isLoading() {
@@ -2262,6 +2279,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
+/*
+TODO:
+Layout
+Add categories, they're mandatory for the collection
+Multi image
+Image preview?
+*/
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2270,25 +2295,40 @@ __webpack_require__.r(__webpack_exports__);
         description: '',
         price: '',
         user: '',
-        file: ''
+        files: ''
       },
       errors: []
     };
   },
   computed: {
     user: function user() {
-      return this.$store.state.authentication.user.id;
+      return this.$store.getters['authentication/activeUser'];
     }
   },
   methods: {
-    register: function register() {
-      this.form.user = this.user;
-      console.log(this.form);
-      this.$store.dispatch('products/addProduct', this.form);
+    addProduct: function addProduct() {
+      this.form.user = this.user.id;
+      var data = new FormData();
+      data.append('name', this.form.name);
+      data.append('description', this.form.description);
+      data.append('price', this.form.price);
+      data.append('user', this.form.user);
+      data.append('files', this.form.files); // console.log(this.form)
+
+      console.log(data);
+      this.$store.dispatch('products/addProduct', data);
     },
     selectFile: function selectFile(event) {
-      // `files` is always an array because the file input may be in multiple mode
-      this.form.file = event.target.files[0];
+      var file = event.target.files[0];
+      var reader = new FileReader();
+
+      if (event.target.files[0]['size'] < 2097152) {
+        this.form.files = file;
+      } else {
+        alert('File size can not be bigger than 2 MB');
+      } // `files` is always an array because the file input may be in multiple mode
+      //this.form.files = event.target.files[0];
+
     }
   }
 });
@@ -2549,18 +2589,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      priceRanges: [[0, 5], [5, 10], [10, 50], [50, 100], [100, 500], [500, 2, 147, 483, 647]],
+      priceRanges: [[0, 10000] // [5,10],
+      // [10,50],
+      // [50,100],
+      // [100,500],
+      // [500,2,147,483,647]
+      ],
       filters: {
         categories: [],
         price: [],
@@ -2569,7 +2609,7 @@ __webpack_require__.r(__webpack_exports__);
       limits: [[5, 5], //categories
       [5, 5] //price
       ],
-      value: [0, 0]
+      sliderValue: [0, 1000]
     };
   },
   components: {
@@ -2584,7 +2624,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.search = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.search, 300);
+    this.search = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.search, 500);
+    this.priceSlider = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.priceSlider, 500);
   },
   methods: {
     filterByCategory: function filterByCategory(category) {
@@ -2602,6 +2643,10 @@ __webpack_require__.r(__webpack_exports__);
       this.limits[index].splice(0, 1, newValue); //Splicing because just setting it does not trigger Vue reactivity.
     },
     search: function search() {
+      this.$store.dispatch("updateFilters", this.filters);
+    },
+    priceSlider: function priceSlider() {
+      this.filters.price = this.sliderValue;
       this.$store.dispatch("updateFilters", this.filters);
     }
   }
@@ -3067,11 +3112,11 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
 
       if (state.filters.price.length) {
         //Filter prices by checking if the products are within any of the selected ranges. 
-        //Kind of dumb, why would someone only want to search 0-5 AND 10-100, but not 5-10? I'll rework this to a slider later, but the logic remains the same.
         state.filteredProducts = state.filteredProducts.filter(function (product) {
-          return state.filters.price.some(function (range) {
-            return product.price >= range[0] && product.price <= range[1];
-          });
+          // return state.filters.price.some(range => {
+          //     return product.price >= range[0] && product.price <= range[1]
+          // }) Old system when it was checkmarks and not a slider
+          return product.price >= state.filters.price[0] && product.price <= state.filters.price[1];
         });
       }
     }
@@ -3330,6 +3375,14 @@ __webpack_require__.r(__webpack_exports__);
     },
     activeUser: function activeUser(state, user) {
       state.user = user;
+
+      if (user == '') {
+        state.authenticated = false;
+
+        if (!!state.token) {
+          localStorage.removeItem('token'); //This is a clause to delete any outdated tokens.
+        }
+      }
     }
   },
   actions: {
@@ -3389,9 +3442,8 @@ __webpack_require__.r(__webpack_exports__);
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/activeUser', {
         'token': token
       })["catch"](function (error) {
-        return _this3.errors = error.response.data;
+        _this3.errors = error.response.data;
       }).then(function (response) {
-        console.log(response.data);
         commit('activeUser', response.data);
       });
     }
@@ -3428,9 +3480,7 @@ __webpack_require__.r(__webpack_exports__);
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response.status, error.response.data);
         } else if (error.request) {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -3442,8 +3492,10 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         console.log(error.config);
-      }); //           .then(() => { //currently doesn't care about errors, that's a problem
-      //             router.push({ name: "Dashboard"})})
+      }).then(function (res) {
+        //currently doesn't care about errors, that's a problem
+        console.log(res);
+      });
     }
   }
 });
@@ -6697,10 +6749,10 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
+  return _c("div", { staticClass: "content" }, [
     _vm._m(0),
     _vm._v(" "),
-    _c("div", [
+    _c("div", {}, [
       _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
       _vm._v(" "),
       _vm.errors.name
@@ -6729,7 +6781,7 @@ var render = function() {
       })
     ]),
     _vm._v(" "),
-    _c("div", [
+    _c("div", {}, [
       _c("label", { attrs: { for: "price" } }, [_vm._v("Price")]),
       _vm._v(" "),
       _c("input", {
@@ -6754,7 +6806,7 @@ var render = function() {
       })
     ]),
     _vm._v(" "),
-    _c("div", [
+    _c("div", {}, [
       _c("label", { attrs: { for: "description" } }, [_vm._v("Description")]),
       _vm._v(" "),
       _vm.errors.description
@@ -6784,7 +6836,10 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", [
-      _c("input", { attrs: { type: "file" }, on: { change: _vm.selectFile } })
+      _c("input", {
+        attrs: { type: "file", multiple: "" },
+        on: { change: _vm.selectFile }
+      })
     ]),
     _vm._v(" "),
     _c("div", [
@@ -6796,7 +6851,7 @@ var render = function() {
           on: {
             click: function($event) {
               $event.preventDefault()
-              return _vm.register.apply(null, arguments)
+              return _vm.addProduct.apply(null, arguments)
             }
           }
         },
@@ -7179,107 +7234,36 @@ var render = function() {
       _vm._v(" "),
       _vm._m(0),
       _vm._v(" "),
-      _c("div", {}, [
-        _c("h1", { staticClass: "is-size-6 has-text-weight-bold" }, [
-          _vm._v("Prices")
-        ]),
-        _vm._v(" "),
-        _vm.priceRanges
-          ? _c(
-              "ul",
-              { staticClass: "is-size-7" },
-              [
-                _vm._l(_vm.priceRanges, function(price, index) {
-                  return index < _vm.limits[1][0]
-                    ? _c("li", { key: price.id, staticClass: "is-size-7" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.filters.price,
-                              expression: "filters.price"
-                            }
-                          ],
-                          staticClass: "form-check-input",
-                          attrs: { type: "checkbox" },
-                          domProps: {
-                            value: price,
-                            checked: Array.isArray(_vm.filters.price)
-                              ? _vm._i(_vm.filters.price, price) > -1
-                              : _vm.filters.price
-                          },
-                          on: {
-                            change: [
-                              function($event) {
-                                var $$a = _vm.filters.price,
-                                  $$el = $event.target,
-                                  $$c = $$el.checked ? true : false
-                                if (Array.isArray($$a)) {
-                                  var $$v = price,
-                                    $$i = _vm._i($$a, $$v)
-                                  if ($$el.checked) {
-                                    $$i < 0 &&
-                                      _vm.$set(
-                                        _vm.filters,
-                                        "price",
-                                        $$a.concat([$$v])
-                                      )
-                                  } else {
-                                    $$i > -1 &&
-                                      _vm.$set(
-                                        _vm.filters,
-                                        "price",
-                                        $$a
-                                          .slice(0, $$i)
-                                          .concat($$a.slice($$i + 1))
-                                      )
-                                  }
-                                } else {
-                                  _vm.$set(_vm.filters, "price", $$c)
-                                }
-                              },
-                              function($event) {
-                                return _vm.updateFilters()
-                              }
-                            ]
-                          }
-                        }),
-                        _vm._v(
-                          "\n                " +
-                            _vm._s(price) +
-                            "\n            "
-                        )
-                      ])
-                    : _vm._e()
-                }),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass: "mt-1",
-                    attrs: { href: "javascript:void(0)" },
-                    on: {
-                      click: function($event) {
-                        return _vm.toggle(1)
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      _vm._s(
-                        _vm.limits[1][0] === _vm.limits[1][1]
-                          ? "+Show more"
-                          : "-Hide more"
-                      )
-                    )
-                  ]
-                )
-              ],
-              2
-            )
-          : _vm._e()
-      ]),
+      _c(
+        "div",
+        {},
+        [
+          _c("h1", { staticClass: "is-size-6 has-text-weight-bold" }, [
+            _vm._v("Prices")
+          ]),
+          _vm._v(" "),
+          _c("Vue-slider", {
+            attrs: { "enable-cross": false, min: 0, max: 1000, interval: 1 },
+            on: {
+              change: function($event) {
+                return _vm.priceSlider()
+              }
+            },
+            model: {
+              value: _vm.sliderValue,
+              callback: function($$v) {
+                _vm.sliderValue = $$v
+              },
+              expression: "sliderValue"
+            }
+          }),
+          _vm._v(" "),
+          _vm._v("\n        " + _vm._s(_vm.sliderValue) + "\n        ")
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("br"),
       _vm._v(" "),
       _c("div", {}, [
         _c("h1", { staticClass: "is-size-6 has-text-weight-bold" }, [
@@ -7395,23 +7379,10 @@ var render = function() {
       _vm._v(" "),
       _c("br"),
       _vm._v(" "),
-      _c("Vue-slider", {
-        attrs: { "enable-cross": false, min: 0, max: 10000, interval: 1 },
-        model: {
-          value: _vm.value,
-          callback: function($$v) {
-            _vm.value = $$v
-          },
-          expression: "value"
-        }
-      }),
-      _vm._v(" "),
-      _vm._v("\n        " + _vm._s(_vm.value) + "\n        "),
       _c("div", { staticClass: "has-text-left is-capitalized is-size-7" }, [
         _vm._v("\n        " + _vm._s(_vm.filters) + "\n        ")
       ])
-    ],
-    1
+    ]
   )
 }
 var staticRenderFns = [
@@ -7431,7 +7402,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("li", [_vm._v("._debounce?")]),
         _vm._v(" "),
-        _c("li", [_vm._v("Collection = JSON?")])
+        _c("li", [_vm._v("CR: Collection = JSON?")]),
+        _vm._v(" "),
+        _c("li", [_vm._v("File upload encoding?")])
       ])
     ])
   }
@@ -7518,7 +7491,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("p", { staticClass: "has-text-grey is-size-7" }, [
                   _c("i", { staticClass: "fas fa-clock" }),
-                  _vm._v(" sinds " + _vm._s(_vm.product.created_at))
+                  _vm._v(" since " + _vm._s(_vm.product.created_at))
                 ]),
                 _vm._v(
                   "\r\n                    €" +

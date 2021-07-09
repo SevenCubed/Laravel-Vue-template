@@ -30,6 +30,12 @@ export default {
         },
         activeUser(state, user) {
             state.user = user;
+            if(user == ''){
+                state.authenticated = false;
+                if(!!state.token){
+                    localStorage.removeItem('token') //This is a clause to delete any outdated tokens.
+                }
+            }
         },
     },
     actions: {    
@@ -71,9 +77,9 @@ export default {
         activeUser( {commit}, token ) {
             axios
             .post('api/activeUser',  {'token':  token})
-            .catch((error) =>  this.errors = error.response.data)
+            .catch((error) =>  { this.errors = error.response.data
+            })
             .then(response => { 
-                console.log(response.data)
                 commit('activeUser', response.data)
             })
         },

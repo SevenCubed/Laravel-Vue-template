@@ -27,6 +27,14 @@
 </div>
 </template>
 <script>
+
+/*
+TODO:
+Default sort by date, youngest first
+Add sorting/ordering
+Paginate
+*/
+
 const default_layout = "default";
 
 import ProductCard from '../views/components/ProductCard.vue'
@@ -44,8 +52,14 @@ export default {
         SearchFilter,
     },
     mounted() {
-        this.$store.dispatch("fetchUsers");
-        this.$store.dispatch("fetchProducts");
+        if(!this.users.length){
+            console.log('Users empty, fetching...')
+            this.$store.dispatch("fetchUsers");
+        }
+        if(!this.products.length){
+            console.log('Products empty, fetching...')
+            this.$store.dispatch("fetchProducts");
+        }
     },
     computed: {
         isLoading () {

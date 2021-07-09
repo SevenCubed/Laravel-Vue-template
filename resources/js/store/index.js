@@ -70,11 +70,11 @@ export default new Vuex.Store({
                 });
             }
             if (state.filters.price.length) { //Filter prices by checking if the products are within any of the selected ranges. 
-                //Kind of dumb, why would someone only want to search 0-5 AND 10-100, but not 5-10? I'll rework this to a slider later, but the logic remains the same.
                 state.filteredProducts = state.filteredProducts.filter(product => {
-                    return state.filters.price.some(range => {
-                        return product.price >= range[0] && product.price <= range[1]
-                    })
+                    // return state.filters.price.some(range => {
+                    //     return product.price >= range[0] && product.price <= range[1]
+                    // }) Old system when it was checkmarks and not a slider
+                    return product.price >= state.filters.price[0] && product.price <= state.filters.price[1]
                 });
             }
         },

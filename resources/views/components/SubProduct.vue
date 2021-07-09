@@ -14,7 +14,7 @@
             <div class="column is-three-quarters">
                 <div class="box">
                     <h1 class='title is-5 is-capitalized'>{{product.name}}</h1>
-                    <p class="has-text-grey is-size-7"><i class="fas fa-clock"></i> sinds {{product.created_at}}</p>
+                    <p class="has-text-grey is-size-7"><i class="fas fa-clock"></i> since {{product.created_at}}</p>
                     €{{product.price}}
                     <figure class="image is-4by3">
                     <img :src="product.card_image" alt="Placeholder image">
@@ -67,10 +67,10 @@ export default {
         if (this.product === undefined){
             this.$store.commit('loadingStatus', true)
             axios.get(`api/products/${this.$route.params.id}`).then((res)=>{
-            this.product = res.data.data
-            this.$store.commit('loadingStatus', false)
-            console.log('product was undefined, fetching data directly')
-        })
+                this.product = res.data.data
+                this.$store.commit('loadingStatus', false)
+                console.log('product was undefined, fetching data directly')
+            })
         }
     }
 

@@ -27,7 +27,9 @@ export default {
   created() {
     const token = localStorage.getItem('token');
     console.log(token);
+    if(!!token){
     this.$store.dispatch('authentication/activeUser', token)
+    }
   },
 }
 
