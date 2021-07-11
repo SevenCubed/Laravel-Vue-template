@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+//https://learnvue.co/2020/01/build-a-custom-vuejs-tag-input-in-under-10-minutes/
 export default {
   data () {
     return {
