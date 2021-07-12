@@ -1,27 +1,78 @@
 <template>
   <div class='tag-input'>
     <div v-for='(tag, index) in tags' :key='tag' class='tag-input__tag'>
-      <span>x</span>
+      <span @click='removeTag(index)'>x</span>
       {{ tag }}
     </div>
-    <input type='text' placeholder="Enter a Tag" class='tag-input__text'
+    <input type='text' 
+    placeholder="Enter a Tag" 
+    class='tag-input__text'
     @keydown.enter='addTag' 
     @keydown.188='addTag'
+    @keydown.delete='removeLastTag'
+    list="categories"
     />
+    <datalist id="categories">
+      <option v-for="category in categories" >{{category.name}}</option>
+    </datalist>
   </div>
 </template>
 <script>
-//https://learnvue.co/2020/01/build-a-custom-vuejs-tag-input-in-under-10-minutes/
+
+/*
+TODO:
+Add clear indication a given input is invalid.
+see: https://www.jotform.com/blog/html5-datalists-what-you-need-to-know-78024/
+*/
 export default {
   data () {
     return {
-      tags: ['hello', 'world']
+      tags: [],
+      selectedCategories: [],
     }
   },
   methods: {
-      addTag(){
-          console.log('HI')
-      }
+      addTag(event){
+        event.preventDefault();
+        let tag = event.target.value.trim();
+        if (tag.length > 0){
+          const catIndex = (this.categories.findIndex((category) => category.name.toLowerCase() == tag.toLowerCase()))+1; //The database indices start at 1, not 0
+          console.log(catIndex);
+          if(catIndex > 0){
+            if(!this.selectedCategories.includes(catIndex)){
+              this.tags.push(tag);
+              this.selectedCategories.push(catIndex);
+            }
+          }
+          event.target.value = '';
+          this.updateParent();
+        }  
+      },
+      removeTag(index){
+        this.tags.splice(index, 1)
+        this.selectedCategories.splice(index, 1)
+        this.updateParent();
+      },
+      removeLastTag(event) {
+        if (event.target.value.length === 0) {
+          this.removeTag(this.tags.length - 1)
+        }
+      },
+      updateParent(){
+        this.$emit('childUpdated', this.selectedCategories)
+      },
+  },
+  mounted() {
+    if(!this.categories.length){
+      console.log('Categories empty. Fetching...')
+      this.$store.dispatch("fetchCategories");
+    }
+  },
+
+  computed: {
+      categories() {
+          return this.$store.getters.categories;
+      },
   },
 }
 </script>

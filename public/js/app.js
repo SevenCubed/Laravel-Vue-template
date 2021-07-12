@@ -2257,6 +2257,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _TagInput_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TagInput.vue */ "./resources/views/components/TagInput.vue");
+//
+//
+//
 //
 //
 //
@@ -2291,6 +2295,7 @@ Add categories, they're mandatory for the collection
 Multi image
 Image preview?
 */
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2299,27 +2304,45 @@ Image preview?
         description: '',
         price: '',
         user: '',
-        files: ''
+        files: '',
+        categories: []
       },
-      errors: []
+      errors: [],
+      selectedCategories: []
     };
+  },
+  components: {
+    TagInput: _TagInput_vue__WEBPACK_IMPORTED_MODULE_0__.default
   },
   computed: {
     user: function user() {
       return this.$store.getters['authentication/activeUser'];
+    },
+    categories: function categories() {
+      return this.$store.getters.categories;
     }
   },
   methods: {
+    updateCategories: function updateCategories(updatedCategories) {
+      this.selectedCategories = updatedCategories;
+    },
     addProduct: function addProduct() {
       this.form.user = this.user.id;
+      this.form.categories = this.selectedCategories; // const categoryData = this.categories.filter((category) => this.selectedCategories.includes(category.id))
+
+      var categoryJSON = JSON.stringify({
+        categories: this.selectedCategories
+      });
+      console.log(categoryJSON); // console.log(categoryData)
+
       var data = new FormData();
       data.append('name', this.form.name);
       data.append('description', this.form.description);
       data.append('price', this.form.price);
       data.append('user', this.form.user);
-      data.append('files', this.form.files); // console.log(this.form)
-
-      console.log(data);
+      data.append('files', this.form.files);
+      data.append('categories', categoryJSON);
+      console.log(this.form);
       this.$store.dispatch('products/addProduct', data);
     },
     selectFile: function selectFile(event) {
@@ -2592,7 +2615,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
+
+/*
+*/
 
 
 
@@ -2608,6 +2633,7 @@ __webpack_require__.r(__webpack_exports__);
       filters: {
         categories: [],
         price: [],
+        user: [],
         search: ''
       },
       limits: [[5, 5], //categories
@@ -2621,6 +2647,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.$store.dispatch("fetchCategories");
+    this.filters = this.$store.state.filters;
+
+    if (this.filters.price.length) {
+      console.log('slider?');
+      this.sliderValue = this.filters.price;
+    }
   },
   computed: {
     categories: function categories() {
@@ -2628,8 +2660,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.search = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.search, 500);
-    this.priceSlider = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.priceSlider, 500);
+    this.searchDebounced = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.search, 500);
+    this.priceSliderDebounced = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.priceSlider, 500);
   },
   methods: {
     filterByCategory: function filterByCategory(category) {
@@ -2776,15 +2808,72 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+
+/*
+TODO:
+Add clear indication a given input is invalid.
+see: https://www.jotform.com/blog/html5-datalists-what-you-need-to-know-78024/
+*/
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      tags: ['hello', 'world']
+      tags: [],
+      selectedCategories: []
     };
   },
   methods: {
-    addTag: function addTag() {
-      console.log('HI');
+    addTag: function addTag(event) {
+      event.preventDefault();
+      var tag = event.target.value.trim();
+
+      if (tag.length > 0) {
+        var catIndex = this.categories.findIndex(function (category) {
+          return category.name.toLowerCase() == tag.toLowerCase();
+        }) + 1; //The database indices start at 1, not 0
+
+        console.log(catIndex);
+
+        if (catIndex > 0) {
+          if (!this.selectedCategories.includes(catIndex)) {
+            this.tags.push(tag);
+            this.selectedCategories.push(catIndex);
+          }
+        }
+
+        event.target.value = '';
+        this.updateParent();
+      }
+    },
+    removeTag: function removeTag(index) {
+      this.tags.splice(index, 1);
+      this.selectedCategories.splice(index, 1);
+      this.updateParent();
+    },
+    removeLastTag: function removeLastTag(event) {
+      if (event.target.value.length === 0) {
+        this.removeTag(this.tags.length - 1);
+      }
+    },
+    updateParent: function updateParent() {
+      this.$emit('childUpdated', this.selectedCategories);
+    }
+  },
+  mounted: function mounted() {
+    if (!this.categories.length) {
+      console.log('Categories empty. Fetching...');
+      this.$store.dispatch("fetchCategories");
+    }
+  },
+  computed: {
+    categories: function categories() {
+      return this.$store.getters.categories;
     }
   }
 });
@@ -7024,6 +7113,13 @@ var render = function() {
       })
     ]),
     _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "container" },
+      [_c("TagInput", { on: { childUpdated: _vm.updateCategories } })],
+      1
+    ),
+    _vm._v("\r\n        " + _vm._s(_vm.selectedCategories) + "\r\n    "),
     _c("div", [
       _c("input", {
         attrs: { type: "file", multiple: "" },
@@ -7046,8 +7142,7 @@ var render = function() {
         },
         [_vm._v("Add")]
       )
-    ]),
-    _vm._v("\r\n    " + _vm._s(_vm.user) + "\r\n")
+    ])
   ])
 }
 var staticRenderFns = [
@@ -7411,7 +7506,7 @@ var render = function() {
               _vm.$set(_vm.filters, "search", $event.target.value)
             },
             function($event) {
-              return _vm.search(_vm.filters.search)
+              return _vm.searchDebounced(_vm.filters.search)
             }
           ]
         }
@@ -7435,7 +7530,7 @@ var render = function() {
             attrs: { "enable-cross": false, min: 0, max: 1000, interval: 1 },
             on: {
               change: function($event) {
-                return _vm.priceSlider()
+                return _vm.priceSliderDebounced()
               }
             },
             model: {
@@ -7585,15 +7680,13 @@ var staticRenderFns = [
       ]),
       _vm._v(" "),
       _c("ul", { staticClass: "is-size-7" }, [
-        _c("li", [_vm._v("Mounted products check?")]),
+        _c("li", [_vm._v("File upload encoding?")]),
         _vm._v(" "),
-        _c("li", [_vm._v("Debounce syntax?")]),
+        _c("li", [_vm._v("There's got to be a better way @ formdata")]),
         _vm._v(" "),
-        _c("li", [_vm._v("._debounce?")]),
+        _c("li", [_vm._v("CR: Collection = JSON? (jasper)")]),
         _vm._v(" "),
-        _c("li", [_vm._v("CR: Collection = JSON?")]),
-        _vm._v(" "),
-        _c("li", [_vm._v("File upload encoding?")])
+        _c("li", [_vm._v("Is using Infinity a good idea?")])
       ])
     ])
   }
@@ -7762,14 +7855,24 @@ var render = function() {
     [
       _vm._l(_vm.tags, function(tag, index) {
         return _c("div", { key: tag, staticClass: "tag-input__tag" }, [
-          _c("span", [_vm._v("x")]),
+          _c(
+            "span",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.removeTag(index)
+                }
+              }
+            },
+            [_vm._v("x")]
+          ),
           _vm._v("\n    " + _vm._s(tag) + "\n  ")
         ])
       }),
       _vm._v(" "),
       _c("input", {
         staticClass: "tag-input__text",
-        attrs: { type: "text", placeholder: "Enter a Tag" },
+        attrs: { type: "text", placeholder: "Enter a Tag", list: "categories" },
         on: {
           keydown: [
             function($event) {
@@ -7786,10 +7889,32 @@ var render = function() {
                 return null
               }
               return _vm.addTag.apply(null, arguments)
+            },
+            function($event) {
+              if (
+                !$event.type.indexOf("key") &&
+                _vm._k($event.keyCode, "delete", [8, 46], $event.key, [
+                  "Backspace",
+                  "Delete",
+                  "Del"
+                ])
+              ) {
+                return null
+              }
+              return _vm.removeLastTag.apply(null, arguments)
             }
           ]
         }
-      })
+      }),
+      _vm._v(" "),
+      _c(
+        "datalist",
+        { attrs: { id: "categories" } },
+        _vm._l(_vm.categories, function(category) {
+          return _c("option", [_vm._v(_vm._s(category.name))])
+        }),
+        0
+      )
     ],
     2
   )

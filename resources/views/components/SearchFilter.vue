@@ -7,23 +7,22 @@
         type="search"
         placeholder="Use any search term"
         aria-label="Use any search term"
-        @input="search(filters.search)"
+        @input="searchDebounced(filters.search)"
         >        
         <br>
         <br>
         <div class="content">
         <h1 class="is-size-6 has-text-weight-bold">Questions</h1>
             <ul class="is-size-7">
-                <li>Mounted products check?</li>
-                <li>Debounce syntax?</li>
-                <li>._debounce?</li>
-                <li>CR: Collection = JSON?</li>
                 <li>File upload encoding?</li>
+                <li>There's got to be a better way @ formdata</li>
+                <li>CR: Collection = JSON? (jasper)</li>
+                <li>Is using Infinity a good idea?</li>
             </ul>
             </div>
             <div class="">
             <h1 class="is-size-6 has-text-weight-bold">Prices</h1>
-            <Vue-slider v-model="sliderValue" :enable-cross="false" :min="0" :max="1000" :interval="1" @change="priceSlider()"/>
+            <Vue-slider v-model="sliderValue" :enable-cross="false" :min="0" :max="1000" :interval="1" @change="priceSliderDebounced()"/>
             <!-- https://nightcatsama.github.io/vue-slider-component/#/basics/simple -->
             {{sliderValue}}
             <!-- <ul class="is-size-7" v-if="priceRanges">
@@ -61,6 +60,9 @@
 
 <script setup>
 
+/*
+*/
+
 import { debounce } from '../../js/helpers/index'
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
@@ -80,6 +82,7 @@ export default
             filters: {
                 categories: [],
                 price: [],
+                user: [],
                 search: '',
             },
             limits: [
@@ -94,6 +97,11 @@ export default
     },
     mounted() {
         this.$store.dispatch("fetchCategories");
+        this.filters = this.$store.state.filters;
+        if(this.filters.price.length){
+            console.log('slider?')
+            this.sliderValue = this.filters.price;
+        }
     },
 
     computed: {
@@ -102,8 +110,8 @@ export default
         },
     },
     created() {
-        this.search = debounce(this.search, 500);
-        this.priceSlider = debounce(this.priceSlider, 500);
+        this.searchDebounced = debounce(this.search, 500);
+        this.priceSliderDebounced = debounce(this.priceSlider, 500);
     },
     methods: {
         filterByCategory (category) {

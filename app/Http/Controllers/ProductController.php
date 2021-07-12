@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all(); 
+        $products = Product::all();
         // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
         // AFAIK the Resource Collection is already in json. It definitely seems to be that way in Tools->Network->Request->Response
         return new ProductCollection($products);
@@ -53,27 +53,25 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'files'=> 'required',
+            // 'files' => 'required',
         ]);
-        // $name = $request['user'] . '.' . time();
-        // $request['files']->save(public_path('img/'), $name);
-        // $image = Image::create(['product_image_path' => 'img'.$name]);
         $product = Product::create([
             'name' => $request['name'],
             'description' => $request['description'],
             'price' => $request['price'],
             'user_id' => $request['user'],
             'status' => 'open',
-       ]);
-       $product->categories()->sync(Category::all()->random());
-       $name = $product->id . '-' . time();
-       $request['files']->move(public_path('img/'), $name);
-       $image = Image::create([
-           'product_image_path' => ('img/'.$name),
-           'product_id' => $product->id,
-       ]);
+        ]);
+        $categories = json_decode($request['categories'],true);
+        $product->categories()->sync($categories['categories']);
+        $name = $product->id . '-' . time();
+        $request['files']->move(public_path('img/'), $name);
+        $image = Image::create([
+            'product_image_path' => ('img/' . $name),
+            'product_id' => $product->id,
+        ]);
     }
-        
+
     /**
      * Display the specified resource.
      *

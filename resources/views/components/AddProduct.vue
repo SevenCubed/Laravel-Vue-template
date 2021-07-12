@@ -15,12 +15,15 @@
                 <span v-if="errors.description">{{errors.description[0]}}</span>
         <textarea type="description" placeholder="???" v-model="form.description"></textarea>
     </div>
+    <div class="container">
+        <TagInput @childUpdated="updateCategories" />
+        </div>
+        {{selectedCategories}}
     <div>
             <input type="file" multiple @change="selectFile" />
     </div>
     <div>
         <button @click.prevent="addProduct" class="button" type="submit">Add</button></div>
-    {{user}}
 </div>
 </template>
 
@@ -32,6 +35,9 @@ Add categories, they're mandatory for the collection
 Multi image
 Image preview?
 */
+
+import TagInput from './TagInput.vue'
+
 export default {
     data() {
         return {
@@ -41,26 +47,44 @@ export default {
                 price: '',
                 user: '',
                 files: '',
+                categories: [],
             },
         errors: [],
+        selectedCategories: [],
         }
+    },
+    components: {
+        TagInput,
     },
     computed: {
         user(){
             return this.$store.getters['authentication/activeUser']
-        }
+        },
+        categories() {
+          return this.$store.getters.categories;
+      },
     },
     methods:{
+        updateCategories(updatedCategories){
+            this.selectedCategories = updatedCategories
+        },
         addProduct(){
-            this.form.user = this.user.id;   
+            this.form.user = this.user.id;
+            this.form.categories = this.selectedCategories;
+            // const categoryData = this.categories.filter((category) => this.selectedCategories.includes(category.id))
+            const categoryJSON = JSON.stringify({
+                categories: this.selectedCategories
+            });
+            console.log(categoryJSON)
+            // console.log(categoryData)
             const data = new FormData();
             data.append('name', this.form.name)
             data.append('description', this.form.description)
             data.append('price', this.form.price)
             data.append('user', this.form.user)
             data.append('files', this.form.files)
-            // console.log(this.form)
-            console.log(data)
+            data.append('categories', categoryJSON)
+            console.log(this.form)
             this.$store.dispatch('products/addProduct', data)
         },
         selectFile(event) {
@@ -69,6 +93,7 @@ export default {
             if(event.target.files[0]['size'] < 2097152)
             {              
                 this.form.files = file;
+                
             }
             else{
                 alert('File size can not be bigger than 2 MB')
