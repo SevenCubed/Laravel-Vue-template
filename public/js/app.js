@@ -3243,11 +3243,17 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
 
       if (state.filters.price.length) {
         //Filter prices by checking if the products are within any of the selected ranges. 
+        var range = state.filters.price;
+
+        if (range[1] == 1000) {
+          range[1] = Infinity;
+        }
+
         state.filteredProducts = state.filteredProducts.filter(function (product) {
           // return state.filters.price.some(range => {
           //     return product.price >= range[0] && product.price <= range[1]
           // }) Old system when it was checkmarks and not a slider
-          return product.price >= state.filters.price[0] && product.price <= state.filters.price[1];
+          return product.price >= range[0] && product.price <= range[1];
         });
       }
     }
