@@ -17,7 +17,6 @@
                 <li>File upload encoding?</li>
                 <li>There's got to be a better way @ formdata</li>
                 <li>CR: Collection = JSON? (jasper)</li>
-                <li>Is using Infinity a good idea?</li>
                 <li>Sorting algorithm?</li>
                 <li></li>
             </ul>

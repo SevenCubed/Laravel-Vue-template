@@ -82,8 +82,17 @@ export default new Vuex.Store({
                 });
             }
             //Ordering
-            if(state.filters.order === 'createdAtDesc'){
-
+            if(state.filters.order == 'createdAtAsc'){
+                const orderedProducts = state.filteredProducts
+                orderedProducts.sort((a, b) => {
+                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                })
+            }
+            else if(state.filters.order == 'createdAtDesc') {
+                const orderedProducts = state.filteredProducts
+                orderedProducts.sort((a, b) => {
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                })
             }
         },
     },

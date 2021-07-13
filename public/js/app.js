@@ -2644,7 +2644,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /*
 TODO:
@@ -3318,7 +3317,18 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
       } //Ordering
 
 
-      if (state.filters.order === 'createdAtDesc') {}
+      if (state.filters.order == 'createdAtAsc') {
+        var orderedProducts = state.filteredProducts;
+        orderedProducts.sort(function (a, b) {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        });
+      } else if (state.filters.order == 'createdAtDesc') {
+        var _orderedProducts = state.filteredProducts;
+
+        _orderedProducts.sort(function (a, b) {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        });
+      }
     }
   },
   getters: {
@@ -7854,8 +7864,6 @@ var staticRenderFns = [
         _c("li", [_vm._v("There's got to be a better way @ formdata")]),
         _vm._v(" "),
         _c("li", [_vm._v("CR: Collection = JSON? (jasper)")]),
-        _vm._v(" "),
-        _c("li", [_vm._v("Is using Infinity a good idea?")]),
         _vm._v(" "),
         _c("li", [_vm._v("Sorting algorithm?")]),
         _vm._v(" "),
