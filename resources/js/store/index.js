@@ -15,7 +15,6 @@ export default new Vuex.Store({
         //https://dev.to/messerli90/build-an-advanced-search-and-filter-with-vuex-in-nuxt-3jn8
         //https://www.youtube.com/watch?v=OjS6SWS6G5c
         testlist: [],
-        todos: [],
         users: [],
         products: [],
         filteredProducts: [],
@@ -25,6 +24,7 @@ export default new Vuex.Store({
             price: [],
             user: [],
             search: '',
+            order: 'default'
         },
         isLoading: false,
     },
@@ -57,13 +57,6 @@ export default new Vuex.Store({
         },
         FILTER_PRODUCTS(state) {
             state.filteredProducts = state.products.products;
-            if(state.filters.search !== ''){
-                const search = state.filters.search.toLowerCase();
-                state.filteredProducts = state.filteredProducts.filter(product => {
-                    return (product.name !== null && product.name.toLowerCase().includes(search)) //Search in name..
-                        || (product.description !== null && product.description.toLowerCase().includes(search)) //Or description..
-                });
-            }
             if (state.filters.categories.length) { //Filter categories by filtering the list based on if the products include the filtered categories
                 state.filteredProducts = state.filteredProducts.filter(product => {
                     return state.filters.categories.includes(product.categories)
@@ -72,7 +65,7 @@ export default new Vuex.Store({
             if (state.filters.price.length) { //Filter prices by checking if the products are within any of the selected ranges. 
                 let range = state.filters.price;
                 if(range[1] == 1000){
-                    range[1] = Infinity;
+                    range[1] = Infinity; //If the upper limit is set at the max, go to infinity and beyond
                 }
                 state.filteredProducts = state.filteredProducts.filter(product => {
                     // return state.filters.price.some(range => {
@@ -80,6 +73,17 @@ export default new Vuex.Store({
                     // }) Old system when it was checkmarks and not a slider
                     return product.price >= range[0] && product.price <= range[1]
                 });
+            }
+            if(state.filters.search !== ''){
+                const search = state.filters.search.toLowerCase();
+                state.filteredProducts = state.filteredProducts.filter(product => {
+                    return (product.name !== null && product.name.toLowerCase().includes(search)) //Search in name..
+                        || (product.description !== null && product.description.toLowerCase().includes(search)) //Or description..
+                });
+            }
+            //Ordering
+            if(state.filters.order === 'createdAtDesc'){
+
             }
         },
     },

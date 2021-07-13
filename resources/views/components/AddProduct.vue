@@ -31,7 +31,6 @@
 /*
 TODO:
 Layout
-Add categories, they're mandatory for the collection
 Multi image
 Image preview?
 */
@@ -62,7 +61,7 @@ export default {
         },
         categories() {
           return this.$store.getters.categories;
-      },
+        },
     },
     methods:{
         updateCategories(updatedCategories){
@@ -100,7 +99,8 @@ export default {
             }
             // `files` is always an array because the file input may be in multiple mode
             //this.form.files = event.target.files[0];
-        }
+        },
+
     }
 }
 </script>

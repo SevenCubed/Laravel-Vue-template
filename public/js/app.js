@@ -2291,7 +2291,6 @@ __webpack_require__.r(__webpack_exports__);
 /*
 TODO:
 Layout
-Add categories, they're mandatory for the collection
 Multi image
 Image preview?
 */
@@ -2615,8 +2614,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /*
+TODO:
+Sort algorithm https://medium.com/@rajat_m/implement-5-sorting-algorithms-using-javascript-63c5a917e811
 */
 
 
@@ -2634,12 +2666,14 @@ __webpack_require__.r(__webpack_exports__);
         categories: [],
         price: [],
         user: [],
-        search: ''
+        search: '',
+        order: ''
       },
       limits: [[5, 5], //categories
       [5, 5] //price
       ],
-      sliderValue: [0, 1000]
+      sliderValue: [0, 1000],
+      orderOpen: false
     };
   },
   components: {
@@ -2657,6 +2691,24 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     categories: function categories() {
       return this.$store.getters.categories;
+    },
+    orderText: function orderText() {
+      switch (this.filters.order) {
+        case 'createdAtAsc':
+          return 'Created At ↑';
+
+        case 'createdAtDesc':
+          return 'Created At ↓';
+
+        case 'priceAsc':
+          return 'Price ↑';
+
+        case 'priceDesc':
+          return 'Price ↓';
+
+        default:
+          return 'Default';
+      }
     }
   },
   created: function created() {
@@ -2683,6 +2735,14 @@ __webpack_require__.r(__webpack_exports__);
     },
     priceSlider: function priceSlider() {
       this.filters.price = this.sliderValue;
+      this.$store.dispatch("updateFilters", this.filters);
+    },
+    closeOrderDropDown: function closeOrderDropDown(e) {
+      this.orderOpen = false;
+    },
+    handleFilterOrder: function handleFilterOrder(orderBy) {
+      this.orderOpen = false;
+      this.filters.order = orderBy;
       this.$store.dispatch("updateFilters", this.filters);
     }
   }
@@ -3182,7 +3242,6 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
     //https://dev.to/messerli90/build-an-advanced-search-and-filter-with-vuex-in-nuxt-3jn8
     //https://www.youtube.com/watch?v=OjS6SWS6G5c
     testlist: [],
-    todos: [],
     users: [],
     products: [],
     filteredProducts: [],
@@ -3191,7 +3250,8 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
       categories: [],
       price: [],
       user: [],
-      search: ''
+      search: '',
+      order: 'default'
     },
     isLoading: false
   },
@@ -3226,14 +3286,6 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
     FILTER_PRODUCTS: function FILTER_PRODUCTS(state) {
       state.filteredProducts = state.products.products;
 
-      if (state.filters.search !== '') {
-        var search = state.filters.search.toLowerCase();
-        state.filteredProducts = state.filteredProducts.filter(function (product) {
-          return product.name !== null && product.name.toLowerCase().includes(search) || //Search in name..
-          product.description !== null && product.description.toLowerCase().includes(search); //Or description..
-        });
-      }
-
       if (state.filters.categories.length) {
         //Filter categories by filtering the list based on if the products include the filtered categories
         state.filteredProducts = state.filteredProducts.filter(function (product) {
@@ -3246,7 +3298,7 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
         var range = state.filters.price;
 
         if (range[1] == 1000) {
-          range[1] = Infinity;
+          range[1] = Infinity; //If the upper limit is set at the max, go to infinity and beyond
         }
 
         state.filteredProducts = state.filteredProducts.filter(function (product) {
@@ -3256,6 +3308,17 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
           return product.price >= range[0] && product.price <= range[1];
         });
       }
+
+      if (state.filters.search !== '') {
+        var search = state.filters.search.toLowerCase();
+        state.filteredProducts = state.filteredProducts.filter(function (product) {
+          return product.name !== null && product.name.toLowerCase().includes(search) || //Search in name..
+          product.description !== null && product.description.toLowerCase().includes(search); //Or description..
+        });
+      } //Ordering
+
+
+      if (state.filters.order === 'createdAtDesc') {}
     }
   },
   getters: {
@@ -7669,8 +7732,108 @@ var render = function() {
       _vm._v(" "),
       _c("br"),
       _vm._v(" "),
-      _c("div", { staticClass: "has-text-left is-capitalized is-size-7" }, [
-        _vm._v("\n        " + _vm._s(_vm.filters) + "\n        ")
+      _c("div", { staticClass: "has-text-left is-capitalized is-size-7" }),
+      _vm._v(" "),
+      _c("div", {}, [
+        _c("div", {}, [
+          _c(
+            "p",
+            {
+              on: {
+                click: function($event) {
+                  _vm.orderOpen = !_vm.orderOpen
+                }
+              }
+            },
+            [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("span", { staticClass: "is-size-6" }, [
+                _vm._v(_vm._s(_vm.orderText))
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "ul",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.orderOpen,
+                  expression: "orderOpen"
+                }
+              ]
+            },
+            [
+              _c(
+                "li",
+                {
+                  staticClass: "is-size-7",
+                  class: {
+                    "has-text-weight-bold":
+                      _vm.filters.order === "createdAtDesc"
+                  },
+                  on: {
+                    click: function($event) {
+                      return _vm.handleFilterOrder("createdAtDesc")
+                    }
+                  }
+                },
+                [_vm._v("\n                Created At ↓\n            ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "li",
+                {
+                  staticClass: "is-size-7",
+                  class: {
+                    "has-text-weight-bold": _vm.filters.order === "createdAtAsc"
+                  },
+                  on: {
+                    click: function($event) {
+                      return _vm.handleFilterOrder("createdAtAsc")
+                    }
+                  }
+                },
+                [_vm._v("\n                Created At ↑\n            ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "li",
+                {
+                  staticClass: "is-size-7",
+                  class: {
+                    "has-text-weight-bold": _vm.filters.order === "priceDesc"
+                  },
+                  on: {
+                    click: function($event) {
+                      return _vm.handleFilterOrder("priceDesc")
+                    }
+                  }
+                },
+                [_vm._v("\n                Price ↓\n            ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "li",
+                {
+                  staticClass: "is-size-7",
+                  class: {
+                    "has-text-weight-bold": _vm.filters.order === "priceAsc"
+                  },
+                  on: {
+                    click: function($event) {
+                      return _vm.handleFilterOrder("priceAsc")
+                    }
+                  }
+                },
+                [_vm._v("\n                Price ↑\n            ")]
+              )
+            ]
+          )
+        ])
       ])
     ]
   )
@@ -7692,8 +7855,21 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("li", [_vm._v("CR: Collection = JSON? (jasper)")]),
         _vm._v(" "),
-        _c("li", [_vm._v("Is using Infinity a good idea?")])
+        _c("li", [_vm._v("Is using Infinity a good idea?")]),
+        _vm._v(" "),
+        _c("li", [_vm._v("Sorting algorithm?")]),
+        _vm._v(" "),
+        _c("li")
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "is-size-6 has-text-weight-bold" }, [
+      _c("i", { staticClass: "fa-solid fa-arrow-down-wide-short" }),
+      _vm._v("Order By: ")
     ])
   }
 ]
