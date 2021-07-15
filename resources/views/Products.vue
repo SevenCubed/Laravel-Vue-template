@@ -11,7 +11,6 @@
                     <h1 class="title is-size-6">Extra</h1>
                     <p class="is-size-7"> A section to add any other tidbits, that don't fall into categories or search filters
                     </p>
-                    <TagInput />
                 </div>
             </div>
             <div class="column is-9">
@@ -41,7 +40,6 @@ const default_layout = "default";
 import ProductCard from '../views/components/ProductCard.vue'
 import Spinner from 'vue-simple-spinner' //Custom package
 import SearchFilter from '../views/components/SearchFilter.vue'
-import TagInput from './components/TagInput.vue'
 
 export default {
     data() {
@@ -52,7 +50,6 @@ export default {
         ProductCard,
         Spinner,
         SearchFilter,
-        TagInput,
     },
     mounted() {
         if(!this.users.length){

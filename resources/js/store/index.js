@@ -49,7 +49,7 @@ export default new Vuex.Store({
         SET_FILTER_PRICE(state, price) { //I feel like I SHOULD be able to consolidate this with the category mutation, by just adding some kind of "payload type" parameter
             state.filters.price = price
         },
-        SET_FILTER_SEARCH(state, search){
+        SET_FILTER_SEARCH(state, search) {
             state.filters.search = search
         },
         SET_FILTERS(state, filters) {
@@ -64,7 +64,7 @@ export default new Vuex.Store({
             }
             if (state.filters.price.length) { //Filter prices by checking if the products are within any of the selected ranges. 
                 let range = state.filters.price;
-                if(range[1] == 1000){
+                if (range[1] == 1000) {
                     range[1] = Infinity; //If the upper limit is set at the max, go to infinity and beyond
                 }
                 state.filteredProducts = state.filteredProducts.filter(product => {
@@ -74,7 +74,7 @@ export default new Vuex.Store({
                     return product.price >= range[0] && product.price <= range[1]
                 });
             }
-            if(state.filters.search !== ''){
+            if (state.filters.search !== '') {
                 const search = state.filters.search.toLowerCase();
                 state.filteredProducts = state.filteredProducts.filter(product => {
                     return (product.name !== null && product.name.toLowerCase().includes(search)) //Search in name..
@@ -82,17 +82,30 @@ export default new Vuex.Store({
                 });
             }
             //Ordering
-            if(state.filters.order == 'createdAtAsc'){
-                const orderedProducts = state.filteredProducts
-                orderedProducts.sort((a, b) => {
-                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-                })
-            }
-            else if(state.filters.order == 'createdAtDesc') {
-                const orderedProducts = state.filteredProducts
-                orderedProducts.sort((a, b) => {
-                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-                })
+            
+            switch (state.filters.order) {
+                case 'createdAtAsc':
+                    state.filteredProducts.sort((a, b) => {
+                        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                    })
+                    break;
+                case 'createdAtDesc':
+                    state.filteredProducts.sort((a, b) => {
+                        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                    })
+                    break;
+                case 'priceAsc':
+                    state.filteredProducts.sort((a, b) => {
+                        return a.price - b.price
+                    })
+                    break;
+                case 'priceDesc':
+                    state.filteredProducts.sort((a, b) => {
+                        return b.price - a.price
+                    })
+                    break;
+                default:
+                    break;
             }
         },
     },
@@ -201,15 +214,15 @@ export default new Vuex.Store({
         async filterPrice({ commit, dispatch }, price) {
             await commit('SET_FILTER_PRICE', price)
             dispatch('filterProducts')
-        },        
-        async filterSearch({commit, dispatch}, search) {
+        },
+        async filterSearch({ commit, dispatch }, search) {
             await commit('SET_FILTER_SEARCH', search)
             dispatch('filterProducts')
         },
         async updateFilters({ commit, dispatch }, filters) {
             await commit('SET_FILTERS', filters)
             dispatch('filterProducts')
-        },        
+        },
         async filterProducts({ commit }) {
             await commit('FILTER_PRODUCTS')
         },

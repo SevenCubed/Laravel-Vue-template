@@ -2024,8 +2024,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_simple_spinner__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-simple-spinner */ "./node_modules/vue-simple-spinner/dist/vue-simple-spinner.js");
 /* harmony import */ var vue_simple_spinner__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_simple_spinner__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _views_components_SearchFilter_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../views/components/SearchFilter.vue */ "./resources/views/components/SearchFilter.vue");
-/* harmony import */ var _components_TagInput_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/TagInput.vue */ "./resources/views/components/TagInput.vue");
-//
 //
 //
 //
@@ -2066,7 +2064,6 @@ var default_layout = "default";
  //Custom package
 
 
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {};
@@ -2074,8 +2071,7 @@ var default_layout = "default";
   components: {
     ProductCard: _views_components_ProductCard_vue__WEBPACK_IMPORTED_MODULE_0__.default,
     Spinner: (vue_simple_spinner__WEBPACK_IMPORTED_MODULE_1___default()),
-    SearchFilter: _views_components_SearchFilter_vue__WEBPACK_IMPORTED_MODULE_2__.default,
-    TagInput: _components_TagInput_vue__WEBPACK_IMPORTED_MODULE_3__.default
+    SearchFilter: _views_components_SearchFilter_vue__WEBPACK_IMPORTED_MODULE_2__.default
   },
   mounted: function mounted() {
     if (!this.users.length) {
@@ -3317,17 +3313,33 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
       } //Ordering
 
 
-      if (state.filters.order == 'createdAtAsc') {
-        var orderedProducts = state.filteredProducts;
-        orderedProducts.sort(function (a, b) {
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        });
-      } else if (state.filters.order == 'createdAtDesc') {
-        var _orderedProducts = state.filteredProducts;
+      switch (state.filters.order) {
+        case 'createdAtAsc':
+          state.filteredProducts.sort(function (a, b) {
+            return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          });
+          break;
 
-        _orderedProducts.sort(function (a, b) {
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        });
+        case 'createdAtDesc':
+          state.filteredProducts.sort(function (a, b) {
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          });
+          break;
+
+        case 'priceAsc':
+          state.filteredProducts.sort(function (a, b) {
+            return a.price - b.price;
+          });
+          break;
+
+        case 'priceDesc':
+          state.filteredProducts.sort(function (a, b) {
+            return b.price - a.price;
+          });
+          break;
+
+        default:
+          break;
       }
     }
   },
@@ -6819,28 +6831,7 @@ var render = function() {
             _c(
               "div",
               { staticClass: "column is-2" },
-              [
-                _c("SearchFilter"),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "section has-text-left" },
-                  [
-                    _c("h1", { staticClass: "title is-size-6" }, [
-                      _vm._v("Extra")
-                    ]),
-                    _vm._v(" "),
-                    _c("p", { staticClass: "is-size-7" }, [
-                      _vm._v(
-                        " A section to add any other tidbits, that don't fall into categories or search filters\r\n                    "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("TagInput")
-                  ],
-                  1
-                )
-              ],
+              [_c("SearchFilter"), _vm._v(" "), _vm._m(0)],
               1
             ),
             _vm._v(" "),
@@ -6865,7 +6856,22 @@ var render = function() {
         ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "section has-text-left" }, [
+      _c("h1", { staticClass: "title is-size-6" }, [_vm._v("Extra")]),
+      _vm._v(" "),
+      _c("p", { staticClass: "is-size-7" }, [
+        _vm._v(
+          " A section to add any other tidbits, that don't fall into categories or search filters\r\n                    "
+        )
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
