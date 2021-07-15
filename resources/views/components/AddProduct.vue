@@ -70,12 +70,10 @@ export default {
         addProduct(){
             this.form.user = this.user.id;
             this.form.categories = this.selectedCategories;
-            // const categoryData = this.categories.filter((category) => this.selectedCategories.includes(category.id))
             const categoryJSON = JSON.stringify({
                 categories: this.selectedCategories
             });
             console.log(categoryJSON)
-            // console.log(categoryData)
             const data = new FormData();
             data.append('name', this.form.name)
             data.append('description', this.form.description)

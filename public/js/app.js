@@ -2323,13 +2323,11 @@ Image preview?
     },
     addProduct: function addProduct() {
       this.form.user = this.user.id;
-      this.form.categories = this.selectedCategories; // const categoryData = this.categories.filter((category) => this.selectedCategories.includes(category.id))
-
+      this.form.categories = this.selectedCategories;
       var categoryJSON = JSON.stringify({
         categories: this.selectedCategories
       });
-      console.log(categoryJSON); // console.log(categoryData)
-
+      console.log(categoryJSON);
       var data = new FormData();
       data.append('name', this.form.name);
       data.append('description', this.form.description);
