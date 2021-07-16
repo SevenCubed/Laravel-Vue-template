@@ -6,6 +6,7 @@
       <router-link :to="{ name: 'Add Product' }" class="navbar-item">
         Add New Product
       </router-link>
+       <button v-on:click="test()">Test</button>
     </div>
 </template>
 
@@ -16,11 +17,18 @@ export default {
         return{
         }    
     },
-        computed: {
+    computed: {
         user() {
             return this.$store.getters['authentication/activeUser']
         },
-        },
+    },
+    methods: {
+        test(){
+            const id = this.user.id
+            console.log(id)
+            this.$store.dispatch("fetchAds", id)
+        }
+    },
     // mounted(){
     //     axios.get('/api/user').then((res)=>{
     //         this.user = res.data;

@@ -1913,6 +1913,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {};
@@ -1920,6 +1921,13 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     user: function user() {
       return this.$store.getters['authentication/activeUser'];
+    }
+  },
+  methods: {
+    test: function test() {
+      var id = this.user.id;
+      console.log(id);
+      this.$store.dispatch("fetchAds", id);
     }
   } // mounted(){
   //     axios.get('/api/user').then((res)=>{
@@ -3438,14 +3446,40 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
         commit("fetchCategories", response.data);
       });
     },
-    filterCategory: function filterCategory(_ref4, category) {
+    fetchAds: function fetchAds(_ref4, id) {
+      var commit = _ref4.commit;
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post("api/users/ads", {
+        'id': id
+      })["catch"](function (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+
+        console.log(error.config);
+      }).then(function (response) {
+        console.log(response.data); // commit("fetchCategories", response.data);
+      });
+    },
+    filterCategory: function filterCategory(_ref5, category) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var commit, dispatch;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                commit = _ref4.commit, dispatch = _ref4.dispatch;
+                commit = _ref5.commit, dispatch = _ref5.dispatch;
                 _context.next = 3;
                 return commit('SET_FILTER_CATEGORY', category);
 
@@ -3460,14 +3494,14 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
         }, _callee);
       }))();
     },
-    filterPrice: function filterPrice(_ref5, price) {
+    filterPrice: function filterPrice(_ref6, price) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var commit, dispatch;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                commit = _ref5.commit, dispatch = _ref5.dispatch;
+                commit = _ref6.commit, dispatch = _ref6.dispatch;
                 _context2.next = 3;
                 return commit('SET_FILTER_PRICE', price);
 
@@ -3482,14 +3516,14 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
         }, _callee2);
       }))();
     },
-    filterSearch: function filterSearch(_ref6, search) {
+    filterSearch: function filterSearch(_ref7, search) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         var commit, dispatch;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                commit = _ref6.commit, dispatch = _ref6.dispatch;
+                commit = _ref7.commit, dispatch = _ref7.dispatch;
                 _context3.next = 3;
                 return commit('SET_FILTER_SEARCH', search);
 
@@ -3504,14 +3538,14 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
         }, _callee3);
       }))();
     },
-    updateFilters: function updateFilters(_ref7, filters) {
+    updateFilters: function updateFilters(_ref8, filters) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
         var commit, dispatch;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                commit = _ref7.commit, dispatch = _ref7.dispatch;
+                commit = _ref8.commit, dispatch = _ref8.dispatch;
                 _context4.next = 3;
                 return commit('SET_FILTERS', filters);
 
@@ -3526,14 +3560,14 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
         }, _callee4);
       }))();
     },
-    filterProducts: function filterProducts(_ref8) {
+    filterProducts: function filterProducts(_ref9) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
         var commit;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                commit = _ref8.commit;
+                commit = _ref9.commit;
                 _context5.next = 3;
                 return commit('FILTER_PRODUCTS');
 
@@ -6647,6 +6681,18 @@ var render = function() {
         "router-link",
         { staticClass: "navbar-item", attrs: { to: { name: "Add Product" } } },
         [_vm._v("\n        Add New Product\n      ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          on: {
+            click: function($event) {
+              return _vm.test()
+            }
+          }
+        },
+        [_vm._v("Test")]
       )
     ],
     1

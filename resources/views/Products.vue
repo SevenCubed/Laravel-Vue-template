@@ -76,7 +76,6 @@ export default {
 
     },
 
-
     // CRx :: filters? - This was something I used to force the names to capitalize. It turns out to be deprecated + Bulma allows for a simple CSS class to do this for me in is-capitalized
 };
 </script>

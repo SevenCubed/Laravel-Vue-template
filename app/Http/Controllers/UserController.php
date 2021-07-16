@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Resources\ProductCollection;
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
@@ -18,6 +21,11 @@ class UserController extends Controller
     {
         // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
         return new UserCollection(User::all());
+    }
+
+    public function ads(Request $request)
+    {  
+        return new ProductCollection(Product::where('user_id', $request->id)->get()); //error. multiple models problem?
     }
 
     /**
