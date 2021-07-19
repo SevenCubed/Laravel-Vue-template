@@ -1923,6 +1923,18 @@ __webpack_require__.r(__webpack_exports__);
       return this.$store.getters['authentication/activeUser'];
     }
   },
+  mounted: function mounted() {
+    var token = localStorage.getItem('token');
+    console.log(token);
+
+    if (!!token) {
+      this.$store.dispatch('authentication/activeUser', token);
+    }
+
+    console.log(this.$store.state.authentication.user, " user");
+    var id = this.$store.state.authentication.user.id;
+    this.$store.dispatch("fetchAds", id);
+  },
   methods: {
     test: function test() {
       var id = this.user.id;

@@ -8,7 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
-
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -25,7 +25,8 @@ class UserController extends Controller
 
     public function ads(Request $request)
     {  
-        return new ProductCollection(Product::where('user_id', $request->id)->get()); //error. multiple models problem?
+        dd(Auth::user());
+        return new ProductCollection(Product::where('user_id', $request->id)->get()); //the error here was due to the categories being empty.
     }
 
     /**

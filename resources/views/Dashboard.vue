@@ -22,6 +22,16 @@ export default {
             return this.$store.getters['authentication/activeUser']
         },
     },
+    mounted() {
+        const token = localStorage.getItem('token');
+        console.log(token);
+        if(!!token){
+            this.$store.dispatch('authentication/activeUser', token)
+        }
+        console.log(this.$store.state.authentication.user, " user")
+        const id = this.$store.state.authentication.user.id
+        this.$store.dispatch("fetchAds", id);
+    },
     methods: {
         test(){
             const id = this.user.id
