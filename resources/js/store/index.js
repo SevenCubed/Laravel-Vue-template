@@ -81,8 +81,7 @@ export default new Vuex.Store({
                         || (product.description !== null && product.description.toLowerCase().includes(search)) //Or description..
                 });
             }
-            //Ordering
-            
+            //Ordering 
             switch (state.filters.order) {
                 case 'createdAtAsc':
                     state.filteredProducts.sort((a, b) => {

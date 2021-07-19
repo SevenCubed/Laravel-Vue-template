@@ -18,6 +18,7 @@
                 <div class="columns is-variable is-multiline is-1">
                     <ProductCard v-for="product in products" :key="product.id" :product="product"/>
                 </div>
+                <button v-show='totalProducts != products.length' class="button" v-on:click="addPages()">Load More</button>
             </div>
             <div class="column is-1">
                 <!-- Empty filler -->
@@ -44,6 +45,7 @@ import SearchFilter from '../views/components/SearchFilter.vue'
 export default {
     data() {
         return {
+            paginationIndex: 18,
         }
     },
     components: {
@@ -51,6 +53,7 @@ export default {
         Spinner,
         SearchFilter,
     },
+    
     mounted() {
         if(!this.users.length){
             console.log('Users empty, fetching...')
@@ -60,20 +63,32 @@ export default {
             console.log('Products empty, fetching...')
             this.$store.dispatch("fetchProducts");
         }
+        // window.onscroll = () => this.addPages();
+        // this.addPages();
     },
     computed: {
         isLoading () {
             return this.$store.getters.isLoading;
         },
         products() {
-            return this.$store.getters.filteredProducts;
+            return this.$store.getters.filteredProducts.slice(0, this.paginationIndex);
+        },
+        totalProducts() {
+            return this.$store.getters.filteredProducts.length
         },
         users() {
             return this.$store.state.users;
         }
     },
     methods: {
-
+        addPages() {
+            if(this.totalProducts != this.products.length){
+                const docElement = document.documentElement;
+                if (docElement.scrollTop + window.innerHeight === docElement.offsetHeight) {
+                    this.paginationIndex += 18;
+                }
+            }
+        },
     },
 
     // CRx :: filters? - This was something I used to force the names to capitalize. It turns out to be deprecated + Bulma allows for a simple CSS class to do this for me in is-capitalized

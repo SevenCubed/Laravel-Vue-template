@@ -2072,6 +2072,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /*
 TODO:
@@ -2086,7 +2087,9 @@ var default_layout = "default";
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
-    return {};
+    return {
+      paginationIndex: 18
+    };
   },
   components: {
     ProductCard: _views_components_ProductCard_vue__WEBPACK_IMPORTED_MODULE_0__.default,
@@ -2102,20 +2105,35 @@ var default_layout = "default";
     if (!this.products.length) {
       console.log('Products empty, fetching...');
       this.$store.dispatch("fetchProducts");
-    }
+    } // window.onscroll = () => this.addPages();
+    // this.addPages();
+
   },
   computed: {
     isLoading: function isLoading() {
       return this.$store.getters.isLoading;
     },
     products: function products() {
-      return this.$store.getters.filteredProducts;
+      return this.$store.getters.filteredProducts.slice(0, this.paginationIndex);
+    },
+    totalProducts: function totalProducts() {
+      return this.$store.getters.filteredProducts.length;
     },
     users: function users() {
       return this.$store.state.users;
     }
   },
-  methods: {} // CRx :: filters? - This was something I used to force the names to capitalize. It turns out to be deprecated + Bulma allows for a simple CSS class to do this for me in is-capitalized
+  methods: {
+    addPages: function addPages() {
+      if (this.totalProducts != this.products.length) {
+        var docElement = document.documentElement;
+
+        if (docElement.scrollTop + window.innerHeight === docElement.offsetHeight) {
+          this.paginationIndex += 18;
+        }
+      }
+    }
+  } // CRx :: filters? - This was something I used to force the names to capitalize. It turns out to be deprecated + Bulma allows for a simple CSS class to do this for me in is-capitalized
 
 });
 
@@ -3328,7 +3346,7 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
           return product.name !== null && product.name.toLowerCase().includes(search) || //Search in name..
           product.description !== null && product.description.toLowerCase().includes(search); //Or description..
         });
-      } //Ordering
+      } //Ordering 
 
 
       switch (state.filters.order) {
@@ -6904,6 +6922,27 @@ var render = function() {
                   })
                 }),
                 1
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.totalProducts != _vm.products.length,
+                      expression: "totalProducts != products.length"
+                    }
+                  ],
+                  staticClass: "button",
+                  on: {
+                    click: function($event) {
+                      return _vm.addPages()
+                    }
+                  }
+                },
+                [_vm._v("Load More")]
               )
             ]),
             _vm._v(" "),
