@@ -18,8 +18,9 @@ use Illuminate\Auth\Middleware\Authenticate;
 |
 */
 // DON'T FORGET TO *USE* THE CONTROLLERS ABOVE, OR YOU GET 500 ERRORS
+//This one's apparently a example
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+    return dd($request);
 });
 //Authentication
 Route::post('register', [AuthenticationController::class, 'register'])->name('register');

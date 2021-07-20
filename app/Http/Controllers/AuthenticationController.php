@@ -26,7 +26,7 @@ class AuthenticationController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'token' => Str::random(60),
+            'api_token' => Str::random(60),
         ]);
     }
     
@@ -37,6 +37,7 @@ class AuthenticationController extends Controller
         ]);
 
         if(Auth::attempt($credentials)){
+            // $request->session()->regenerate();
             return response()->json(Auth::user(), 200); //200 = success
         }
         //TODO Probably fold this into the custom validation?
@@ -50,7 +51,7 @@ class AuthenticationController extends Controller
     }
 
     public function activeUser(Request $request){
-        $user = User::firstWhere('token', $request->token);
+        $user = User::firstWhere('api_token', $request->token);
         return $user;
     }
 }

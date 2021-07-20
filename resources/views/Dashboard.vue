@@ -23,7 +23,7 @@ export default {
         },
     },
     mounted() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('api_token');
         console.log(token);
         if(!!token){
             this.$store.dispatch('authentication/activeUser', token)
@@ -39,11 +39,12 @@ export default {
             this.$store.dispatch("fetchAds", id)
         }
     },
-    // mounted(){
-    //     axios.get('/api/user').then((res)=>{
-    //         this.user = res.data;
-    //     })
-    // }
+    //https://github.com/tymondesigns/jwt-auth/wiki/Creating-Tokens
+    mounted(){
+        axios.get('/api/user').then((res)=>{
+            console.log(res.data)
+        })
+    }
 };
 </script>
 

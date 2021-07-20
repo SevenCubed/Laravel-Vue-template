@@ -26,7 +26,7 @@ class UserFactory extends Factory
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
             'password' => '$2$10$qh1YTNjcU7oweU6JzzqhEOk3lGkV4raUogMChR95dOq36jiNt0mPC', // password
-            'token' => Str::random(60),
+            'api_token' => Str::random(60),
         ];
     }
 }

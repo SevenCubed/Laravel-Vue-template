@@ -1880,7 +1880,7 @@ __webpack_require__.r(__webpack_exports__);
     Header: _views_components_Header_vue__WEBPACK_IMPORTED_MODULE_1__.default
   },
   created: function created() {
-    var token = localStorage.getItem('token');
+    var token = localStorage.getItem('api_token');
     console.log(token);
 
     if (!!token) {
@@ -1902,6 +1902,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -1914,7 +1916,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_defineProperty({
   data: function data() {
     return {};
   },
@@ -1924,7 +1926,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    var token = localStorage.getItem('token');
+    var token = localStorage.getItem('api_token');
     console.log(token);
 
     if (!!token) {
@@ -1941,13 +1943,12 @@ __webpack_require__.r(__webpack_exports__);
       console.log(id);
       this.$store.dispatch("fetchAds", id);
     }
-  } // mounted(){
-  //     axios.get('/api/user').then((res)=>{
-  //         this.user = res.data;
-  //     })
-  // }
-
-});
+  }
+}, "mounted", function mounted() {
+  axios.get('/api/user').then(function (res) {
+    console.log(res.data);
+  });
+}));
 
 /***/ }),
 
@@ -3634,7 +3635,7 @@ __webpack_require__.r(__webpack_exports__);
   namespaced: true,
   state: {
     authenticated: false,
-    token: localStorage.getItem('token') || '',
+    token: localStorage.getItem('api_token') || '',
     //is this okay? state isn't immutable this way
     user: null
   },
@@ -3650,7 +3651,7 @@ __webpack_require__.r(__webpack_exports__);
     loginUser: function loginUser(state, user) {
       state.authenticated = true;
       state.user = user;
-      state.token = user.token;
+      state.token = user.api_token;
     },
     logoutUser: function logoutUser(state) {
       state.authenticated = false;
@@ -3664,26 +3665,41 @@ __webpack_require__.r(__webpack_exports__);
         state.authenticated = false;
 
         if (!!state.token) {
-          localStorage.removeItem('token'); //This is a clause to delete any outdated tokens.
+          localStorage.removeItem('api_token'); //This is a clause to delete any outdated tokens.
         }
       }
     }
   },
   actions: {
     loginUser: function loginUser(_ref, user) {
-      var _this = this;
-
       var commit = _ref.commit,
           state = _ref.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/login', {
         email: user.email,
         password: user.password
       })["catch"](function (error) {
-        return _this.errors = error.response.data;
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+
+        console.log(error.config);
       }).then(function (response) {
-        console.log(response.data);
-        var token = response.data.token;
-        localStorage.setItem('token', token);
+        console.log(response.data.api_token);
+        var token = response.data.api_token;
+        console.log(token);
+        localStorage.setItem('api_token', token);
         commit('loginUser', response.data);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: 'Dashboard'
@@ -3691,17 +3707,17 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     registerUser: function registerUser(_ref2, user) {
-      var _this2 = this;
+      var _this = this;
 
       var commit = _ref2.commit,
           state = _ref2.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/register', user)["catch"](function (error) {
-        return _this2.errors = error.response.data;
+        return _this.errors = error.response.data;
       }).then(function (response) {
         //currently doesn't care about errors, that's a problem\
-        console.log(response);
-        var token = response.data.token;
-        localStorage.setItem('token', token);
+        console.log(response.data.api_token);
+        var token = response.data.api_token;
+        localStorage.setItem('api_token', token);
         commit('loginUser', user);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: "Dashboard"
@@ -3712,7 +3728,7 @@ __webpack_require__.r(__webpack_exports__);
       var commit = _ref3.commit,
           state = _ref3.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/logout').then(function () {
-        localStorage.removeItem('token');
+        localStorage.removeItem('api_token');
         commit('logoutUser');
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: 'Home'
@@ -3720,13 +3736,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     activeUser: function activeUser(_ref4, token) {
-      var _this3 = this;
+      var _this2 = this;
 
       var commit = _ref4.commit;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/activeUser', {
         'token': token
       })["catch"](function (error) {
-        _this3.errors = error.response.data;
+        _this2.errors = error.response.data;
       }).then(function (response) {
         commit('activeUser', response.data);
       });

@@ -6,7 +6,7 @@ export default {
 
     state: {
         authenticated: false,
-        token: localStorage.getItem('token') || '', //is this okay? state isn't immutable this way
+        token: localStorage.getItem('api_token') || '', //is this okay? state isn't immutable this way
         user: null,
     },
     getters: {
@@ -21,7 +21,7 @@ export default {
         loginUser(state, user) {
             state.authenticated = true;
             state.user = user;
-            state.token = user.token;
+            state.token = user.api_token;
         },
         logoutUser(state) {
             state.authenticated = false;
@@ -33,7 +33,7 @@ export default {
             if(user == ''){
                 state.authenticated = false;
                 if(!!state.token){
-                    localStorage.removeItem('token') //This is a clause to delete any outdated tokens.
+                    localStorage.removeItem('api_token') //This is a clause to delete any outdated tokens.
                 }
             }
         },
@@ -45,11 +45,29 @@ export default {
             email: user.email,
             password: user.password
             })
-            .catch((error) =>  this.errors = error.response.data)
+            .catch(function (error) {
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log("Error", error.message);
+                }
+                console.log(error.config);
+            })
             .then(response => {
-                console.log(response.data)
-                const token = response.data.token
-                localStorage.setItem('token', token)
+                console.log(response.data.api_token)
+                const token = response.data.api_token
+                console.log(token)
+                localStorage.setItem('api_token', token)
                 commit('loginUser', response.data)
                 router.push({ name: 'Dashboard'})
 
@@ -59,9 +77,9 @@ export default {
                 axios.post('api/register', user)
                 .catch((error) =>  this.errors = error.response.data)
                 .then(response => { //currently doesn't care about errors, that's a problem\
-                    console.log(response)
-                    const token = response.data.token
-                    localStorage.setItem('token', token)
+                    console.log(response.data.api_token)
+                    const token = response.data.api_token
+                    localStorage.setItem('api_token', token)
                     commit('loginUser', user)
                     router.push({ name: "Dashboard"})})
         },
@@ -69,7 +87,7 @@ export default {
             axios
             .post('api/logout')
             .then(() => {                
-                localStorage.removeItem('token')
+                localStorage.removeItem('api_token')
                 commit('logoutUser')
                 router.push({ name: 'Home'})
             })

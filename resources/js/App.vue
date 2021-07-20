@@ -25,7 +25,7 @@ export default {
     Header,
   },
   created() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('api_token');
     console.log(token);
     if(!!token){
     this.$store.dispatch('authentication/activeUser', token)
