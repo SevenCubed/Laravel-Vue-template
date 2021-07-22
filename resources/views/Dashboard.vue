@@ -40,6 +40,7 @@ export default {
         }
     },
     //https://github.com/tymondesigns/jwt-auth/wiki/Creating-Tokens
+    //https://blog.angular-university.io/angular-jwt/
     mounted(){
         axios.get('/api/user').then((res)=>{
             console.log(res.data)
