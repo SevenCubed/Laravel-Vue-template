@@ -56,6 +56,7 @@ export default new Vuex.Store({
             state.filters = filters //Or I just update all the filters
         },
         FILTER_PRODUCTS(state) {
+            console.time("filtering")
             state.filteredProducts = state.products.products;
             if (state.filters.categories.length) { //Filter categories by filtering the list based on if the products include the filtered categories
                 state.filteredProducts = state.filteredProducts.filter(product => {
@@ -81,6 +82,7 @@ export default new Vuex.Store({
                         || (product.description !== null && product.description.toLowerCase().includes(search)) //Or description..
                 });
             }
+            
             //Ordering 
             switch (state.filters.order) {
                 case 'createdAtAsc':
@@ -106,6 +108,7 @@ export default new Vuex.Store({
                 default:
                     break;
             }
+        console.timeEnd("filtering")
         },
     },
     getters: {

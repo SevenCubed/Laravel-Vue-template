@@ -3316,6 +3316,7 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
       state.filters = filters; //Or I just update all the filters
     },
     FILTER_PRODUCTS: function FILTER_PRODUCTS(state) {
+      console.time("filtering");
       state.filteredProducts = state.products.products;
 
       if (state.filters.categories.length) {
@@ -3378,6 +3379,8 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
         default:
           break;
       }
+
+      console.timeEnd("filtering");
     }
   },
   getters: {
