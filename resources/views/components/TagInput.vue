@@ -23,6 +23,7 @@
 TODO:
 Add clear indication a given input is invalid.
 see: https://www.jotform.com/blog/html5-datalists-what-you-need-to-know-78024/
+//https://github.com/shentao/vue-multiselect
 */
 export default {
   data () {

@@ -2912,6 +2912,7 @@ __webpack_require__.r(__webpack_exports__);
 TODO:
 Add clear indication a given input is invalid.
 see: https://www.jotform.com/blog/html5-datalists-what-you-need-to-know-78024/
+//https://github.com/shentao/vue-multiselect
 */
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
