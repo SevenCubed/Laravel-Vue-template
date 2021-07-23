@@ -1983,6 +1983,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2002,6 +2004,29 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     login: function login() {
       this.$store.dispatch('authentication/loginUser', this.form);
+    },
+    test: function test() {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/auth/me")["catch"](function (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+
+        console.log(error.config);
+      }).then(function (response) {
+        console.log(response.data);
+      });
     }
   }
 });
@@ -3678,10 +3703,12 @@ __webpack_require__.r(__webpack_exports__);
     loginUser: function loginUser(_ref, user) {
       var commit = _ref.commit,
           state = _ref.state;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/login', {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/login', {
         email: user.email,
         password: user.password
       })["catch"](function (error) {
+        console.log("ERROR!");
+
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -3700,10 +3727,10 @@ __webpack_require__.r(__webpack_exports__);
 
         console.log(error.config);
       }).then(function (response) {
-        console.log(response.data.api_token);
-        var token = response.data.api_token;
-        console.log(token);
-        localStorage.setItem('api_token', token);
+        console.log(response); // const token = response.data.api_token
+        // console.log(token)
+        // localStorage.setItem('api_token', token)
+
         commit('loginUser', response.data);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: 'Dashboard'
@@ -3719,8 +3746,8 @@ __webpack_require__.r(__webpack_exports__);
         return _this.errors = error.response.data;
       }).then(function (response) {
         //currently doesn't care about errors, that's a problem\
-        console.log(response.data.api_token);
-        var token = response.data.api_token;
+        console.log(response);
+        var token = response;
         localStorage.setItem('api_token', token);
         commit('loginUser', user);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
@@ -3731,7 +3758,7 @@ __webpack_require__.r(__webpack_exports__);
     logoutUser: function logoutUser(_ref3) {
       var commit = _ref3.commit,
           state = _ref3.state;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/logout').then(function () {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/logout').then(function () {
         localStorage.removeItem('api_token');
         commit('logoutUser');
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
@@ -6834,7 +6861,17 @@ var render = function() {
         },
         [_vm._v("Login")]
       )
-    ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        staticClass: "button",
+        attrs: { type: "submit" },
+        on: { click: _vm.test }
+      },
+      [_vm._v("Test")]
+    )
   ])
 }
 var staticRenderFns = [

@@ -41,11 +41,12 @@ export default {
     actions: {    
         loginUser( {commit, state}, user ) {
             axios
-            .post('api/login',{
+            .post('api/auth/login',{
             email: user.email,
             password: user.password
             })
             .catch(function (error) {
+                console.log("ERROR!")
                 if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
@@ -64,10 +65,10 @@ export default {
                 console.log(error.config);
             })
             .then(response => {
-                console.log(response.data.api_token)
-                const token = response.data.api_token
-                console.log(token)
-                localStorage.setItem('api_token', token)
+                console.log(response)
+                // const token = response.data.api_token
+                // console.log(token)
+                // localStorage.setItem('api_token', token)
                 commit('loginUser', response.data)
                 router.push({ name: 'Dashboard'})
 
@@ -77,15 +78,15 @@ export default {
                 axios.post('api/register', user)
                 .catch((error) =>  this.errors = error.response.data)
                 .then(response => { //currently doesn't care about errors, that's a problem\
-                    console.log(response.data.api_token)
-                    const token = response.data.api_token
+                    console.log(response)
+                    const token = response
                     localStorage.setItem('api_token', token)
                     commit('loginUser', user)
                     router.push({ name: "Dashboard"})})
         },
         logoutUser( {commit, state}) {
             axios
-            .post('api/logout')
+            .post('api/auth/logout')
             .then(() => {                
                 localStorage.removeItem('api_token')
                 commit('logoutUser')

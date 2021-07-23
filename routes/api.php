@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Auth\Middleware\Authenticate;
 
 /*
@@ -24,8 +25,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 //Authentication
 Route::post('register', [AuthenticationController::class, 'register'])->name('register');
-Route::post('login', [AuthenticationController::class, 'login'])->name('login');
-Route::post('logout', [AuthenticationController::class, 'logout'])->name('logout');
+Route::post('loginold', [AuthenticationController::class, 'login'])->name('login');
+Route::post('logoutold', [AuthenticationController::class, 'logout'])->name('logout');
 Route::post('activeUser', [AuthenticationController::class, 'activeUser'])->name('activeUser');
 
 //Users
@@ -40,3 +41,18 @@ Route::get('/categories', [ProductController::class, 'categories'])->name('produ
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('products/{product}',[ProductController::class, 'show'])->name('products.show');
 Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+
+//JWT
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
+
+});
