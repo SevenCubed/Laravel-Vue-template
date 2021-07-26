@@ -148,12 +148,12 @@ return [
     */
 
     'required_claims' => [
-        'iss',
-        'iat',
-        'exp',
-        'nbf',
-        'sub',
-        'jti',
+        'iss', //issuer, default request url
+        'iat', //issued at, unix
+        'exp', //expiry, unix
+        'nbf', //not before, unix
+        'sub', //subject, user id
+        'jti', //JWT id
     ],
 
     /*

@@ -8,6 +8,7 @@ export default {
         authenticated: false,
         token: localStorage.getItem('api_token') || '', //is this okay? state isn't immutable this way
         user: null,
+        JWT: null,
     },
     getters: {
         authenticated(state) {
@@ -16,12 +17,17 @@ export default {
         activeUser(state) {
             return state.user
         },
+        JWT(state) {
+            return state.JWT
+        },
     },
     mutations: {
         loginUser(state, user) {
-            state.authenticated = true;
-            state.user = user;
-            state.token = user.api_token;
+            state.JWT = user;
+            // state.authenticated = true;
+            // state.user = user;
+            // state.token = user.api_token;
+            console.log(state.JWT, 'mutation')
         },
         logoutUser(state) {
             state.authenticated = false;
@@ -69,8 +75,14 @@ export default {
                 // const token = response.data.api_token
                 // console.log(token)
                 // localStorage.setItem('api_token', token)
-                commit('loginUser', response.data)
-                router.push({ name: 'Dashboard'})
+                let inMemoryToken;
+                inMemoryToken = {
+                    token: response.data.access_token,
+                    expiry: response.data.expires_in
+                };
+                console.log(inMemoryToken)
+                commit('loginUser', inMemoryToken)
+                // router.push({ name: 'Dashboard'})
 
             })
         },

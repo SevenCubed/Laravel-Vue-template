@@ -1999,6 +1999,9 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     user: function user() {
       return this.$store.getters['authentication/activeUser'];
+    },
+    JWT: function JWT() {
+      return this.$store.getters['authentication/JWT'];
     }
   },
   methods: {
@@ -2006,7 +2009,12 @@ __webpack_require__.r(__webpack_exports__);
       this.$store.dispatch('authentication/loginUser', this.form);
     },
     test: function test() {
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/auth/me")["catch"](function (error) {
+      console.log(this.JWT.token);
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/auth/me", {
+        headers: {
+          Authorization: 'Bearer ' + this.JWT.token
+        }
+      })["catch"](function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -2025,7 +2033,7 @@ __webpack_require__.r(__webpack_exports__);
 
         console.log(error.config);
       }).then(function (response) {
-        console.log(response.data);
+        console.log("Response:", response.data);
       });
     }
   }
@@ -3666,7 +3674,8 @@ __webpack_require__.r(__webpack_exports__);
     authenticated: false,
     token: localStorage.getItem('api_token') || '',
     //is this okay? state isn't immutable this way
-    user: null
+    user: null,
+    JWT: null
   },
   getters: {
     authenticated: function authenticated(state) {
@@ -3674,13 +3683,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     activeUser: function activeUser(state) {
       return state.user;
+    },
+    JWT: function JWT(state) {
+      return state.JWT;
     }
   },
   mutations: {
     loginUser: function loginUser(state, user) {
-      state.authenticated = true;
-      state.user = user;
-      state.token = user.api_token;
+      state.JWT = user; // state.authenticated = true;
+      // state.user = user;
+      // state.token = user.api_token;
+
+      console.log(state.JWT, 'mutation');
     },
     logoutUser: function logoutUser(state) {
       state.authenticated = false;
@@ -3731,10 +3745,13 @@ __webpack_require__.r(__webpack_exports__);
         // console.log(token)
         // localStorage.setItem('api_token', token)
 
-        commit('loginUser', response.data);
-        _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
-          name: 'Dashboard'
-        });
+        var inMemoryToken;
+        inMemoryToken = {
+          token: response.data.access_token,
+          expiry: response.data.expires_in
+        };
+        console.log(inMemoryToken);
+        commit('loginUser', inMemoryToken); // router.push({ name: 'Dashboard'})
       });
     },
     registerUser: function registerUser(_ref2, user) {

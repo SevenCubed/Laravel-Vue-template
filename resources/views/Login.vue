@@ -34,6 +34,9 @@ export default {
     computed: {
         user() {
             return this.$store.getters['authentication/activeUser']
+        },
+        JWT() {
+            return this.$store.getters['authentication/JWT']
         }
     },
     methods: {
@@ -41,8 +44,14 @@ export default {
             this.$store.dispatch('authentication/loginUser', this.form)
         },
         test() {
+            console.log(this.JWT.token)
              axios
-            .post("api/auth/me")
+            .post("api/auth/me", {
+                headers: 
+                {
+                    Authorization: 'Bearer ' + this.JWT.token,
+                }
+            })
             .catch(function (error) {
                 if (error.response) {
                     // The request was made and the server responded with a status code
@@ -62,7 +71,7 @@ export default {
                 console.log(error.config);
             })
             .then(response => {
-                console.log(response.data)
+                console.log("Response:", response.data)
             });
         },
     },
