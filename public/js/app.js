@@ -2009,12 +2009,13 @@ __webpack_require__.r(__webpack_exports__);
       this.$store.dispatch('authentication/loginUser', this.form);
     },
     test: function test() {
-      console.log(this.JWT.token);
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/auth/me", {
+      var config = {
         headers: {
-          Authorization: 'Bearer ' + this.JWT.token
+          'Authorization': 'Bearer ' + this.JWT.token
         }
-      })["catch"](function (error) {
+      };
+      console.log(this.JWT.token);
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/me', null, config)["catch"](function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx

@@ -44,14 +44,18 @@ export default {
             this.$store.dispatch('authentication/loginUser', this.form)
         },
         test() {
+            const config = {
+                headers: 
+                    {
+                        'Authorization': 'Bearer ' + this.JWT.token,
+                    }
+                };
             console.log(this.JWT.token)
              axios
-            .post("api/auth/me", {
-                headers: 
-                {
-                    Authorization: 'Bearer ' + this.JWT.token,
-                }
-            })
+            .post('api/auth/me',
+            null,
+            config
+            )
             .catch(function (error) {
                 if (error.response) {
                     // The request was made and the server responded with a status code

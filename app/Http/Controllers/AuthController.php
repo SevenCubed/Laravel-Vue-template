@@ -31,7 +31,7 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = Auth::attempt($credentials)) {
+        if (! $token = $this->guard()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized, invalid credentials'], 401);
         }
 
@@ -85,4 +85,15 @@ class AuthController extends Controller
             'expires_in' => Auth::factory()->getTTL() * 60
         ]);
     }
+    
+    /** From Progress Insight repo
+     * Get the guard to be used during authentication.
+     *
+     * @return \Illuminate\Contracts\Auth\Guard
+     */
+    public function guard()
+    {
+        return Auth::guard('api');
+    }
+
 }
