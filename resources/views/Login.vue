@@ -19,8 +19,8 @@
 </template>
 
 <script>
-  import axios from 'axios'
-
+import axios from 'axios'
+//
 export default {
     data() {
         return{
@@ -50,32 +50,30 @@ export default {
                         'Authorization': 'Bearer ' + this.JWT.token,
                     }
                 };
-            console.log(this.JWT.token)
-             axios
-            .post('api/auth/me',
+            axios.post('api/auth/me',
             null,
             config
             )
             .catch(function (error) {
                 if (error.response) {
-                    // The request was made and the server responded with a status code
+                    // Th//e request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response.data);
+                    // console.log(error.response.data);
                     console.log(error.response.status);
-                    console.log(error.response.headers);
+                    // console.log(error.response.headers);
                 } else if (error.request) {
                     // The request was made but no response was received
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
                     // http.ClientRequest in node.js
-                    console.log(error.request);
+                    // console.log(error.request);
                 } else {
                     // Something happened in setting up the request that triggered an Error
-                    console.log("Error", error.message);
+                    // console.log("Error", error.message);
                 }
                 console.log(error.config);
             })
             .then(response => {
-                console.log("Response:", response.data)
+                console.log("Test Response:", response.data)
             });
         },
     },

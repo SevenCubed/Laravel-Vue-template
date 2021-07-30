@@ -45,7 +45,7 @@ Route::post('/products/store', [ProductController::class, 'store'])->name('produ
 //JWT
 Route::group([
 
-    'middleware' => 'api',
+    // 'middleware' => 'api',
     'prefix' => 'auth'
 
 ], function ($router) {

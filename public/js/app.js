@@ -1985,6 +1985,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+ //
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2014,27 +2015,23 @@ __webpack_require__.r(__webpack_exports__);
           'Authorization': 'Bearer ' + this.JWT.token
         }
       };
-      console.log(this.JWT.token);
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/me', null, config)["catch"](function (error) {
         if (error.response) {
-          // The request was made and the server responded with a status code
+          // Th//e request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
+          // console.log(error.response.data);
+          console.log(error.response.status); // console.log(error.response.headers);
+        } else if (error.request) {// The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log("Error", error.message);
-        }
+          // console.log(error.request);
+        } else {// Something happened in setting up the request that triggered an Error
+            // console.log("Error", error.message);
+          }
 
         console.log(error.config);
       }).then(function (response) {
-        console.log("Response:", response.data);
+        console.log("Test Response:", response.data);
       });
     }
   }
@@ -3104,8 +3101,11 @@ new vue__WEBPACK_IMPORTED_MODULE_5__.default({
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
   \***********************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _store_authInterceptors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store/authInterceptors.js */ "./resources/js/store/authInterceptors.js");
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the
@@ -3113,6 +3113,7 @@ new vue__WEBPACK_IMPORTED_MODULE_5__.default({
  */
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -3266,6 +3267,53 @@ router.beforeEach(function (to, from, next) {
   }
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
+
+/***/ }),
+
+/***/ "./resources/js/store/authInterceptors.js":
+/*!************************************************!*\
+  !*** ./resources/js/store/authInterceptors.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.js */ "./resources/js/store/index.js");
+
+
+axios__WEBPACK_IMPORTED_MODULE_0___default().interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  var originalRequest = error.config;
+
+  if (error.response.status === 401 && !originalRequest._retry) {
+    console.log('401 Interceptor online.');
+    originalRequest._retry = true;
+    var config = {
+      headers: {
+        'Authorization': 'Bearer ' + _index_js__WEBPACK_IMPORTED_MODULE_1__.default.getters["authentication/JWT"].token
+      }
+    };
+    return axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/refresh', null, config).then(function (response) {
+      console.log("Refresh Response:", response.status, response.data);
+      var token;
+      token = {
+        token: response.data.access_token,
+        expiry: response.data.expires_in
+      }; // Put Token in State
+
+      _index_js__WEBPACK_IMPORTED_MODULE_1__.default.commit('authentication/LOGIN_USER', token); // Reset headers
+
+      originalRequest.headers.Authorization = 'Bearer ' + _index_js__WEBPACK_IMPORTED_MODULE_1__.default.getters["authentication/JWT"].token; // Return original object
+
+      return axios__WEBPACK_IMPORTED_MODULE_0___default()(originalRequest);
+    });
+  }
+
+  return Promise.reject(error);
+});
 
 /***/ }),
 
@@ -3690,12 +3738,12 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mutations: {
-    loginUser: function loginUser(state, user) {
-      state.JWT = user; // state.authenticated = true;
+    LOGIN_USER: function LOGIN_USER(state, JWT) {
+      state.JWT = JWT; // state.authenticated = true;
       // state.user = user;
       // state.token = user.api_token;
 
-      console.log(state.JWT, 'mutation');
+      console.log('Mutating JWT:', state.JWT);
     },
     logoutUser: function logoutUser(state) {
       state.authenticated = false;
@@ -3742,7 +3790,7 @@ __webpack_require__.r(__webpack_exports__);
 
         console.log(error.config);
       }).then(function (response) {
-        console.log(response); // const token = response.data.api_token
+        console.log("Login res:", response.data); // const token = response.data.api_token
         // console.log(token)
         // localStorage.setItem('api_token', token)
 
@@ -3751,8 +3799,7 @@ __webpack_require__.r(__webpack_exports__);
           token: response.data.access_token,
           expiry: response.data.expires_in
         };
-        console.log(inMemoryToken);
-        commit('loginUser', inMemoryToken); // router.push({ name: 'Dashboard'})
+        commit('LOGIN_USER', inMemoryToken); // router.push({ name: 'Dashboard'})
       });
     },
     registerUser: function registerUser(_ref2, user) {

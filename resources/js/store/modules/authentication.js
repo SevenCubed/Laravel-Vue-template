@@ -22,12 +22,12 @@ export default {
         },
     },
     mutations: {
-        loginUser(state, user) {
-            state.JWT = user;
+        LOGIN_USER(state, JWT) {
+            state.JWT = JWT;
             // state.authenticated = true;
             // state.user = user;
             // state.token = user.api_token;
-            console.log(state.JWT, 'mutation')
+            console.log('Mutating JWT:', state.JWT)
         },
         logoutUser(state) {
             state.authenticated = false;
@@ -71,7 +71,7 @@ export default {
                 console.log(error.config);
             })
             .then(response => {
-                console.log(response)
+                console.log("Login res:", response.data)
                 // const token = response.data.api_token
                 // console.log(token)
                 // localStorage.setItem('api_token', token)
@@ -80,8 +80,7 @@ export default {
                     token: response.data.access_token,
                     expiry: response.data.expires_in
                 };
-                console.log(inMemoryToken)
-                commit('loginUser', inMemoryToken)
+                commit('LOGIN_USER', inMemoryToken)
                 // router.push({ name: 'Dashboard'})
 
             })
