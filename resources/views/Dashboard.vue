@@ -6,45 +6,86 @@
       <router-link :to="{ name: 'Add Product' }" class="navbar-item">
         Add New Product
       </router-link>
-       <button v-on:click="test()">Test</button>
+    <div v-if="ads.length && !isLoading">
+        <ul>
+            <li  v-for="ad in ads" :key="ad.id">
+                <router-link class="is-clickable" tag="div"
+                    :to="{
+                        name: 'ProductDetails',
+                        params: { id: ad.id, initProduct: ad }
+                    }">
+                        {{ad.id}}, {{ad.name}}, {{ad.price}}
+                        <!-- spruce this up later -->
+                </router-link>
+            </li>
+        </ul>
     </div>
+    <div v-if="!ads.length && !isLoading">
+        You are not currently selling anything! Have you considered doing so?
+    </div>
+    <div v-if="!ads.length && isLoading">
+        <Spinner line-fg-color="#777777" size="medium" message=""/>
+    </div>
+    <div v-if="ads.length && isLoading">
+        <!-- This shouldn't ever happen, but y'know -->
+        Something went wrong, please refresh.
+    </div>
+</div>
 </template>
 
 <script setup>
 
+import Spinner from 'vue-simple-spinner' //Custom package
+
 export default {
     data() {
         return{
+            ads: false,
         }    
+    },
+    components: {
+        Spinner,
     },
     computed: {
         user() {
             return this.$store.getters['authentication/activeUser']
         },
+        isLoading () {
+            return this.$store.getters.isLoading;
+        },
     },
     mounted() {
-        const token = localStorage.getItem('api_token');
-        console.log(token);
-        if(!!token){
-            this.$store.dispatch('authentication/activeUser', token)
-        }
-        console.log(this.$store.state.authentication.user, " user")
         const id = this.$store.state.authentication.user.id
-        this.$store.dispatch("fetchAds", id);
+        console.log("Attempting to fetch ads...")
+        this.$store.commit('loadingStatus', true)
+            axios
+            .post("api/users/ads", {'id': id})
+            .catch(function (error) {
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log("Error", error.message);
+                }
+                console.log(error.config);
+            })
+            .then(response => {
+                this.ads = response.data.data.products
+                this.$store.commit('loadingStatus', false)
+            });
     },
     methods: {
-        test(){
-            const id = this.user.id
-            console.log(id)
-            this.$store.dispatch("fetchAds", id)
-        }
     },
     //https://github.com/tymondesigns/jwt-auth/wiki/Creating-Tokens
-    mounted(){
-        axios.get('/api/user').then((res)=>{
-            console.log(res.data)
-        })
-    }
 };
 </script>
 

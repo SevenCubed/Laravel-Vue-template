@@ -5,14 +5,13 @@ export default {
     namespaced: true,
 
     state: {
-        authenticated: false,
-        token: localStorage.getItem('api_token') || '', //is this okay? state isn't immutable this way
+        authenticated: !!window.$cookies.get("JWT"),
         user: null,
         JWT: null,
     },
     getters: {
         authenticated(state) {
-            return !!state.token
+            return !!state.authenticated
         },
         activeUser(state) {
             return state.user
@@ -24,27 +23,49 @@ export default {
     mutations: {
         LOGIN_USER(state, JWT) {
             state.JWT = JWT;
-            // state.authenticated = true;
-            // state.user = user;
-            // state.token = user.api_token;
-            console.log('Mutating JWT:', state.JWT)
+            state.authenticated = true;
+            console.log('Authentication mutation:', state.authenticated, state.JWT)
+        },
+        SET_JWT(state, JWT) {
+            state.JWT = JWT;
+            console.log("Setting initial JWT");
+        },
+        SET_USER(state, user) {
+            state.user = user;
+            console.log('User: ', user)
         },
         logoutUser(state) {
             state.authenticated = false;
             state.user = null;
-            state.token = ''
         },
         activeUser(state, user) {
             state.user = user;
             if(user == ''){
                 state.authenticated = false;
                 if(!!state.token){
-                    localStorage.removeItem('api_token') //This is a clause to delete any outdated tokens.
+                    // localStorage.removeItem('api_token') //This is a clause to delete any outdated tokens.
                 }
             }
         },
     },
-    actions: {    
+    actions: {
+        initUser( {commit}, JWT ) {
+            const config =
+            {
+                headers: 
+                    {
+                        'Authorization': 'Bearer ' + JWT.token,
+                    }
+            };
+            axios
+            .post('api/auth/me',
+            null,
+            config
+            )
+            .then(response => {
+                commit('SET_USER', response.data)
+            });
+        }, 
         loginUser( {commit, state}, user ) {
             axios
             .post('api/auth/login',{
@@ -72,17 +93,13 @@ export default {
             })
             .then(response => {
                 console.log("Login res:", response.data)
-                // const token = response.data.api_token
-                // console.log(token)
-                // localStorage.setItem('api_token', token)
-                let inMemoryToken;
-                inMemoryToken = {
+                const JWT = {
                     token: response.data.access_token,
                     expiry: response.data.expires_in
                 };
-                commit('LOGIN_USER', inMemoryToken)
-                // router.push({ name: 'Dashboard'})
-
+                window.$cookies.set("JWT", JWT);
+                commit('LOGIN_USER', JWT)
+                router.push({ name: 'Dashboard'})
             })
         },
         registerUser( {commit, state}, user) {
@@ -92,14 +109,14 @@ export default {
                     console.log(response)
                     const token = response
                     localStorage.setItem('api_token', token)
-                    commit('loginUser', user)
+                    commit('SET_USER', user)
                     router.push({ name: "Dashboard"})})
         },
         logoutUser( {commit, state}) {
             axios
             .post('api/auth/logout')
             .then(() => {                
-                localStorage.removeItem('api_token')
+                window.$cookies.remove("JWT");
                 commit('logoutUser')
                 router.push({ name: 'Home'})
             })

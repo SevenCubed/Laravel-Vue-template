@@ -1879,12 +1879,13 @@ __webpack_require__.r(__webpack_exports__);
     Footer: _views_components_Footer_vue__WEBPACK_IMPORTED_MODULE_0__.default,
     Header: _views_components_Header_vue__WEBPACK_IMPORTED_MODULE_1__.default
   },
-  created: function created() {
-    var token = localStorage.getItem('api_token');
-    console.log(token);
+  beforeCreate: function beforeCreate() {
+    console.log(window.$cookies.get("JWT"));
+    var cookieJWT = this.$cookies.get('JWT');
 
-    if (!!token) {
-      this.$store.dispatch('authentication/activeUser', token);
+    if (!!cookieJWT) {
+      console.log("Before create:", cookieJWT.token);
+      this.$store.dispatch('authentication/initUser', cookieJWT.token);
     }
   }
 });
@@ -1902,53 +1903,97 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+/* harmony import */ var vue_simple_spinner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-simple-spinner */ "./node_modules/vue-simple-spinner/dist/vue-simple-spinner.js");
+/* harmony import */ var vue_simple_spinner__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_simple_spinner__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+ //Custom package
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_defineProperty({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
-    return {};
+    return {
+      ads: false
+    };
+  },
+  components: {
+    Spinner: (vue_simple_spinner__WEBPACK_IMPORTED_MODULE_0___default())
   },
   computed: {
     user: function user() {
       return this.$store.getters['authentication/activeUser'];
+    },
+    isLoading: function isLoading() {
+      return this.$store.getters.isLoading;
     }
   },
   mounted: function mounted() {
-    var token = localStorage.getItem('api_token');
-    console.log(token);
+    var _this = this;
 
-    if (!!token) {
-      this.$store.dispatch('authentication/activeUser', token);
-    }
-
-    console.log(this.$store.state.authentication.user, " user");
     var id = this.$store.state.authentication.user.id;
-    this.$store.dispatch("fetchAds", id);
+    console.log("Attempting to fetch ads...");
+    this.$store.commit('loadingStatus', true);
+    axios.post("api/users/ads", {
+      'id': id
+    })["catch"](function (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error", error.message);
+      }
+
+      console.log(error.config);
+    }).then(function (response) {
+      _this.ads = response.data.data.products;
+
+      _this.$store.commit('loadingStatus', false);
+    });
   },
-  methods: {
-    test: function test() {
-      var id = this.user.id;
-      console.log(id);
-      this.$store.dispatch("fetchAds", id);
-    }
-  }
-}, "mounted", function mounted() {
-  axios.get('/api/user').then(function (res) {
-    console.log(res.data);
-  });
-}));
+  methods: {} //https://github.com/tymondesigns/jwt-auth/wiki/Creating-Tokens
+
+});
 
 /***/ }),
 
@@ -2012,7 +2057,7 @@ __webpack_require__.r(__webpack_exports__);
     test: function test() {
       var config = {
         headers: {
-          'Authorization': 'Bearer ' + this.JWT.token
+          'Authorization': 'Bearer ' + window.$cookies.get("JWT").token
         }
       };
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/me', null, config)["catch"](function (error) {
@@ -2705,9 +2750,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 /*
 TODO:
@@ -3065,18 +3107,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store */ "./resources/js/store/index.js");
-/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
-/* harmony import */ var _node_modules_Bulma_CSS_bulma_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../node_modules/Bulma/CSS/bulma.css */ "./node_modules/Bulma/CSS/bulma.css");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vue_cookies__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-cookies */ "./node_modules/vue-cookies/vue-cookies.js");
+/* harmony import */ var vue_cookies__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_cookies__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./resources/js/store/index.js");
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
+/* harmony import */ var _node_modules_Bulma_CSS_bulma_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../node_modules/Bulma/CSS/bulma.css */ "./node_modules/Bulma/CSS/bulma.css");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_5__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
  //Main pages
 
- //Import store
+ //Because I call for a cookie inside the initial state, I have to import this before the store
+
+ //Import store, before router because see above
 
  //Import router
 
@@ -3085,11 +3131,12 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
  //Axios stuff for Sanctum auth
 
 
-(axios__WEBPACK_IMPORTED_MODULE_4___default().defaults.withCredentials) = true;
-new vue__WEBPACK_IMPORTED_MODULE_5__.default({
+(axios__WEBPACK_IMPORTED_MODULE_5___default().defaults.withCredentials) = true;
+vue__WEBPACK_IMPORTED_MODULE_6__.default.use((vue_cookies__WEBPACK_IMPORTED_MODULE_1___default()));
+new vue__WEBPACK_IMPORTED_MODULE_6__.default({
   el: "#app",
-  store: _store__WEBPACK_IMPORTED_MODULE_1__.default,
-  router: _router__WEBPACK_IMPORTED_MODULE_2__.default,
+  store: _store__WEBPACK_IMPORTED_MODULE_2__.default,
+  router: _router__WEBPACK_IMPORTED_MODULE_3__.default,
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_0__.default);
   }
@@ -3195,7 +3242,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_10__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_11__.default);
+vue__WEBPACK_IMPORTED_MODULE_10__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_11__.default); //https://forum.vuejs.org/t/solved-delay-vue-action-until-a-state-variable-is-set/9063/5
+
+var checkUser = function checkUser(to, from, next) {
+  function proceed() {
+    if (!!_store__WEBPACK_IMPORTED_MODULE_0__.default.state.authentication.user) {
+      console.log("User loaded, proceeding.");
+      next();
+    }
+  }
+
+  if (!_store__WEBPACK_IMPORTED_MODULE_0__.default.state.authentication.user) {
+    console.log("User not loaded, waiting and watching.");
+    _store__WEBPACK_IMPORTED_MODULE_0__.default.watch(function (state) {
+      return !!state.authentication.user;
+    }, function (value) {
+      if (value === true) {
+        proceed();
+      }
+    });
+  } else {
+    proceed();
+  }
+};
+
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_11__.default({
   routes: [{
     path: "/"
@@ -3213,7 +3283,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_11__.default({
     component: _views_Dashboard_vue__WEBPACK_IMPORTED_MODULE_9__.default,
     meta: {
       requiresAuth: true
-    }
+    },
+    beforeEnter: checkUser
   }, {
     path: "/vuextest",
     name: "Vuex Test",
@@ -3289,27 +3360,37 @@ axios__WEBPACK_IMPORTED_MODULE_0___default().interceptors.response.use(function 
   var originalRequest = error.config;
 
   if (error.response.status === 401 && !originalRequest._retry) {
-    console.log('401 Interceptor online.');
+    var JWT = window.$cookies.get("JWT");
+    console.log('401 Interceptor online.', JWT.token);
     originalRequest._retry = true;
     var config = {
       headers: {
-        'Authorization': 'Bearer ' + _index_js__WEBPACK_IMPORTED_MODULE_1__.default.getters["authentication/JWT"].token
+        'Authorization': 'Bearer ' + JWT.token
       }
     };
     return axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/refresh', null, config).then(function (response) {
       console.log("Refresh Response:", response.status, response.data);
-      var token;
-      token = {
+      var JWT;
+      JWT = {
         token: response.data.access_token,
         expiry: response.data.expires_in
-      }; // Put Token in State
+      }; // Put token in cookie
 
-      _index_js__WEBPACK_IMPORTED_MODULE_1__.default.commit('authentication/LOGIN_USER', token); // Reset headers
+      window.$cookies.set("JWT", JWT); // Put Token in State
 
-      originalRequest.headers.Authorization = 'Bearer ' + _index_js__WEBPACK_IMPORTED_MODULE_1__.default.getters["authentication/JWT"].token; // Return original object
+      _index_js__WEBPACK_IMPORTED_MODULE_1__.default.commit('authentication/LOGIN_USER', JWT); // Reset headers
+
+      originalRequest.headers.Authorization = 'Bearer ' + window.$cookies.get("JWT").token; // Return original object
 
       return axios__WEBPACK_IMPORTED_MODULE_0___default()(originalRequest);
     });
+  } // If there's a 500 on the refresh, the token has expired past it's refresh_ttl.
+
+
+  if (error.response.status === 500 && originalRequest.url.includes("api/auth/refresh")) {
+    console.log('Tried again, failed, invalid token.', originalRequest.url);
+    window.$cookies.remove("JWT");
+    this.$store.commit('authentication/logoutUser'); //reset the auth state
   }
 
   return Promise.reject(error);
@@ -3720,15 +3801,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
   state: {
-    authenticated: false,
-    token: localStorage.getItem('api_token') || '',
-    //is this okay? state isn't immutable this way
+    authenticated: !!window.$cookies.get("JWT"),
     user: null,
     JWT: null
   },
   getters: {
     authenticated: function authenticated(state) {
-      return !!state.token;
+      return !!state.authenticated;
     },
     activeUser: function activeUser(state) {
       return state.user;
@@ -3739,16 +3818,21 @@ __webpack_require__.r(__webpack_exports__);
   },
   mutations: {
     LOGIN_USER: function LOGIN_USER(state, JWT) {
-      state.JWT = JWT; // state.authenticated = true;
-      // state.user = user;
-      // state.token = user.api_token;
-
-      console.log('Mutating JWT:', state.JWT);
+      state.JWT = JWT;
+      state.authenticated = true;
+      console.log('Authentication mutation:', state.authenticated, state.JWT);
+    },
+    SET_JWT: function SET_JWT(state, JWT) {
+      state.JWT = JWT;
+      console.log("Setting initial JWT");
+    },
+    SET_USER: function SET_USER(state, user) {
+      state.user = user;
+      console.log('User: ', user);
     },
     logoutUser: function logoutUser(state) {
       state.authenticated = false;
       state.user = null;
-      state.token = '';
     },
     activeUser: function activeUser(state, user) {
       state.user = user;
@@ -3756,16 +3840,26 @@ __webpack_require__.r(__webpack_exports__);
       if (user == '') {
         state.authenticated = false;
 
-        if (!!state.token) {
-          localStorage.removeItem('api_token'); //This is a clause to delete any outdated tokens.
+        if (!!state.token) {// localStorage.removeItem('api_token') //This is a clause to delete any outdated tokens.
         }
       }
     }
   },
   actions: {
-    loginUser: function loginUser(_ref, user) {
-      var commit = _ref.commit,
-          state = _ref.state;
+    initUser: function initUser(_ref, JWT) {
+      var commit = _ref.commit;
+      var config = {
+        headers: {
+          'Authorization': 'Bearer ' + JWT.token
+        }
+      };
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/me', null, config).then(function (response) {
+        commit('SET_USER', response.data);
+      });
+    },
+    loginUser: function loginUser(_ref2, user) {
+      var commit = _ref2.commit,
+          state = _ref2.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/login', {
         email: user.email,
         password: user.password
@@ -3790,23 +3884,23 @@ __webpack_require__.r(__webpack_exports__);
 
         console.log(error.config);
       }).then(function (response) {
-        console.log("Login res:", response.data); // const token = response.data.api_token
-        // console.log(token)
-        // localStorage.setItem('api_token', token)
-
-        var inMemoryToken;
-        inMemoryToken = {
+        console.log("Login res:", response.data);
+        var JWT = {
           token: response.data.access_token,
           expiry: response.data.expires_in
         };
-        commit('LOGIN_USER', inMemoryToken); // router.push({ name: 'Dashboard'})
+        window.$cookies.set("JWT", JWT);
+        commit('LOGIN_USER', JWT);
+        _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
+          name: 'Dashboard'
+        });
       });
     },
-    registerUser: function registerUser(_ref2, user) {
+    registerUser: function registerUser(_ref3, user) {
       var _this = this;
 
-      var commit = _ref2.commit,
-          state = _ref2.state;
+      var commit = _ref3.commit,
+          state = _ref3.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/register', user)["catch"](function (error) {
         return _this.errors = error.response.data;
       }).then(function (response) {
@@ -3814,27 +3908,27 @@ __webpack_require__.r(__webpack_exports__);
         console.log(response);
         var token = response;
         localStorage.setItem('api_token', token);
-        commit('loginUser', user);
+        commit('SET_USER', user);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: "Dashboard"
         });
       });
     },
-    logoutUser: function logoutUser(_ref3) {
-      var commit = _ref3.commit,
-          state = _ref3.state;
+    logoutUser: function logoutUser(_ref4) {
+      var commit = _ref4.commit,
+          state = _ref4.state;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/logout').then(function () {
-        localStorage.removeItem('api_token');
+        window.$cookies.remove("JWT");
         commit('logoutUser');
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: 'Home'
         });
       });
     },
-    activeUser: function activeUser(_ref4, token) {
+    activeUser: function activeUser(_ref5, token) {
       var _this2 = this;
 
-      var commit = _ref4.commit;
+      var commit = _ref5.commit;
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/activeUser', {
         'token': token
       })["catch"](function (error) {
@@ -5596,6 +5690,156 @@ module.exports = function (list, options) {
 
 /***/ }),
 
+/***/ "./node_modules/vue-cookies/vue-cookies.js":
+/*!*************************************************!*\
+  !*** ./node_modules/vue-cookies/vue-cookies.js ***!
+  \*************************************************/
+/***/ ((module) => {
+
+/**
+ * Vue Cookies v1.7.4
+ * https://github.com/cmp-cc/vue-cookies
+ *
+ * Copyright 2016, cmp-cc
+ * Released under the MIT license
+ */
+
+(function () {
+
+  var defaultConfig = {
+    expires: '1d',
+    path: '; path=/',
+    domain: '',
+    secure: '',
+    sameSite: '; SameSite=Lax'
+  };
+
+  var VueCookies = {
+    // install of Vue
+    install: function (Vue) {
+      Vue.prototype.$cookies = this;
+      Vue.$cookies = this;
+    },
+    config: function (expireTimes, path, domain, secure, sameSite) {
+      defaultConfig.expires = expireTimes ? expireTimes : '1d';
+      defaultConfig.path = path ? '; path=' + path : '; path=/';
+      defaultConfig.domain = domain ? '; domain=' + domain : '';
+      defaultConfig.secure = secure ? '; Secure' : '';
+      defaultConfig.sameSite = sameSite ? '; SameSite=' + sameSite : '; SameSite=Lax';
+    },
+    get: function (key) {
+      var value = decodeURIComponent(document.cookie.replace(new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$'), '$1')) || null;
+
+      if (value && value.substring(0, 1) === '{' && value.substring(value.length - 1, value.length) === '}') {
+        try {
+          value = JSON.parse(value);
+        } catch (e) {
+          return value;
+        }
+      }
+      return value;
+    },
+    set: function (key, value, expireTimes, path, domain, secure, sameSite) {
+      if (!key) {
+        throw new Error('Cookie name is not find in first argument.');
+      } else if (/^(?:expires|max\-age|path|domain|secure|SameSite)$/i.test(key)) {
+        throw new Error('Cookie key name illegality, Cannot be set to ["expires","max-age","path","domain","secure","SameSite"]\t current key name: ' + key);
+      }
+      // support json object
+      if (value && value.constructor === Object) {
+        value = JSON.stringify(value);
+      }
+      var _expires = '';
+      expireTimes = expireTimes == undefined ? defaultConfig.expires : expireTimes;
+      if (expireTimes && expireTimes != 0) {
+        switch (expireTimes.constructor) {
+          case Number:
+            if (expireTimes === Infinity || expireTimes === -1) _expires = '; expires=Fri, 31 Dec 9999 23:59:59 GMT';
+            else _expires = '; max-age=' + expireTimes;
+            break;
+          case String:
+            if (/^(?:\d+(y|m|d|h|min|s))$/i.test(expireTimes)) {
+              // get capture number group
+              var _expireTime = expireTimes.replace(/^(\d+)(?:y|m|d|h|min|s)$/i, '$1');
+              // get capture type group , to lower case
+              switch (expireTimes.replace(/^(?:\d+)(y|m|d|h|min|s)$/i, '$1').toLowerCase()) {
+                  // Frequency sorting
+                case 'm':
+                  _expires = '; max-age=' + +_expireTime * 2592000;
+                  break; // 60 * 60 * 24 * 30
+                case 'd':
+                  _expires = '; max-age=' + +_expireTime * 86400;
+                  break; // 60 * 60 * 24
+                case 'h':
+                  _expires = '; max-age=' + +_expireTime * 3600;
+                  break; // 60 * 60
+                case 'min':
+                  _expires = '; max-age=' + +_expireTime * 60;
+                  break; // 60
+                case 's':
+                  _expires = '; max-age=' + _expireTime;
+                  break;
+                case 'y':
+                  _expires = '; max-age=' + +_expireTime * 31104000;
+                  break; // 60 * 60 * 24 * 30 * 12
+                default:
+                  new Error('unknown exception of "set operation"');
+              }
+            } else {
+              _expires = '; expires=' + expireTimes;
+            }
+            break;
+          case Date:
+            _expires = '; expires=' + expireTimes.toUTCString();
+            break;
+        }
+      }
+      document.cookie =
+          encodeURIComponent(key) + '=' + encodeURIComponent(value) +
+          _expires +
+          (domain ? '; domain=' + domain : defaultConfig.domain) +
+          (path ? '; path=' + path : defaultConfig.path) +
+          (secure == undefined ? defaultConfig.secure : secure ? '; Secure' : '') +
+          (sameSite == undefined ? defaultConfig.sameSite : (sameSite ? '; SameSite=' + sameSite : ''));
+      return this;
+    },
+    remove: function (key, path, domain) {
+      if (!key || !this.isKey(key)) {
+        return false;
+      }
+      document.cookie = encodeURIComponent(key) +
+          '=; expires=Thu, 01 Jan 1970 00:00:00 GMT' +
+          (domain ? '; domain=' + domain : defaultConfig.domain) +
+          (path ? '; path=' + path : defaultConfig.path) +
+          '; SameSite=Lax';
+      return this;
+    },
+    isKey: function (key) {
+      return (new RegExp('(?:^|;\\s*)' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=')).test(document.cookie);
+    },
+    keys: function () {
+      if (!document.cookie) return [];
+      var _keys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
+      for (var _index = 0; _index < _keys.length; _index++) {
+        _keys[_index] = decodeURIComponent(_keys[_index]);
+      }
+      return _keys;
+    }
+  };
+
+  if (true) {
+    module.exports = VueCookies;
+  } else {}
+  // vue-cookies can exist independently,no dependencies library
+  if (typeof window !== 'undefined') {
+    window.$cookies = VueCookies;
+  }
+
+})();
+
+
+/***/ }),
+
 /***/ "./resources/js/App.vue":
 /*!******************************!*\
   !*** ./resources/js/App.vue ***!
@@ -6825,17 +7069,77 @@ var render = function() {
         [_vm._v("\n        Add New Product\n      ")]
       ),
       _vm._v(" "),
-      _c(
-        "button",
-        {
-          on: {
-            click: function($event) {
-              return _vm.test()
-            }
-          }
-        },
-        [_vm._v("Test")]
-      )
+      _vm.ads.length && !_vm.isLoading
+        ? _c("div", [
+            _c(
+              "ul",
+              _vm._l(_vm.ads, function(ad) {
+                return _c(
+                  "li",
+                  { key: ad.id },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "is-clickable",
+                        attrs: {
+                          tag: "div",
+                          to: {
+                            name: "ProductDetails",
+                            params: { id: ad.id, initProduct: ad }
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(ad.id) +
+                            ", " +
+                            _vm._s(ad.name) +
+                            ", " +
+                            _vm._s(ad.price) +
+                            "\n                        "
+                        )
+                      ]
+                    )
+                  ],
+                  1
+                )
+              }),
+              0
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      !_vm.ads.length && !_vm.isLoading
+        ? _c("div", [
+            _vm._v(
+              "\n        You are not currently selling anything! Have you considered doing so?\n    "
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      !_vm.ads.length && _vm.isLoading
+        ? _c(
+            "div",
+            [
+              _c("Spinner", {
+                attrs: {
+                  "line-fg-color": "#777777",
+                  size: "medium",
+                  message: ""
+                }
+              })
+            ],
+            1
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.ads.length && _vm.isLoading
+        ? _c("div", [
+            _vm._v("\n        Something went wrong, please refresh.\n    ")
+          ])
+        : _vm._e()
     ],
     1
   )
@@ -8082,13 +8386,7 @@ var staticRenderFns = [
       ]),
       _vm._v(" "),
       _c("ul", { staticClass: "is-size-7" }, [
-        _c("li", [_vm._v("File upload encoding?")]),
-        _vm._v(" "),
-        _c("li", [_vm._v("There's got to be a better way @ formdata")]),
-        _vm._v(" "),
-        _c("li", [_vm._v("CR: Collection = JSON? (jasper)")]),
-        _vm._v(" "),
-        _c("li", [_vm._v("Sorting algorithm?")]),
+        _c("li", [_vm._v("Navigation guard for login?")]),
         _vm._v(" "),
         _c("li")
       ])

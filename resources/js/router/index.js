@@ -15,6 +15,28 @@ import Dashboard from "../../views/Dashboard.vue";
 
 Vue.use(VueRouter);
 
+//https://forum.vuejs.org/t/solved-delay-vue-action-until-a-state-variable-is-set/9063/5
+const checkUser = (to, from, next) => {
+    function proceed () {
+      if (!!store.state.authentication.user) {
+        console.log("User loaded, proceeding.")
+        next()
+      }
+    }
+    if (!store.state.authentication.user) {
+        console.log("User not loaded, waiting and watching.")
+        store.watch(
+            (state) => !!state.authentication.user,
+            (value) => {
+                if (value === true) {
+                    proceed()
+                }
+            }
+      )
+    } else {
+      proceed()
+    }
+}
 
 const router = new VueRouter({
     routes: [
@@ -36,6 +58,7 @@ const router = new VueRouter({
             name: "Dashboard",
             component: Dashboard,
             meta: { requiresAuth: true },
+            beforeEnter: checkUser,
         },
         {
             path: "/vuextest",

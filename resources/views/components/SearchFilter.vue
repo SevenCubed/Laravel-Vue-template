@@ -14,10 +14,7 @@
         <div class="content">
         <h1 class="is-size-6 has-text-weight-bold">Questions</h1>
             <ul class="is-size-7">
-                <li>File upload encoding?</li>
-                <li>There's got to be a better way @ formdata</li>
-                <li>CR: Collection = JSON? (jasper)</li>
-                <li>Sorting algorithm?</li>
+                <li>Navigation guard for login?</li>
                 <li></li>
             </ul>
             </div>

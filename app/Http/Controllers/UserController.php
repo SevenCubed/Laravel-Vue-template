@@ -25,7 +25,6 @@ class UserController extends Controller
 
     public function ads(Request $request)
     {  
-        dd(Auth::user());
         return new ProductCollection(Product::where('user_id', $request->id)->get()); //the error here was due to the categories being empty.
     }
 

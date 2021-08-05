@@ -7,12 +7,13 @@ axios.interceptors.response.use((response) => {
     function (error) {
         let originalRequest = error.config;
         if (error.response.status === 401 && !originalRequest._retry) {
-            console.log('401 Interceptor online.')
+            const JWT = window.$cookies.get("JWT");
+            console.log('401 Interceptor online.', JWT.token)
             originalRequest._retry = true;
             let config = {
                 headers:
                 {
-                    'Authorization': 'Bearer ' + store.getters['authentication/JWT'].token,
+                    'Authorization': 'Bearer ' + JWT.token,
                 }
             };
             return axios.post('api/auth/refresh',
@@ -20,18 +21,26 @@ axios.interceptors.response.use((response) => {
                 config)
                 .then(response => {
                     console.log("Refresh Response:", response.status, response.data)
-                    let token;
-                    token = {
+                    let JWT;
+                    JWT = {
                         token: response.data.access_token,
                         expiry: response.data.expires_in
                     };
+                    // Put token in cookie
+                    window.$cookies.set("JWT", JWT);
                     // Put Token in State
-                    store.commit('authentication/LOGIN_USER', token)
+                    store.commit('authentication/LOGIN_USER', JWT)
                     // Reset headers
-                    originalRequest.headers.Authorization = 'Bearer ' + store.getters['authentication/JWT'].token
+                    originalRequest.headers.Authorization = 'Bearer ' + window.$cookies.get("JWT").token
                     // Return original object
                     return axios(originalRequest);
                 });
+        }
+        // If there's a 500 on the refresh, the token has expired past it's refresh_ttl.
+        if (error.response.status === 500 && originalRequest.url.includes("api/auth/refresh")) {
+            console.log('Tried again, failed, invalid token.', originalRequest.url)
+            window.$cookies.remove("JWT")
+            this.$store.commit('authentication/logoutUser') //reset the auth state
         }
         return Promise.reject(error);
     }

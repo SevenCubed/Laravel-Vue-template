@@ -44,10 +44,11 @@ export default {
             this.$store.dispatch('authentication/loginUser', this.form)
         },
         test() {
-            const config = {
+            const config =
+            {
                 headers: 
                     {
-                        'Authorization': 'Bearer ' + this.JWT.token,
+                        'Authorization': 'Bearer ' + window.$cookies.get("JWT").token,
                     }
                 };
             axios.post('api/auth/me',

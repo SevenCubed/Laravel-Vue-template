@@ -24,11 +24,12 @@ export default {
     Footer,
     Header,
   },
-  created() {
-    const token = localStorage.getItem('api_token');
-    console.log(token);
-    if(!!token){
-    this.$store.dispatch('authentication/activeUser', token)
+  beforeCreate() {
+    console.log(window.$cookies.get("JWT"))
+    const cookieJWT = this.$cookies.get('JWT');
+    if(!!cookieJWT){
+      console.log("Before create:", cookieJWT.token);
+      this.$store.dispatch('authentication/initUser', cookieJWT.token)
     }
   },
 }
