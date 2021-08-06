@@ -41,17 +41,38 @@ const checkUser = (to, from, next) => {
 const router = new VueRouter({
     routes: [
         {
-            path: "/"
+            path: "/",
+            name: "Home",
         },
         {
             path: "/login",
             name: "Login",
             component: Login,
+            beforeEnter(to, from, next) {
+                if (!store.getters['authentication/authenticated']) {
+                  next()
+                } else {
+                console.log("Redirecting to index");
+                  next({
+                    name: "Home" //Redirect if someone is on the login path (for instance due to an unfortunate bookmark or history) to the index.
+                  });
+                }
+            }
         },
         {
             path: "/register",
             name: "Register",
             component: Register,
+            beforeEnter(to, from, next) {
+                if (!store.getters['authentication/authenticated']) {
+                  next()
+                } else {
+                console.log("Redirecting to index");
+                  next({
+                    name: "Home" //As above so below
+                  });
+                }
+            }
         },
         {
             path: "/dashboard",

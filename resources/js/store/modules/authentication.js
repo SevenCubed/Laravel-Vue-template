@@ -92,13 +92,15 @@ export default {
                 console.log(error.config);
             })
             .then(response => {
-                console.log("Login res:", response.data)
+                console.log("Login res:", response.data[0].original)
+                //The response is an array comprising of the JWT (0) and the user (1). If I do not load in the user immediately, the push to the dashboard would get stuck waiting for the user.
                 const JWT = {
-                    token: response.data.access_token,
-                    expiry: response.data.expires_in
+                    token: response.data[0].original.access_token,
+                    expiry: response.data[0].original.expires_in
                 };
                 window.$cookies.set("JWT", JWT);
                 commit('LOGIN_USER', JWT)
+                commit('SET_USER', response.data[1].original)
                 router.push({ name: 'Dashboard'})
             })
         },
@@ -113,12 +115,21 @@ export default {
                     router.push({ name: "Dashboard"})})
         },
         logoutUser( {commit, state}) {
+            const config =
+            {
+                headers: 
+                    {
+                        'Authorization': 'Bearer ' + state.JWT.token,
+                    }
+            };
             axios
-            .post('api/auth/logout')
+            .post('api/auth/logout',
+            null,
+            config)
             .then(() => {                
                 window.$cookies.remove("JWT");
                 commit('logoutUser')
-                router.push({ name: 'Home'})
+                router.push({ name: 'Login'})
             })
         },
         activeUser( {commit}, token ) {

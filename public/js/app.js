@@ -3268,15 +3268,38 @@ var checkUser = function checkUser(to, from, next) {
 
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_11__.default({
   routes: [{
-    path: "/"
+    path: "/",
+    name: "Home"
   }, {
     path: "/login",
     name: "Login",
-    component: _views_Login_vue__WEBPACK_IMPORTED_MODULE_8__.default
+    component: _views_Login_vue__WEBPACK_IMPORTED_MODULE_8__.default,
+    beforeEnter: function beforeEnter(to, from, next) {
+      if (!_store__WEBPACK_IMPORTED_MODULE_0__.default.getters["authentication/authenticated"]) {
+        next();
+      } else {
+        console.log("Redirecting to index");
+        next({
+          name: "Home" //Redirect if someone is on the login path (for instance due to an unfortunate bookmark or history) to the index.
+
+        });
+      }
+    }
   }, {
     path: "/register",
     name: "Register",
-    component: _views_Register_vue__WEBPACK_IMPORTED_MODULE_7__.default
+    component: _views_Register_vue__WEBPACK_IMPORTED_MODULE_7__.default,
+    beforeEnter: function beforeEnter(to, from, next) {
+      if (!_store__WEBPACK_IMPORTED_MODULE_0__.default.getters["authentication/authenticated"]) {
+        next();
+      } else {
+        console.log("Redirecting to index");
+        next({
+          name: "Home" //As above so below
+
+        });
+      }
+    }
   }, {
     path: "/dashboard",
     name: "Dashboard",
@@ -3884,13 +3907,15 @@ __webpack_require__.r(__webpack_exports__);
 
         console.log(error.config);
       }).then(function (response) {
-        console.log("Login res:", response.data);
+        console.log("Login res:", response.data[0].original); //The response is an array comprising of the JWT (0) and the user (1). If I do not load in the user immediately, the push to the dashboard would get stuck waiting for the user.
+
         var JWT = {
-          token: response.data.access_token,
-          expiry: response.data.expires_in
+          token: response.data[0].original.access_token,
+          expiry: response.data[0].original.expires_in
         };
         window.$cookies.set("JWT", JWT);
         commit('LOGIN_USER', JWT);
+        commit('SET_USER', response.data[1].original);
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
           name: 'Dashboard'
         });
@@ -3917,11 +3942,16 @@ __webpack_require__.r(__webpack_exports__);
     logoutUser: function logoutUser(_ref4) {
       var commit = _ref4.commit,
           state = _ref4.state;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/logout').then(function () {
+      var config = {
+        headers: {
+          'Authorization': 'Bearer ' + state.JWT.token
+        }
+      };
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/logout', null, config).then(function () {
         window.$cookies.remove("JWT");
         commit('logoutUser');
         _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
-          name: 'Home'
+          name: 'Login'
         });
       });
     },
