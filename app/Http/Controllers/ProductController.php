@@ -81,7 +81,8 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
-        return new ProductResource($product);
+        $product = new ProductResource($product);
+        return response()->json($product);
     }
 
     /**
@@ -104,7 +105,15 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = Product::find($id);
+        $product->update([
+            'name' => $request['name'],
+            'description' => $request['description'],
+            'price' => $request['price'],
+            'user_id' => $request['user'],
+        ]);
+
+        return response()->json('Product update succesfully!');
     }
 
     /**
@@ -115,6 +124,9 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = Product::find($id);
+        $product->delete();
+
+        return response()->json('Product succesfully deleted!');
     }
 }

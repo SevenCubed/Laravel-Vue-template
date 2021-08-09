@@ -67,9 +67,9 @@ export default {
         if (this.product === undefined){
             this.$store.commit('loadingStatus', true)
             axios.get(`api/products/${this.$route.params.id}`).then((res)=>{
-                this.product = res.data.data
+                this.product = res.data
                 this.$store.commit('loadingStatus', false)
-                console.log('product was undefined, fetching data directly')
+                console.log('product was undefined, fetching data directly:', res.data)
             })
         }
     }

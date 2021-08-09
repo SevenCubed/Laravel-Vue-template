@@ -1,6 +1,6 @@
 <template>
 <div class="content">
-    <div ><h1 class="title">Add a new product</h1></div>
+    <div ><h1 class="title">Update Product</h1></div>
     <div class="">
         <label for="name">Name</label>
         <span v-if="errors.name">{{errors.name[0]}}</span>
@@ -16,14 +16,15 @@
         <textarea type="description" placeholder="???" v-model="form.description"></textarea>
     </div>
     <div class="container">
-        <TagInput @childUpdated="updateCategories" />
+        <TagInput @childUpdated="updateCategories" :startingTags="adCategories" />
         </div>
         {{selectedCategories}}
+        {{adCategories}}
     <div>
             <input type="file" multiple @change="selectFile" />
     </div>
     <div>
-        <button @click.prevent="addProduct" class="button" type="submit">Add</button></div>
+        <button @click.prevent="updateProduct" class="button" type="submit">Update</button></div>
 </div>
 </template>
 
@@ -41,6 +42,7 @@ export default {
     data() {
         return {
             form: {
+                id: '',
                 name: '',
                 description: '',
                 price: '',
@@ -62,26 +64,43 @@ export default {
         categories() {
           return this.$store.getters.categories;
         },
+        adCategories() {
+            // if(this.form.categories.length){
+            return this.form.categories.toString().split(" ");
+            // }
+        },
+    },
+    created() {
+        //isLoading?
+            axios
+                .get(`api/products/${this.$route.params.id}`)
+                .then((res) => {
+                    console.log(res)
+                    this.form = res.data;
+                });
     },
     methods:{
         updateCategories(updatedCategories){
             this.selectedCategories = updatedCategories
         },
-        addProduct(){
+        updateProduct(){
             this.form.user = this.user.id;
             this.form.categories = this.selectedCategories;
             const categoryJSON = JSON.stringify({
                 categories: this.selectedCategories
             });
+            console.log("Form:", this.form)
             const data = new FormData();
+            data.append('id', this.form.id)
             data.append('name', this.form.name)
             data.append('description', this.form.description)
             data.append('price', this.form.price)
             data.append('user', this.form.user)
             data.append('files', this.form.files)
             data.append('categories', categoryJSON)
-            console.log(this.form)
-            this.$store.dispatch('products/addProduct', data)
+            data.append('_method', 'PUT')
+            console.log("FormData:", data)
+            this.$store.dispatch('products/updateProduct', {'product': data, 'id': this.form.id})
         },
         selectFile(event) {
             const file = event.target.files[0];

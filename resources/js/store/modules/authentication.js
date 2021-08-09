@@ -98,7 +98,7 @@ export default {
                     token: response.data[0].original.access_token,
                     expiry: response.data[0].original.expires_in
                 };
-                window.$cookies.set("JWT", JWT);
+                window.$cookies.set("JWT", JWT, '14d');
                 commit('LOGIN_USER', JWT)
                 commit('SET_USER', response.data[1].original)
                 router.push({ name: 'Dashboard'})

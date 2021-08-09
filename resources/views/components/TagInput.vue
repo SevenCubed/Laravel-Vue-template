@@ -26,9 +26,10 @@ see: https://www.jotform.com/blog/html5-datalists-what-you-need-to-know-78024/
 //https://github.com/shentao/vue-multiselect
 */
 export default {
+  props: ['startingTags'],
   data () {
     return {
-      tags: [],
+      tags: this.startingTags || [],
       selectedCategories: [],
     }
   },

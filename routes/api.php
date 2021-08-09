@@ -35,12 +35,24 @@ Route::post('/users/store', [UserController::class, 'store'])->name('users.store
 Route::post('/users/ads', [UserController::class, 'ads'])->name('users.ads');
 
 //Categories
-Route::get('/categories', [ProductController::class, 'categories'])->name('products.index');
+Route::get('/categories', [ProductController::class, 'categories'])->name('categories.index');
 
 //Products
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('products/{product}',[ProductController::class, 'show'])->name('products.show');
-Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+// Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+// Route::get('products/{product}',[ProductController::class, 'show'])->name('products.show');
+// Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+
+// GET           /users                      index   users.index
+// GET           /users/create               create  users.create
+// POST          /users                      store   users.store
+// GET           /users/{user}               show    users.show
+// GET           /users/{user}/edit          edit    users.edit
+// PUT|PATCH     /users/{user}               update  users.update
+// DELETE        /users/{user}               destroy users.destroy
+
+Route::middleware('api')->group(function () {
+    Route::resource('products', ProductController::class);
+});
 
 //JWT
 Route::group([

@@ -27,7 +27,7 @@ axios.interceptors.response.use((response) => {
                         expiry: response.data.expires_in
                     };
                     // Put token in cookie
-                    window.$cookies.set("JWT", JWT);
+                    window.$cookies.set("JWT", JWT, '14d');
                     // Put Token in State
                     store.commit('authentication/LOGIN_USER', JWT)
                     // Reset headers
