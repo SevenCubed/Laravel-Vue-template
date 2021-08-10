@@ -1,6 +1,7 @@
 <template>
     <div>
 <h1 class="title">Dashboard</h1>
+<button class="button" @click="openSuccessAlert">SUCCESS</button>
 {{user.name}}
 {{user.email}}
       <router-link :to="{ name: 'Add Product' }" class="navbar-item">
@@ -39,12 +40,16 @@
         <!-- This shouldn't ever happen, but y'know -->
         Something went wrong, please refresh.
     </div>
+    <ModalRoot />
 </div>
 </template>
 
 <script setup>
+import { EventBus } from '../js/eventBus'
 
 import Spinner from 'vue-simple-spinner' //Custom package
+import ModalRoot from './components/ModalRoot'
+import Alert from './components/Alert';
 
 export default {
     data() {
@@ -54,6 +59,7 @@ export default {
     },
     components: {
         Spinner,
+        ModalRoot,
     },
     computed: {
         user() {
@@ -101,7 +107,13 @@ export default {
                 const i = this.ads.map(ad => ad.id).indexOf(id);
                 this.ads.splice(i, 1)
             })
-        }
+        },
+        openSuccessAlert () {
+            EventBus.$emit('open', {
+                component: Alert,
+                props: { text: 'Everything is working great!', type: 'error' }
+            })
+        },
     },
 };
 </script>
