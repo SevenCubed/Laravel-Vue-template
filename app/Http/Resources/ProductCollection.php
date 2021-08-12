@@ -16,7 +16,7 @@ class ProductCollection extends ResourceCollection
     {
         return [
             'products' => $this->collection,
-            'meta' => ['product_count' => $this->collection->count()],
+            // 'meta' => ['product_count' => $this->collection->count()],
         ];
     }
 }

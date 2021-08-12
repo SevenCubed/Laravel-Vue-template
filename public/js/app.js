@@ -2409,6 +2409,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _TagInput_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TagInput.vue */ "./resources/views/components/TagInput.vue");
+/* harmony import */ var _js_eventBus__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../js/eventBus */ "./resources/js/eventBus.js");
+//
+//
 //
 //
 //
@@ -2446,6 +2449,7 @@ Multi image
 Image preview?
 */
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2457,7 +2461,7 @@ Image preview?
         files: '',
         categories: []
       },
-      errors: [],
+      errors: {},
       selectedCategories: []
     };
   },
@@ -2504,6 +2508,14 @@ Image preview?
       //this.form.files = event.target.files[0];
 
     }
+  },
+  created: function created() {
+    var _this = this;
+
+    _js_eventBus__WEBPACK_IMPORTED_MODULE_1__.EventBus.$on('errors', function (data) {
+      console.log('Event Bus arrived:', data.data);
+      _this.errors = data.data.errors;
+    });
   }
 });
 
@@ -4343,6 +4355,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../router */ "./resources/js/router/index.js");
+/* harmony import */ var _eventBus__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../eventBus */ "./resources/js/eventBus.js");
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -4353,8 +4367,8 @@ __webpack_require__.r(__webpack_exports__);
   actions: {
     addProduct: function addProduct(_ref, product) {
       var commit = _ref.commit;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/products", product);
-      console.log("Add Product request:", product)["catch"](function (error) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/products", product) // console.log("Add Product request:", product)
+      ["catch"](function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -4366,13 +4380,18 @@ __webpack_require__.r(__webpack_exports__);
           console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.log("Error", error.message);
+          console.log("Error", error);
         }
 
-        console.log(error.config);
-      }).then(function (res) {
+        _eventBus__WEBPACK_IMPORTED_MODULE_2__.EventBus.$emit('errors', error.response);
+        console.log(error);
+        throw error;
+      }).then(function (response) {
         //currently doesn't care about errors, that's a problem
-        console.log(res);
+        console.log(response);
+        _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
+          name: 'Dashboard'
+        });
       });
     },
     updateProduct: function updateProduct(_ref2, _ref3) {
@@ -8457,10 +8476,6 @@ var render = function() {
     _c("div", {}, [
       _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
       _vm._v(" "),
-      _vm.errors.name
-        ? _c("span", [_vm._v(_vm._s(_vm.errors.name[0]))])
-        : _vm._e(),
-      _vm._v(" "),
       _c("input", {
         directives: [
           {
@@ -8480,7 +8495,13 @@ var render = function() {
             _vm.$set(_vm.form, "name", $event.target.value)
           }
         }
-      })
+      }),
+      _vm._v(" "),
+      _vm.errors.name
+        ? _c("span", { staticClass: "is-size-7 has-text-danger" }, [
+            _vm._v("*" + _vm._s(_vm.errors.name[0]))
+          ])
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c("div", {}, [
@@ -8505,15 +8526,17 @@ var render = function() {
             _vm.$set(_vm.form, "price", $event.target.value)
           }
         }
-      })
+      }),
+      _vm._v(" "),
+      _vm.errors.price
+        ? _c("span", { staticClass: "is-size-7 has-text-danger" }, [
+            _vm._v("*" + _vm._s(_vm.errors.price[0]))
+          ])
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c("div", {}, [
       _c("label", { attrs: { for: "description" } }, [_vm._v("Description")]),
-      _vm._v(" "),
-      _vm.errors.description
-        ? _c("span", [_vm._v(_vm._s(_vm.errors.description[0]))])
-        : _vm._e(),
       _vm._v(" "),
       _c("textarea", {
         directives: [
@@ -8534,21 +8557,41 @@ var render = function() {
             _vm.$set(_vm.form, "description", $event.target.value)
           }
         }
-      })
+      }),
+      _vm._v(" "),
+      _vm.errors.description
+        ? _c("span", { staticClass: "is-size-7 has-text-danger" }, [
+            _vm._v("*" + _vm._s(_vm.errors.description[0]))
+          ])
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c(
       "div",
       { staticClass: "container" },
-      [_c("TagInput", { on: { childUpdated: _vm.updateCategories } })],
+      [
+        _c("TagInput", { on: { childUpdated: _vm.updateCategories } }),
+        _vm._v(" "),
+        _vm.errors.categories
+          ? _c("span", { staticClass: "is-size-7 has-text-danger" }, [
+              _vm._v("*" + _vm._s(_vm.errors.categories[0]))
+            ])
+          : _vm._e()
+      ],
       1
     ),
-    _vm._v("\r\n        " + _vm._s(_vm.selectedCategories) + "\r\n    "),
+    _vm._v(" "),
     _c("div", [
       _c("input", {
         attrs: { type: "file", multiple: "" },
         on: { change: _vm.selectFile }
-      })
+      }),
+      _vm._v(" "),
+      _vm.errors.files
+        ? _c("span", { staticClass: "is-size-7 has-text-danger" }, [
+            _vm._v("*" + _vm._s(_vm.errors.files[0]))
+          ])
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c("div", [

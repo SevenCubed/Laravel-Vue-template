@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\HTTP\Requests\ProductStoreRequest;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
@@ -49,15 +50,12 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductStoreRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            // 'files' => 'required',
-        ]);
+        $validated = $request->validated();
         $product = Product::create([
-            'name' => $request['name'],
-            'description' => $request['description'],
+            'name' => $validated['name'],
+            'description' => $validated['description'],
             'price' => $request['price'],
             'user_id' => $request['user'],
             'status' => 'open',
@@ -65,11 +63,20 @@ class ProductController extends Controller
         $categories = json_decode($request['categories'],true);
         $product->categories()->sync($categories['categories']);
         $name = $product->id . '-' . time();
-        $request['files']->move(public_path('img/'), $name);
-        $image = Image::create([
-            'product_image_path' => ('img/' . $name),
-            'product_id' => $product->id,
-        ]);
+        if ($validated['files']){
+            $validated['files']->move(public_path('img/'), $name);
+            $image = Image::create([
+                'product_image_path' => ('img/' . $name),
+                'product_id' => $product->id,
+            ]);
+        }
+        else {
+            $image = Image::create([
+                'product_image_path' => ('img/placeholder'),
+                'product_id' => $product->id,
+            ]);
+        }
+        return response()->json('Success! (I think)');
     }
 
     /**
@@ -105,6 +112,10 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required',
+            // 'files' => 'required',
+        ]);
         $product = Product::find($id);
         $product->update([
             'name' => $request['name'],
