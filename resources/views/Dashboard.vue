@@ -1,7 +1,6 @@
 <template>
     <div>
 <h1 class="title">Dashboard</h1>
-<button class="button" @click="openSuccessAlert">SUCCESS</button>
 {{user.name}}
 {{user.email}}
       <router-link :to="{ name: 'Add Product' }" class="navbar-item">
@@ -27,8 +26,23 @@
                     <i class="fas fa-edit"></i>
                 </router-link>
                 </div>
-                <i class="fas fa-trash-alt column is-clickable" @click="deleteAd(ad.id)"></i>
+                <i class="fas fa-trash-alt column is-clickable" @click="deleteModal(ad)"></i>            
             </div>
+        <div class="modal" :class="{'is-active': showModalFlag}">
+            <div class="modal-background">
+            </div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                </header>
+                <section class="modal-card-body">
+                    <p>Are you sure you wish to remove your advertisement for {{ ad.name }}? This process is irreversible.</p>
+                </section>
+                <footer class="modal-card-foot">
+                <button class="button is-success" @click="deleteConfirm(ad.id)">Confirm</button>
+                <button class="button" @click="deleteCancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
     </div>
     <div v-if="!ads.length && !isLoading">
         You are not currently selling anything! Have you considered doing so?
@@ -40,7 +54,6 @@
         <!-- This shouldn't ever happen, but y'know -->
         Something went wrong, please refresh.
     </div>
-    <ModalRoot />
 </div>
 </template>
 
@@ -48,18 +61,18 @@
 import { EventBus } from '../js/eventBus'
 
 import Spinner from 'vue-simple-spinner' //Custom package
-import ModalRoot from './components/ModalRoot'
 import Alert from './components/Alert';
 
 export default {
     data() {
         return{
             ads: false,
+            showModalFlag: false,
+            ad: "",
         }    
     },
     components: {
         Spinner,
-        ModalRoot,
     },
     computed: {
         user() {
@@ -99,6 +112,24 @@ export default {
             });
     },
     methods: {
+        deleteModal(ad) {
+            this.ad = ad;
+            this.showModalFlag = true;
+        },
+        deleteConfirm(id) {
+            axios
+            .delete(`api/products/${id}`)
+            .then(response => {
+                console.log(response)
+                const i = this.ads.map(ad => ad.id).indexOf(id);
+                this.ads.splice(i, 1)
+                this.showModalFlag = false;
+            })
+        },
+        deleteCancel() {
+            this.showModalFlag = false;
+            this.ad = "";
+        },
         deleteAd(id){
             axios
             .delete(`api/products/${id}`)
@@ -106,12 +137,6 @@ export default {
                 console.log(response)
                 const i = this.ads.map(ad => ad.id).indexOf(id);
                 this.ads.splice(i, 1)
-            })
-        },
-        openSuccessAlert () {
-            EventBus.$emit('open', {
-                component: Alert,
-                props: { text: 'Everything is working great!', type: 'error' }
             })
         },
     },

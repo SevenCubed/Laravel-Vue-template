@@ -60,8 +60,7 @@ class ProductController extends Controller
             'user_id' => $request['user'],
             'status' => 'open',
         ]);
-        $categories = json_decode($request['categories'],true);
-        $product->categories()->sync($categories['categories']);
+        $product->categories()->sync($validated['categories']);
         $name = $product->id . '-' . time();
         if ($validated['files']){
             $validated['files']->move(public_path('img/'), $name);
@@ -110,21 +109,22 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProductStoreRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required',
-            // 'files' => 'required',
-        ]);
+        // $request->validate([
+        //     'name' => 'required',
+        //     // 'files' => 'required',
+        // ]);
+        $validated = $request->validated();
         $product = Product::find($id);
         $product->update([
-            'name' => $request['name'],
-            'description' => $request['description'],
-            'price' => $request['price'],
-            'user_id' => $request['user'],
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'price' => $validated['price'],
+            'user_id' => $validated['user'],
         ]);
 
-        return response()->json('Product update succesfully!');
+        return response()->json('Product updated succesfully!');
     }
 
     /**

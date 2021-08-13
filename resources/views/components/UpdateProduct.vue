@@ -3,25 +3,29 @@
     <div ><h1 class="title">Update Product</h1></div>
     <div class="">
         <label for="name">Name</label>
-        <span v-if="errors.name">{{errors.name[0]}}</span>
         <input type="text" placeholder="Name" v-model="form.name">
+        <span class="is-size-7 has-text-danger" v-if="errors.name">*{{errors.name[0]}}</span>
     </div>
     <div class="">
         <label for="price">Price</label>
         <input type="number" placeholder="0" v-model="form.price" name="price">
+                <span class="is-size-7 has-text-danger" v-if="errors.price">*{{errors.price[0]}}</span>
+
     </div>
     <div class="">
         <label for="description">Description</label>
-                <span v-if="errors.description">{{errors.description[0]}}</span>
         <textarea type="description" placeholder="???" v-model="form.description"></textarea>
+                <span class="is-size-7 has-text-danger" v-if="errors.description">*{{errors.description[0]}}</span>
+
     </div>
     <div class="container">
         <TagInput @childUpdated="updateCategories" :startingTags="adCategories" />
+                <span class="is-size-7 has-text-danger" v-if="errors.categories">*{{errors.categories[0]}}</span>
         </div>
-        {{selectedCategories}}
         {{adCategories}}
     <div>
             <input type="file" multiple @change="selectFile" />
+                <span class="is-size-7 has-text-danger" v-if="errors.files">*{{errors.files[0]}}</span>
     </div>
     <div>
         <button @click.prevent="updateProduct" class="button" type="submit">Update</button></div>
@@ -37,6 +41,7 @@ Image preview?
 */
 
 import TagInput from './TagInput.vue'
+import { EventBus } from '../../js/eventBus'
 
 export default {
     data() {
@@ -50,7 +55,7 @@ export default {
                 files: '',
                 categories: [],
             },
-        errors: [],
+        errors: {},
         selectedCategories: [],
         }
     },
@@ -72,12 +77,16 @@ export default {
     },
     created() {
         //isLoading?
+            EventBus.$on('errors', (data) => {
+                console.log('Event Bus arrived:', data.data)
+                this.errors = data.data.errors
+            })
             axios
                 .get(`api/products/${this.$route.params.id}`)
                 .then((res) => {
                     console.log(res)
                     this.form = res.data;
-                });
+            });
     },
     methods:{
         updateCategories(updatedCategories){

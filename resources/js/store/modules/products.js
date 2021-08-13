@@ -53,10 +53,13 @@ export default {
                         // Something happened in setting up the request that triggered an Error
                         console.log("Error", error.message);
                     }
+                    EventBus.$emit('errors', error.response)
                     console.log(error.config)
+                    throw error
                 })
                 .then((res) => { //currently doesn't care about errors, that's a problem
                     console.log(res)
+                    router.push({ name: 'Dashboard'});
                 })
         },
     }

@@ -14,6 +14,9 @@
             <div class="column is-three-quarters">
                 <div class="box">
                     <h1 class='title is-5 is-capitalized'>{{product.name}}</h1>
+                    <div v-if="product.user.id == currentUser.id">This is YOUR ad!
+                        <router-link class="is-capitalized" :to="{name: 'Update Product', params: { id: product.id }}">Edit?</router-link>
+                    </div>
                     <p class="has-text-grey is-size-7"><i class="fas fa-clock"></i> since {{product.created_at}}</p>
                     €{{product.price}}
                     <figure class="image is-4by3">
@@ -53,6 +56,9 @@ export default {
         }
     },
     computed: {
+        currentUser() {
+            return this.$store.getters['authentication/activeUser'];
+        },
         isLoading () {
             return this.$store.getters.isLoading;
         },

@@ -17,6 +17,16 @@ class ProductStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'categories' => json_decode($this->categories,true), //convert to array
+        ]);
+        $this->merge([
+            'categories' => $this->categories['categories'], //strip the weird outer array shell
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -27,7 +37,10 @@ class ProductStoreRequest extends FormRequest
         return [
             'name' => 'required',
             'files' => 'mimes:jpg,png,jpeg,gif,svg',
+            'price' => 'required|gte:1',
             'description' => 'min:5',
+            'user' => 'required',
+            'categories' => 'array|min:1',
         ];
     }
     
@@ -37,9 +50,12 @@ class ProductStoreRequest extends FormRequest
             'name.min' => "A name needs to be at least 5 characters",
             'name.max' => "A name can/'t be more than X characters",
             'description' => "Description pls",
-            'price' => "Price pls",
+            'price.required' => "A price is required",
+            'price.gte' => "The price can't be lower than 1",
             'files.required' => "You must add at least one image",
             'files.image' => "This isn't an image file, chief.",
+            'categories.min' => "Please add at least one category",
+            'user_id.required' => "Something went wrong, please refresh and try again.",
         ];
     }
 }
