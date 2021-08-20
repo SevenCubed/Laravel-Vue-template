@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\BidController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -52,6 +53,9 @@ Route::get('/categories', [ProductController::class, 'categories'])->name('categ
 
 Route::middleware('api')->group(function () {
     Route::resource('products', ProductController::class);
+});
+Route::middleware('api')->group(function () {
+    Route::resource('bids', BidController::class);
 });
 
 //JWT

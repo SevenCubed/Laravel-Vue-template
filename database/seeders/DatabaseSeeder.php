@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Category;
-use App\Models\Order;
+use App\Models\Bid;
 use App\Models\Image;
 
 
@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $users = User::factory(50)->create();
         $categories = Category::factory(15)->create();
         $products = Product::factory(100)->make();
-        $orders = Order::factory(20)->make();
+        $bids = Bid::factory(20)->make();
         $products->each(function (Product $p) use ($users, $categories) {
             $p->user()->associate($users->random());
             $p->save();
@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             $image->save();
             $p->categories()->sync($categories->random());
         });
-        $orders->each(function (Order $o) use ($users, $products) {
+        $bids->each(function (Bid $o) use ($users, $products) {
             $o->user()->associate($users->random());
             $o->product()->associate($products->random());
             $o->save();

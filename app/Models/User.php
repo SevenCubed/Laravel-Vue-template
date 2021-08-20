@@ -46,6 +46,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Product::class);
     }
+    public function bids()
+    {
+        return $this->hasMany(Bid::class);
+    }
     /** JWT stuff
     * @return mixed
     */

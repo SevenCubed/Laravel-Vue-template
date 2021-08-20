@@ -65,6 +65,7 @@ export default {
       },
   },
   mounted() {
+    console.log("Starting Tags:", this.tags)
     if(!this.categories.length){
       console.log('Categories empty. Fetching...')
       this.$store.dispatch("fetchCategories");

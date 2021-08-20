@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Order;
+use App\Models\Bid;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OrderFactory extends Factory
+class BidFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Order::class;
+    protected $model = Bid::class;
 
     /**
      * Define the model's default state.
@@ -22,7 +22,8 @@ class OrderFactory extends Factory
     public function definition()
     {
         return [
-            'status' => 'in transit'
+            'status' => 'open',
+            'amount' => $this->faker->randomNumber(3,false),
         ];
     }
 }

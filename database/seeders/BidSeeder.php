@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Order;
+use App\Models\Bid;
 
 
-class OrderSeeder extends Seeder
+class BidSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +15,7 @@ class OrderSeeder extends Seeder
      */
     public function run()
     {
-        Order::factory(10)
+        Bid::factory(10)
         ->hasProduct(1)
         ->hasUser(1)
         ->create();

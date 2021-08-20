@@ -19,7 +19,7 @@
 
     </div>
     <div class="container">
-        <TagInput @childUpdated="updateCategories" :startingTags="adCategories" />
+        <TagInput @childUpdated="updateCategories" :startingTags="form.categories.toString().split(' ')" />
                 <span class="is-size-7 has-text-danger" v-if="errors.categories">*{{errors.categories[0]}}</span>
         </div>
         {{adCategories}}

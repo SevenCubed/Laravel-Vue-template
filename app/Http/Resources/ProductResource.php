@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\BidResource;
 
 class ProductResource extends JsonResource
 {
@@ -27,6 +28,8 @@ class ProductResource extends JsonResource
             'categories' => $this->categories[0]->name,
             'created_at' => $this->created_at->format('j F Y, H:i'),
             'updated_at' => $this->updated_at,
+            // 'bids' => [ 'id' => $this->bids->id, 'amount' => $this->bids->amount, 'timestamp' => $this->bids->updated_at->format('j F Y'), 'user' => $this->bids()->user->name ],
+            'bids' => BidResource::collection($this->bids),
         ];
     }
 }
