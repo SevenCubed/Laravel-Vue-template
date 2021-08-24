@@ -18,6 +18,15 @@ class BidController extends Controller
         $bid = Bid::create($request->all());
         return response()->json(['message' => 'Bid placed!', 'new_bid' => new BidResource($bid)]);
     }
+    public function update(Request $request, $id)
+    {
+        $bid = Bid::find($id);
+        $bid->update([
+            'amount' => $request['amount'],
+        ]);
+
+        return response()->json('Bid updated succesfully!');
+    }
     public function destroy($id)
     {
         $product = Bid::find($id);

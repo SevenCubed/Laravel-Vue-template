@@ -3116,6 +3116,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
  //Custom package
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -3134,7 +3140,8 @@ __webpack_require__.r(__webpack_exports__);
         bid: ''
       },
       isBidding: false,
-      isSuccess: false
+      isSuccess: false,
+      editOpen: false
     };
   },
   computed: {
@@ -3155,6 +3162,11 @@ __webpack_require__.r(__webpack_exports__);
       var diff = Math.floor((current - user) / (1000 * 60 * 60 * 24)); //milli to secs, secs to mins, mins to hours, hours to days
 
       return "Active for ".concat(diff, " days.");
+    },
+    orderedBids: function orderedBids() {
+      return this.product.bids.sort(function (a, b) {
+        return b.amount - a.amount;
+      });
     }
   },
   methods: {
@@ -3164,7 +3176,7 @@ __webpack_require__.r(__webpack_exports__);
       this.successes.bid = '';
       this.isBidding = true;
 
-      if (bid <= this.product.price) {
+      if (bid < this.product.price) {
         this.errors.bid = "Your bid is too low.";
         this.isBidding = false;
       } else {
@@ -3201,17 +3213,54 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.successes.bid = response.data;
       });
+    },
+    updateBid: function updateBid() {
+      var _this3 = this;
+
+      if (this.placedBid < this.product.price) {
+        this.errors.bid = "Your bid is too low.";
+        this.isBidding = false;
+      } else {
+        this.isBidding = true;
+        var data = new FormData();
+        data.append('amount', this.placedBid);
+        data.append('_method', 'PUT');
+        var i = this.product.bids.map(function (bid) {
+          return bid.user_id;
+        }).indexOf(this.currentUser.id);
+        var updatedBid = this.product.bids[i].id;
+        axios.post("api/bids/".concat(updatedBid), data) //Same as with product, has to be post + formdata or a 404 is thrown.
+        .then(function (response) {
+          console.log(response);
+          _this3.errors.bid = '';
+          _this3.isBidding = false; // this.editOpen = false;
+
+          _this3.isSuccess = true;
+          _this3.product.bids[i].amount = _this3.placedBid;
+          _this3.successes.bid = response.data;
+        });
+      }
+    },
+    toggleEdit: function toggleEdit() {
+      if (!this.editOpen) {
+        var i = this.product.bids.map(function (bid) {
+          return bid.user_id;
+        }).indexOf(this.currentUser.id);
+        this.placedBid = this.product.bids[i].amount;
+      }
+
+      this.editOpen = !this.editOpen;
     }
   },
   created: function created() {
-    var _this3 = this;
+    var _this4 = this;
 
     if (this.product === undefined) {
       this.$store.commit('loadingStatus', true);
       axios.get("api/products/".concat(this.$route.params.id)).then(function (res) {
-        _this3.product = res.data;
+        _this4.product = res.data;
 
-        _this3.$store.commit('loadingStatus', false);
+        _this4.$store.commit('loadingStatus', false);
 
         console.log('product was undefined, fetching data directly:', res.data);
       });
@@ -9489,7 +9538,7 @@ var render = function() {
                               "is-success": _vm.isSuccess
                             },
                             attrs: {
-                              disabled: "",
+                              disabled: !_vm.editOpen || _vm.isSuccess,
                               type: "number",
                               placeholder: ""
                             },
@@ -9516,47 +9565,73 @@ var render = function() {
                         ])
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "field columns" }, [
-                        _c("div", { staticClass: "column" }, [
-                          _c(
-                            "button",
-                            {
-                              staticClass:
-                                "button is-fullwidth is-warning is-light",
-                              class: {
-                                "is-loading": _vm.isBidding,
-                                "is-success is-static": _vm.isSuccess
-                              },
-                              on: {
-                                click: function($event) {
-                                  return _vm.placeBid(_vm.placedBid)
-                                }
-                              }
-                            },
-                            [_vm._v("Edit")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "column" }, [
-                          _c(
-                            "button",
-                            {
-                              staticClass:
-                                "button is-fullwidth is-danger is-light",
-                              class: {
-                                "is-loading": _vm.isBidding,
-                                "is-success is-static": _vm.isSuccess
-                              },
-                              on: {
-                                click: function($event) {
-                                  return _vm.removeBid()
-                                }
-                              }
-                            },
-                            [_vm._v("Withdraw")]
-                          )
-                        ])
-                      ]),
+                      !_vm.editOpen
+                        ? _c("div", { staticClass: "field columns" }, [
+                            _c("div", { staticClass: "column" }, [
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "button is-fullwidth is-warning is-light",
+                                  class: {
+                                    "is-loading": _vm.isBidding,
+                                    "is-success is-static": _vm.isSuccess
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.toggleEdit()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Edit")]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "column" }, [
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "button is-fullwidth is-danger is-light",
+                                  class: {
+                                    "is-loading": _vm.isBidding,
+                                    "is-success is-static": _vm.isSuccess
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.removeBid()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Withdraw")]
+                              )
+                            ])
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.editOpen
+                        ? _c("div", { staticClass: "field columns" }, [
+                            _c("div", { staticClass: "column" }, [
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "button is-fullwidth is-warning is-light",
+                                  class: {
+                                    "is-loading": _vm.isBidding,
+                                    "is-success is-static": _vm.isSuccess
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.updateBid()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Edit Bid")]
+                              )
+                            ])
+                          ])
+                        : _vm._e(),
                       _vm._v(" "),
                       _vm.successes.bid
                         ? _c(
@@ -9572,7 +9647,7 @@ var render = function() {
                   ? _c(
                       "div",
                       { staticClass: "block" },
-                      _vm._l(_vm.product.bids, function(bid) {
+                      _vm._l(_vm.orderedBids, function(bid) {
                         return _c(
                           "div",
                           {

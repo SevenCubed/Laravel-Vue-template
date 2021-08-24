@@ -36,7 +36,7 @@
                     <p class="i-7">This is where I put the link to filter all ads for this user, and possibly data about their verification status, location and preferred payment methods.
                     </p>
                 </div>
-                <!-- Bids -->
+                <!-- Bids - this should probably be a component, it grew waaaay more bloated than I expected. Too bad! -->
                 <div class="box">
                     <!-- User hasnt bid yet -->
                     <div class="block" v-if="!userHasBid">
@@ -73,26 +73,32 @@
                         </div>
                         <div class="field">
                             <div class="control has-icons-left">
-                            <input disabled class="input" type="number" placeholder="" v-model="placedBid" :class="{'is-danger' : errors.bid, 'is-success' : isSuccess}">
+                            <input :disabled="!editOpen || isSuccess" class="input" type="number" placeholder="" v-model="placedBid" :class="{'is-danger' : errors.bid, 'is-success' : isSuccess}">
                             <span v-if="errors.bid" class="has-text-danger is-size-7">{{errors.bid}}</span>
                             <span class="icon is-small is-left">
                                 <i class="fas fa-euro-sign"></i>
                             </span>
                             </div>
                         </div>
-                        <div class="field columns">
+                        <!-- Delete/Edit buttons -->
+                        <div v-if="!editOpen" class="field columns">
                             <div class="column">
-                            <button class="button is-fullwidth is-warning is-light" @click="placeBid(placedBid)" :class="{'is-loading' : isBidding, 'is-success is-static' : isSuccess}">Edit</button>
+                            <button class="button is-fullwidth is-warning is-light" @click="toggleEdit()" :class="{'is-loading' : isBidding, 'is-success is-static' : isSuccess}">Edit</button>
                             </div>
                             <div class="column">
                             <button class="button is-fullwidth is-danger is-light" @click="removeBid()" :class="{'is-loading' : isBidding, 'is-success is-static' : isSuccess}">Withdraw</button>
+                            </div>
+                        </div>
+                        <div v-if="editOpen" class="field columns">
+                            <div class="column">
+                                <button class="button is-fullwidth is-warning is-light" @click="updateBid()" :class="{'is-loading' : isBidding, 'is-success is-static' : isSuccess}">Edit Bid</button>
                             </div>
                         </div>
                         <span v-if="successes.bid" class="has-text-success is-size-7">{{successes.bid}}</span>
                     </div>
                     <!-- All Bids -->
                     <div class="block" v-if="product.bids.length">
-                        <div class="columns is-multiline is-size-7" v-for="bid in product.bids" :key="bid.id" :class="{'has-text-info': currentUser.id == bid.user_id}">
+                        <div class="columns is-multiline is-size-7" v-for="bid in orderedBids" :key="bid.id" :class="{'has-text-info': currentUser.id == bid.user_id}">
                                 <div class="column is-half has-text-weight-semibold has-text-left">
                                     {{bid.user}}
                                 </div>
@@ -134,6 +140,7 @@ export default {
             },
             isBidding: false,
             isSuccess: false,
+            editOpen: false,
         }
     },
     computed: {
@@ -152,12 +159,17 @@ export default {
             let diff = Math.floor((current-user)/(1000*60*60*24)) //milli to secs, secs to mins, mins to hours, hours to days
             return `Active for ${diff} days.`
         },
+        orderedBids () {
+            return this.product.bids.sort((a, b) => {
+                return b.amount - a.amount
+            })
+        },
     },
     methods: {
         placeBid(bid) {
             this.successes.bid = '';
             this.isBidding = true;
-            if(bid <= this.product.price){
+            if(bid < this.product.price){
                 this.errors.bid = "Your bid is too low.";
                 this.isBidding = false;
             }
@@ -190,7 +202,38 @@ export default {
                 this.product.bids.splice(i, 1)
                 this.successes.bid = response.data;
             })
-        }
+        },
+        updateBid() {
+             if(this.placedBid < this.product.price){
+                this.errors.bid = "Your bid is too low.";
+                this.isBidding = false;
+            }
+            else {
+                this.isBidding = true;
+                const data = new FormData();
+                data.append('amount', this.placedBid)
+                data.append('_method', 'PUT')
+                const i = this.product.bids.map(bid => bid.user_id).indexOf(this.currentUser.id);
+                const updatedBid = this.product.bids[i].id
+                axios.post(`api/bids/${updatedBid}`, data) //Same as with product, has to be post + formdata or a 404 is thrown.
+                    .then(response => {
+                    console.log(response)
+                    this.errors.bid = '';
+                    this.isBidding = false;
+                    // this.editOpen = false;
+                    this.isSuccess = true;
+                    this.product.bids[i].amount = this.placedBid
+                    this.successes.bid = response.data;
+                })
+            }
+        },
+        toggleEdit() {
+            if(!this.editOpen) {
+            const i = this.product.bids.map(bid => bid.user_id).indexOf(this.currentUser.id)
+            this.placedBid = this.product.bids[i].amount
+            }
+            this.editOpen = !this.editOpen;
+        },
     },
     created(){
         if (this.product === undefined){
