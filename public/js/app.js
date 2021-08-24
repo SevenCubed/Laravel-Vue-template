@@ -3907,7 +3907,7 @@ axios__WEBPACK_IMPORTED_MODULE_0___default().interceptors.response.use(function 
   } // If there's a 500 on the refresh, the token has expired past it's refresh_ttl.
 
 
-  if (error.response.status === 500 && originalRequest.url.includes("api/auth/refresh")) {
+  if (error.response.status === 500 && originalRequest.url.includes("api/auth/refresh") || error.response.status === 401 && originalRequest._retry) {
     console.log('Tried again, failed, invalid token.', originalRequest.url);
     window.$cookies.remove("JWT");
     this.$store.commit('authentication/logoutUser'); //reset the auth state

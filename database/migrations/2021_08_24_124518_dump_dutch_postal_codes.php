@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class DumpDutchPostalCodes extends Migration
 {
@@ -13,10 +14,7 @@ class DumpDutchPostalCodes extends Migration
      */
     public function up()
     {
-        Schema::create('my_table', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        DB::unprepared( file_get_contents( "database/seeders/4pp.sql" ) );
     }
 
     /**
@@ -26,6 +24,6 @@ class DumpDutchPostalCodes extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('my_table');
+        Schema::dropIfExists('4pp');
     }
 }
