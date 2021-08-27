@@ -9,6 +9,8 @@ use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Resources\UserResource;
+
 
 class AuthController extends Controller
 {
@@ -46,7 +48,8 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json( $this->guard()->user());
+        $user = new UserResource($this->guard()->user());
+        return response()->json($user);
     }
     
     /**

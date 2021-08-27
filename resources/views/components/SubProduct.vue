@@ -33,7 +33,8 @@
                 <div class="box">
                     <p class="title is-6">{{product.user.name}}</p>
                     <p class="is-7">{{userActive}}</p>
-                    <p class="i-7">This is where I put the link to filter all ads for this user, and possibly data about their verification status, location and preferred payment methods.
+                    <p class="is-7">{{product.user.location}}</p>
+                    <p class="is-7">This is where I put the link to filter all ads for this user, and possibly data about their verification status, location and preferred payment methods.
                     </p>
                 </div>
                 <!-- Bids - this should probably be a component, it grew waaaay more bloated than I expected. Too bad! -->
@@ -144,6 +145,7 @@ export default {
         }
     },
     computed: {
+        //TODO Add Geodistance measurement
         currentUser() {
             return this.$store.getters['authentication/activeUser'];
         },

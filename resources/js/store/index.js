@@ -3,6 +3,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import authentication from "./modules/authentication";
 import products from "./modules/products";
+import { geoDistance } from '../../js/helpers/math'
 
 Vue.use(Vuex);
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
         filters: {
             categories: [],
             price: [],
+            distance: [],
             user: [],
             search: '',
             order: 'default'
@@ -58,11 +60,13 @@ export default new Vuex.Store({
         FILTER_PRODUCTS(state) {
             console.time("filtering")
             state.filteredProducts = state.products.products;
+            //CATEGORIES
             if (state.filters.categories.length) { //Filter categories by filtering the list based on if the products include the filtered categories
                 state.filteredProducts = state.filteredProducts.filter(product => {
                     return state.filters.categories.includes(product.categories)
                 });
             }
+            //PRICE
             if (state.filters.price.length) { //Filter prices by checking if the products are within any of the selected ranges. 
                 let range = state.filters.price;
                 if (range[1] == 1000) {
@@ -73,6 +77,19 @@ export default new Vuex.Store({
                     //     return product.price >= range[0] && product.price <= range[1]
                     // }) Old system when it was checkmarks and not a slider
                     return product.price >= range[0] && product.price <= range[1]
+                });
+            }
+            //LOCATION
+            if (state.filters.distance.length) { 
+                let range = state.filters.distance;
+                if (range[1] == 1000) {
+                    range[1] = Infinity; //If the upper limit is set at the max, go to infinity and beyond
+                }
+                const userCoordinates = this.getters['authentication/activeUser'].coordinates;
+                state.filteredProducts = state.filteredProducts.filter(product => {
+                    const distance = geoDistance(userCoordinates[0], product.user.coordinates[0], userCoordinates[1], product.user.coordinates[1]) / 1000 //m to km
+                    console.log(product.user.location, distance)
+                    return distance >= range[0] && distance <= range[1]
                 });
             }
             if (state.filters.search !== '') {

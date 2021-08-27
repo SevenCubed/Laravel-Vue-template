@@ -11,21 +11,22 @@
         >        
         <br>
         <br>
-        <div class="content">
-        <h1 class="is-size-6 has-text-weight-bold">Questions</h1>
-            <ul class="is-size-7">
-                <li>Navigation guard for login?</li>
-                <li></li>
-            </ul>
-            </div>
+        <!-- Price -->
             <div class="">
             <h1 class="is-size-6 has-text-weight-bold">Prices</h1>
             <Vue-slider v-model="sliderValue" :enable-cross="false" :min="0" :max="1000" :interval="1" @change="priceSliderDebounced()"/>
             <!-- https://nightcatsama.github.io/vue-slider-component/#/basics/simple -->
             {{sliderValue}}
             </div>
+            <!-- Distance TODO: Add custom postal code/guest postal code input/checkmark for 'use my own location'-->
+            <div class="">
+            <h1 class="is-size-6 has-text-weight-bold">Distance</h1>
+            <Vue-slider v-model="slider2Value" :enable-cross="false" :min="0" :max="421" :interval="1" @change="distanceSliderDebounced()"/>
+            {{slider2Value}}
+            </div>
             <br>
             <div class="">
+                <!-- Categories -->
             <h1 class="is-size-6 has-text-weight-bold">Categories</h1>
             <ul class="is-size-7" v-if="categories">
                 <li class="is-capitalized is-size-7" v-for="(category, index) in categories" :key="category.id" v-if="index < limits[0][0]">
@@ -93,6 +94,7 @@ Sort algorithm https://medium.com/@rajat_m/implement-5-sorting-algorithms-using-
 */
 
 import { debounce } from '../../js/helpers/index'
+import { geoDistance } from '../../js/helpers/math'
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
 
@@ -111,6 +113,7 @@ export default
             filters: {
                 categories: [],
                 price: [],
+                distance: [],
                 user: [],
                 search: '',
                 order: '',
@@ -120,6 +123,7 @@ export default
                 [5, 5],  //price
             ],
             sliderValue: [0,1000],
+            slider2Value: [0,421],
             orderOpen: false,
         };
     },
@@ -153,10 +157,14 @@ export default
                     return 'Default'
             }
         },
+        test() {
+            return navigator.geolocation.getCurrentLocation
+        },
     },
     created() {
         this.searchDebounced = debounce(this.search, 500);
         this.priceSliderDebounced = debounce(this.priceSlider, 500);
+        this.distanceSliderDebounced = debounce(this.distanceSlider, 500);
     },
     methods: {
         filterByCategory (category) {
@@ -178,6 +186,10 @@ export default
         },
         priceSlider(){
             this.filters.price = this.sliderValue
+            this.$store.dispatch("updateFilters", this.filters)
+        },
+        distanceSlider(){
+            this.filters.distance = this.slider2Value
             this.$store.dispatch("updateFilters", this.filters)
         },
         closeOrderDropDown (e) {

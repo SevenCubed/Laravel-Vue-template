@@ -1966,6 +1966,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
  //Custom package
 
@@ -2793,9 +2794,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _js_helpers_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../js/helpers/index */ "./resources/js/helpers/index.js");
-/* harmony import */ var vue_slider_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-slider-component */ "./node_modules/vue-slider-component/dist/vue-slider-component.umd.min.js");
-/* harmony import */ var vue_slider_component__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_slider_component__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var vue_slider_component_theme_default_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-slider-component/theme/default.css */ "./node_modules/vue-slider-component/theme/default.css");
+/* harmony import */ var _js_helpers_math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../js/helpers/math */ "./resources/js/helpers/math.js");
+/* harmony import */ var vue_slider_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-slider-component */ "./node_modules/vue-slider-component/dist/vue-slider-component.umd.min.js");
+/* harmony import */ var vue_slider_component__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_slider_component__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var vue_slider_component_theme_default_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-slider-component/theme/default.css */ "./node_modules/vue-slider-component/theme/default.css");
+//
 //
 //
 //
@@ -2891,6 +2894,7 @@ Sort algorithm https://medium.com/@rajat_m/implement-5-sorting-algorithms-using-
 
 
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2903,6 +2907,7 @@ Sort algorithm https://medium.com/@rajat_m/implement-5-sorting-algorithms-using-
       filters: {
         categories: [],
         price: [],
+        distance: [],
         user: [],
         search: '',
         order: ''
@@ -2911,11 +2916,12 @@ Sort algorithm https://medium.com/@rajat_m/implement-5-sorting-algorithms-using-
       [5, 5] //price
       ],
       sliderValue: [0, 1000],
+      slider2Value: [0, 421],
       orderOpen: false
     };
   },
   components: {
-    VueSlider: (vue_slider_component__WEBPACK_IMPORTED_MODULE_1___default())
+    VueSlider: (vue_slider_component__WEBPACK_IMPORTED_MODULE_2___default())
   },
   mounted: function mounted() {
     this.$store.dispatch("fetchCategories");
@@ -2947,11 +2953,15 @@ Sort algorithm https://medium.com/@rajat_m/implement-5-sorting-algorithms-using-
         default:
           return 'Default';
       }
+    },
+    test: function test() {
+      return navigator.geolocation.getCurrentLocation;
     }
   },
   created: function created() {
     this.searchDebounced = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.search, 500);
     this.priceSliderDebounced = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.priceSlider, 500);
+    this.distanceSliderDebounced = (0,_js_helpers_index__WEBPACK_IMPORTED_MODULE_0__.debounce)(this.distanceSlider, 500);
   },
   methods: {
     filterByCategory: function filterByCategory(category) {
@@ -2973,6 +2983,10 @@ Sort algorithm https://medium.com/@rajat_m/implement-5-sorting-algorithms-using-
     },
     priceSlider: function priceSlider() {
       this.filters.price = this.sliderValue;
+      this.$store.dispatch("updateFilters", this.filters);
+    },
+    distanceSlider: function distanceSlider() {
+      this.filters.distance = this.slider2Value;
       this.$store.dispatch("updateFilters", this.filters);
     },
     closeOrderDropDown: function closeOrderDropDown(e) {
@@ -3122,6 +3136,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
  //Custom package
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -3145,6 +3160,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   computed: {
+    //TODO Add Geodistance measurement
     currentUser: function currentUser() {
       return this.$store.getters['authentication/activeUser'];
     },
@@ -3690,6 +3706,36 @@ var debounce = function debounce(func, wait) {
 
 /***/ }),
 
+/***/ "./resources/js/helpers/math.js":
+/*!**************************************!*\
+  !*** ./resources/js/helpers/math.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "geoDistance": () => (/* binding */ geoDistance)
+/* harmony export */ });
+function geoDistance(latBuyer, latSeller, lonBuyer, lonSeller) {
+  //φ and λ just look much more *mathematical* than phi and lam, but too bad.
+  var R = 6371000; //Radius of the Earth, in m
+
+  var phiBuyer = latBuyer * Math.PI / 180; //conversion to radians
+
+  var phiSeller = latSeller * Math.PI / 180;
+  var dPhi = (latSeller - latBuyer) * (Math.PI / 180);
+  var dLam = (lonSeller - lonBuyer) * (Math.PI / 180);
+  var a = Math.pow(Math.sin(dPhi / 2), 2) + Math.cos(phiSeller) * Math.cos(phiBuyer) * Math.pow(Math.sin(dLam / 2), 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c; //in m
+
+  return d;
+}
+;
+
+/***/ }),
+
 /***/ "./resources/js/router/index.js":
 /*!**************************************!*\
   !*** ./resources/js/router/index.js ***!
@@ -3933,10 +3979,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _modules_authentication__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/authentication */ "./resources/js/store/modules/authentication.js");
 /* harmony import */ var _modules_products__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/products */ "./resources/js/store/modules/products.js");
+/* harmony import */ var _js_helpers_math__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/helpers/math */ "./resources/js/helpers/math.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -3948,8 +3995,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.default);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_5__.default.Store({
+
+vue__WEBPACK_IMPORTED_MODULE_5__.default.use(vuex__WEBPACK_IMPORTED_MODULE_6__.default);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_6__.default.Store({
   modules: {
     authentication: _modules_authentication__WEBPACK_IMPORTED_MODULE_2__.default,
     products: _modules_products__WEBPACK_IMPORTED_MODULE_3__.default
@@ -3965,6 +4013,7 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
     filters: {
       categories: [],
       price: [],
+      distance: [],
       user: [],
       search: '',
       order: 'default'
@@ -4001,14 +4050,15 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
     },
     FILTER_PRODUCTS: function FILTER_PRODUCTS(state) {
       console.time("filtering");
-      state.filteredProducts = state.products.products;
+      state.filteredProducts = state.products.products; //CATEGORIES
 
       if (state.filters.categories.length) {
         //Filter categories by filtering the list based on if the products include the filtered categories
         state.filteredProducts = state.filteredProducts.filter(function (product) {
           return state.filters.categories.includes(product.categories);
         });
-      }
+      } //PRICE
+
 
       if (state.filters.price.length) {
         //Filter prices by checking if the products are within any of the selected ranges. 
@@ -4023,6 +4073,23 @@ vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.d
           //     return product.price >= range[0] && product.price <= range[1]
           // }) Old system when it was checkmarks and not a slider
           return product.price >= range[0] && product.price <= range[1];
+        });
+      } //LOCATION
+
+
+      if (state.filters.distance.length) {
+        var _range = state.filters.distance;
+
+        if (_range[1] == 1000) {
+          _range[1] = Infinity; //If the upper limit is set at the max, go to infinity and beyond
+        }
+
+        var userCoordinates = this.getters['authentication/activeUser'].coordinates;
+        state.filteredProducts = state.filteredProducts.filter(function (product) {
+          var distance = (0,_js_helpers_math__WEBPACK_IMPORTED_MODULE_4__.geoDistance)(userCoordinates[0], product.user.coordinates[0], userCoordinates[1], product.user.coordinates[1]) / 1000; //m to km
+
+          console.log(product.user.location, distance);
+          return distance >= _range[0] && distance <= _range[1];
         });
       }
 
@@ -7772,6 +7839,8 @@ var render = function() {
           _vm._s(_vm.user.name) +
           "\n" +
           _vm._s(_vm.user.email) +
+          "\n" +
+          _vm._s(_vm.user.location) +
           "\n      "
       ),
       _c(
@@ -8914,7 +8983,7 @@ var render = function() {
                   "€" +
                     _vm._s(_vm.product.price) +
                     " " +
-                    _vm._s(_vm.product.bids.length)
+                    _vm._s(_vm.product.user.location)
                 )
               ])
             ])
@@ -8993,8 +9062,6 @@ var render = function() {
       _vm._v(" "),
       _c("br"),
       _vm._v(" "),
-      _vm._m(0),
-      _vm._v(" "),
       _c(
         "div",
         {},
@@ -9020,6 +9087,34 @@ var render = function() {
           }),
           _vm._v(" "),
           _vm._v("\n        " + _vm._s(_vm.sliderValue) + "\n        ")
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {},
+        [
+          _c("h1", { staticClass: "is-size-6 has-text-weight-bold" }, [
+            _vm._v("Distance")
+          ]),
+          _vm._v(" "),
+          _c("Vue-slider", {
+            attrs: { "enable-cross": false, min: 0, max: 421, interval: 1 },
+            on: {
+              change: function($event) {
+                return _vm.distanceSliderDebounced()
+              }
+            },
+            model: {
+              value: _vm.slider2Value,
+              callback: function($$v) {
+                _vm.slider2Value = $$v
+              },
+              expression: "slider2Value"
+            }
+          }),
+          _vm._v("\n        " + _vm._s(_vm.slider2Value) + "\n        ")
         ],
         1
       ),
@@ -9154,7 +9249,7 @@ var render = function() {
               }
             },
             [
-              _vm._m(1),
+              _vm._m(0),
               _vm._v(" "),
               _c("span", { staticClass: "is-size-6" }, [
                 _vm._v(_vm._s(_vm.orderText))
@@ -9247,22 +9342,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "content" }, [
-      _c("h1", { staticClass: "is-size-6 has-text-weight-bold" }, [
-        _vm._v("Questions")
-      ]),
-      _vm._v(" "),
-      _c("ul", { staticClass: "is-size-7" }, [
-        _c("li", [_vm._v("Navigation guard for login?")]),
-        _vm._v(" "),
-        _c("li")
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -9420,7 +9499,11 @@ var render = function() {
                   _vm._v(_vm._s(_vm.userActive))
                 ]),
                 _vm._v(" "),
-                _c("p", { staticClass: "i-7" }, [
+                _c("p", { staticClass: "is-7" }, [
+                  _vm._v(_vm._s(_vm.product.user.location))
+                ]),
+                _vm._v(" "),
+                _c("p", { staticClass: "is-7" }, [
                   _vm._v(
                     "This is where I put the link to filter all ads for this user, and possibly data about their verification status, location and preferred payment methods.\r\n                    "
                   )
