@@ -3,8 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\ExampleMail;
+use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Carbon\Carbon;
+use App\Mail\MailtrapExample;
+use Illuminate\Support\Facades\Mail;
 
 class SendExampleMail implements ShouldQueue
 {
@@ -13,9 +17,9 @@ class SendExampleMail implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($recipient)
+    public function __construct()
     {
-        $this->recipient = $recipient;
+
     }
 
     /**
@@ -26,9 +30,7 @@ class SendExampleMail implements ShouldQueue
      */
     public function handle(ExampleMail $event)
     {
-        $recipients = User::all(); 
-        foreach($recipients as $recipient){
-            Mail::to($recipient->email)->send(new MailtrapExample($recipient));
-        }
+        $recipient = User::find(51);
+        Mail::to($recipient->email)->send(new MailtrapExample());
     }
 }

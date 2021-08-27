@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Events\ExampleMail;
 use Illuminate\Console\Command;
 
-class SendEmails extends Command
+class SendExampleEmail extends Command
 {
     /**
      * The name and signature of the console command.

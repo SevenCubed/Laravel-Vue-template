@@ -7,6 +7,14 @@
       <router-link :to="{ name: 'Add Product' }" class="navbar-item">
         Add New Product
       </router-link>
+    <ol>
+        <li>
+            Checkmark for mail notification
+        </li>
+        <li>
+            
+        </li>
+    </ol>
     <div v-if="ads.length && !isLoading">
         <div class="title is-3">
             Current ads

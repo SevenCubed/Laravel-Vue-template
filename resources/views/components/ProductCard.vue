@@ -14,7 +14,7 @@
             </div>
             <div class="card-content py-1 has-text-left">
                 <p class="is-size-8 is-capitalized">{{product.name}}</p>
-                <p class="is-size-6 has-text-weight-bold">€{{product.price}} {{product.user.location}}</p>
+                <p class="is-size-6 has-text-weight-bold">€{{product.price}} {{product.user.location}} {{product.bids.length}}</p>
             </div>
         </router-link>  
     </div>

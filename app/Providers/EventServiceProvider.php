@@ -8,7 +8,9 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 
 use App\Events\ExampleMail;
+use App\Events\OverbidEvent;
 use App\Listeners\SendExampleMail;
+use App\Listeners\SendOverbidNotification;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ExampleMail::class => [
             SendExampleMail::class,
+        ],
+        OverbidEvent::class => [
+            SendOverbidNotification::class,
         ],
     ];
 

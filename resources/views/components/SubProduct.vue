@@ -171,7 +171,7 @@ export default {
         placeBid(bid) {
             this.successes.bid = '';
             this.isBidding = true;
-            if(bid < this.product.price){
+            if(bid < this.product.price){ // || bid < this.orderedBids[0].amount - if I want this to also take into account previously done bids
                 this.errors.bid = "Your bid is too low.";
                 this.isBidding = false;
             }

@@ -1967,6 +1967,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
  //Custom package
 
@@ -3193,6 +3201,7 @@ __webpack_require__.r(__webpack_exports__);
       this.isBidding = true;
 
       if (bid < this.product.price) {
+        // || bid < this.orderedBids[0].amount - if I want this to also take into account previously done bids
         this.errors.bid = "Your bid is too low.";
         this.isBidding = false;
       } else {
@@ -7849,6 +7858,8 @@ var render = function() {
         [_vm._v("\n        Add New Product\n      ")]
       ),
       _vm._v(" "),
+      _vm._m(0),
+      _vm._v(" "),
       _vm.ads.length && !_vm.isLoading
         ? _c(
             "div",
@@ -8011,7 +8022,20 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ol", [
+      _c("li", [
+        _vm._v("\n            Checkmark for mail notification\n        ")
+      ]),
+      _vm._v(" "),
+      _c("li")
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -8983,7 +9007,9 @@ var render = function() {
                   "€" +
                     _vm._s(_vm.product.price) +
                     " " +
-                    _vm._s(_vm.product.user.location)
+                    _vm._s(_vm.product.user.location) +
+                    " " +
+                    _vm._s(_vm.product.bids.length)
                 )
               ])
             ])
