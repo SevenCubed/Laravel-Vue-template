@@ -8,6 +8,7 @@ export default {
         authenticated: !!window.$cookies.get("JWT"),
         user: null,
         JWT: null,
+        notifications: [],
     },
     getters: {
         authenticated(state) {
@@ -18,6 +19,9 @@ export default {
         },
         JWT(state) {
             return state.JWT
+        },
+        notifications(state){
+            return state.notifications
         },
     },
     mutations: {
@@ -34,6 +38,9 @@ export default {
             state.user = user;
             console.log('User: ', user)
         },
+        SET_NOTIFICATIONS(state, notifications) {
+            state.notifications = notifications
+        },
         logoutUser(state) {
             state.authenticated = false;
             state.user = null;
@@ -49,7 +56,7 @@ export default {
         },
     },
     actions: {
-        initUser( {commit}, JWT ) {
+        async initUser( {commit}, JWT ) {
             const config =
             {
                 headers: 
@@ -57,7 +64,7 @@ export default {
                         'Authorization': 'Bearer ' + JWT.token,
                     }
             };
-            axios
+            await axios
             .post('api/auth/me',
             null,
             config
@@ -65,6 +72,14 @@ export default {
             .then(response => {
                 commit('SET_USER', response.data)
             });
+            await axios
+            .get('api/auth/notifications',
+            null,
+            config)
+            .then(response => {
+                console.log(response)
+                commit('SET_NOTIFICATIONS', response.data)
+            })
         }, 
         loginUser( {commit, state}, user ) {
             axios

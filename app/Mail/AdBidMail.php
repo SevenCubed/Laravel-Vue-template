@@ -5,9 +5,10 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Queue\SerializesModels;
 
-class OverbidNotification extends Mailable
+class AdBidNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -28,6 +29,11 @@ class OverbidNotification extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.exmpl');
+        $url = url('/#/products/');
+        return (new MailMessage)
+            ->greeting('Hello')
+            ->line('Someone has placed a new bid on your ad!')
+            ->action('View Product', $url)
+            ->line('Remember we do not have chat functionality, so good luck contacting them!');
     }
 }

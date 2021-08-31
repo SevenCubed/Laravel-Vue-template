@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Auth\Middleware\Authenticate;
 
 /*
@@ -58,6 +59,8 @@ Route::middleware('api')->group(function () {
     Route::resource('bids', BidController::class);
 });
 
+Route::middleware('api')->post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markasread');
+
 //JWT
 Route::group([
 
@@ -70,6 +73,6 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
-
+    Route::get('notifications', [AuthController::class, 'notifications']);
 });
 

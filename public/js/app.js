@@ -1975,6 +1975,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  //Custom package
 
@@ -1996,13 +2035,17 @@ __webpack_require__.r(__webpack_exports__);
     },
     isLoading: function isLoading() {
       return this.$store.getters.isLoading;
+    },
+    notifications: function notifications() {
+      return this.$store.getters['authentication/notifications'];
     }
   },
   mounted: function mounted() {
     var _this = this;
 
     var id = this.$store.state.authentication.user.id;
-    console.log("Attempting to fetch ads...");
+    console.log("Attempting to fetch ads..."); //could probably make this better by having the whole Current User be a special Resource with all the needed info
+
     this.$store.commit('loadingStatus', true);
     axios.post("api/users/ads", {
       'id': id
@@ -2065,6 +2108,19 @@ __webpack_require__.r(__webpack_exports__);
         }).indexOf(id);
 
         _this3.ads.splice(i, 1);
+      });
+    },
+    testNotifications: function testNotifications() {
+      var _this4 = this;
+
+      axios.get('api/auth/notifications').then(function (response) {
+        console.log(response);
+        _this4.notifications = response.data;
+      });
+    },
+    markAllAsRead: function markAllAsRead() {
+      axios.post('api/notifications/mark-as-read').then(function (response) {
+        console.log(response);
       });
     }
   }
@@ -2730,6 +2786,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {};
@@ -2737,6 +2798,9 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     authenticated: function authenticated() {
       return this.$store.getters['authentication/authenticated'];
+    },
+    notifications: function notifications() {
+      return this.$store.getters['authentication/notifications'];
     }
   },
   methods: {
@@ -3598,15 +3662,16 @@ Image preview?
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue */ "./resources/js/App.vue");
 /* harmony import */ var vue_cookies__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-cookies */ "./node_modules/vue-cookies/vue-cookies.js");
 /* harmony import */ var vue_cookies__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_cookies__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./resources/js/store/index.js");
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
 /* harmony import */ var _node_modules_Bulma_CSS_bulma_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../node_modules/Bulma/CSS/bulma.css */ "./node_modules/Bulma/CSS/bulma.css");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_creativebulma_bulma_badge_dist_bulma_badge_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./../../node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css */ "./node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_6__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
  //Main pages
@@ -3619,12 +3684,13 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
  //Import Bulma CSS
 
+
  //Axios stuff for Sanctum auth
 
 
-(axios__WEBPACK_IMPORTED_MODULE_5___default().defaults.withCredentials) = true;
-vue__WEBPACK_IMPORTED_MODULE_6__.default.use((vue_cookies__WEBPACK_IMPORTED_MODULE_1___default()));
-new vue__WEBPACK_IMPORTED_MODULE_6__.default({
+(axios__WEBPACK_IMPORTED_MODULE_6___default().defaults.withCredentials) = true;
+vue__WEBPACK_IMPORTED_MODULE_7__.default.use((vue_cookies__WEBPACK_IMPORTED_MODULE_1___default()));
+new vue__WEBPACK_IMPORTED_MODULE_7__.default({
   el: "#app",
   store: _store__WEBPACK_IMPORTED_MODULE_2__.default,
   router: _router__WEBPACK_IMPORTED_MODULE_3__.default,
@@ -4389,9 +4455,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../router */ "./resources/js/router/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../router */ "./resources/js/router/index.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -4399,7 +4473,8 @@ __webpack_require__.r(__webpack_exports__);
   state: {
     authenticated: !!window.$cookies.get("JWT"),
     user: null,
-    JWT: null
+    JWT: null,
+    notifications: []
   },
   getters: {
     authenticated: function authenticated(state) {
@@ -4410,6 +4485,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     JWT: function JWT(state) {
       return state.JWT;
+    },
+    notifications: function notifications(state) {
+      return state.notifications;
     }
   },
   mutations: {
@@ -4425,6 +4503,9 @@ __webpack_require__.r(__webpack_exports__);
     SET_USER: function SET_USER(state, user) {
       state.user = user;
       console.log('User: ', user);
+    },
+    SET_NOTIFICATIONS: function SET_NOTIFICATIONS(state, notifications) {
+      state.notifications = notifications;
     },
     logoutUser: function logoutUser(state) {
       state.authenticated = false;
@@ -4443,20 +4524,42 @@ __webpack_require__.r(__webpack_exports__);
   },
   actions: {
     initUser: function initUser(_ref, JWT) {
-      var commit = _ref.commit;
-      var config = {
-        headers: {
-          'Authorization': 'Bearer ' + JWT.token
-        }
-      };
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/me', null, config).then(function (response) {
-        commit('SET_USER', response.data);
-      });
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var commit, config;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                commit = _ref.commit;
+                config = {
+                  headers: {
+                    'Authorization': 'Bearer ' + JWT.token
+                  }
+                };
+                _context.next = 4;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().post('api/auth/me', null, config).then(function (response) {
+                  commit('SET_USER', response.data);
+                });
+
+              case 4:
+                _context.next = 6;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/auth/notifications', null, config).then(function (response) {
+                  console.log(response);
+                  commit('SET_NOTIFICATIONS', response.data);
+                });
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
     },
     loginUser: function loginUser(_ref2, user) {
       var commit = _ref2.commit,
           state = _ref2.state;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/login', {
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post('api/auth/login', {
         email: user.email,
         password: user.password
       })["catch"](function (error) {
@@ -4489,7 +4592,7 @@ __webpack_require__.r(__webpack_exports__);
         window.$cookies.set("JWT", JWT, '14d');
         commit('LOGIN_USER', JWT);
         commit('SET_USER', response.data[1].original);
-        _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
+        _router__WEBPACK_IMPORTED_MODULE_2__.default.push({
           name: 'Dashboard'
         });
       });
@@ -4499,7 +4602,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var commit = _ref3.commit,
           state = _ref3.state;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/register', user)["catch"](function (error) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post('api/register', user)["catch"](function (error) {
         return _this.errors = error.response.data;
       }).then(function (response) {
         //currently doesn't care about errors, that's a problem\
@@ -4507,7 +4610,7 @@ __webpack_require__.r(__webpack_exports__);
         var token = response;
         localStorage.setItem('api_token', token);
         commit('SET_USER', user);
-        _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
+        _router__WEBPACK_IMPORTED_MODULE_2__.default.push({
           name: "Dashboard"
         });
       });
@@ -4520,10 +4623,10 @@ __webpack_require__.r(__webpack_exports__);
           'Authorization': 'Bearer ' + state.JWT.token
         }
       };
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/logout', null, config).then(function () {
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post('api/auth/logout', null, config).then(function () {
         window.$cookies.remove("JWT");
         commit('logoutUser');
-        _router__WEBPACK_IMPORTED_MODULE_1__.default.push({
+        _router__WEBPACK_IMPORTED_MODULE_2__.default.push({
           name: 'Login'
         });
       });
@@ -4532,7 +4635,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       var commit = _ref5.commit;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/activeUser', {
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post('api/activeUser', {
         'token': token
       })["catch"](function (error) {
         _this2.errors = error.response.data;
@@ -4632,6 +4735,30 @@ __webpack_require__.r(__webpack_exports__);
     }
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css":
+/*!******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css ***!
+  \******************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "/*! @creativebulma/bulma-badge v1.0.1 | (c) 2020 Gaetan | MIT License | https://github.com/CreativeBulma/bulma-badge */\n@-webkit-keyframes spinAround {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(359deg);\n  }\n}\n\n@keyframes spinAround {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(359deg);\n  }\n}\n\n/* line 72, src/sass/app.sass */\n.badge {\n  background-color: #00d1b2;\n  border: 2px solid transparent;\n  border-radius: 14px;\n  box-shadow: 0 0 0 2px white;\n  color: white;\n  font-size: 0.65rem;\n  height: 14px;\n  line-height: calc(7px + 1px);\n  min-width: 14px;\n  overflow: hidden;\n  padding: 0.05rem 0.15rem;\n  position: absolute;\n  right: 0;\n  text-overflow: ellipsis;\n  top: 0;\n  transform: translate(50%, -50%);\n  white-space: nowrap;\n}\n\n/* line 91, src/sass/app.sass */\n.badge.is-outlined {\n  background-color: white;\n  border-color: #00d1b2;\n  color: #00d1b2;\n}\n\n/* line 16, src/sass/app.sass */\n.badge.is-left {\n  bottom: 0;\n  left: 0;\n  right: auto;\n  top: 50%;\n  transform: translate(-50%, -50%);\n}\n\n/* line 23, src/sass/app.sass */\n.badge.is-right {\n  bottom: auto;\n  left: auto;\n  right: 0;\n  top: 50%;\n  transform: translate(50%, -50%);\n}\n\n/* line 30, src/sass/app.sass */\n.badge.is-top {\n  bottom: auto;\n  left: 50%;\n  right: auto;\n  top: 0;\n  transform: translate(-50%, -50%);\n}\n\n/* line 37, src/sass/app.sass */\n.badge.is-top-left {\n  bottom: auto;\n  left: 0;\n  right: auto;\n  top: 0;\n  transform: translate(-50%, -50%);\n}\n\n/* line 44, src/sass/app.sass */\n.badge.is-top-right {\n  bottom: auto;\n  left: auto;\n  right: 0;\n  top: 0;\n  transform: translate(50%, -50%);\n}\n\n/* line 51, src/sass/app.sass */\n.badge.is-bottom {\n  bottom: 0;\n  left: 50%;\n  right: auto;\n  top: auto;\n  transform: translate(-50%, 50%);\n}\n\n/* line 58, src/sass/app.sass */\n.badge.is-bottom-left {\n  bottom: 0;\n  left: 0;\n  right: auto;\n  top: auto;\n  transform: translate(-50%, 50%);\n}\n\n/* line 65, src/sass/app.sass */\n.badge.is-bottom-right {\n  bottom: 0;\n  left: auto;\n  right: 0;\n  top: auto;\n  transform: translate(50%, 50%);\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-white:not(.is-outlined) {\n  background-color: white;\n  color: #0a0a0a;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-white.is-outlined {\n  border-color: white;\n  color: white;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-black:not(.is-outlined) {\n  background-color: #0a0a0a;\n  color: white;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-black.is-outlined {\n  border-color: #0a0a0a;\n  color: #0a0a0a;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-light:not(.is-outlined) {\n  background-color: whitesmoke;\n  color: rgba(0, 0, 0, 0.7);\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-light.is-outlined {\n  border-color: whitesmoke;\n  color: whitesmoke;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-dark:not(.is-outlined) {\n  background-color: #363636;\n  color: #fff;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-dark.is-outlined {\n  border-color: #363636;\n  color: #363636;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-primary:not(.is-outlined) {\n  background-color: #00d1b2;\n  color: #fff;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-primary.is-outlined {\n  border-color: #00d1b2;\n  color: #00d1b2;\n}\n\n/* line 115, src/sass/app.sass */\n.badge.is-primary.is-light {\n  color: #00947e;\n}\n\n/* line 117, src/sass/app.sass */\n.badge.is-primary.is-light:not(.is-outlined) {\n  background-color: #ebfffc;\n}\n\n/* line 119, src/sass/app.sass */\n.badge.is-primary.is-light.is-outlined {\n  border-color: #00d1b2;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-link:not(.is-outlined) {\n  background-color: #3273dc;\n  color: #fff;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-link.is-outlined {\n  border-color: #3273dc;\n  color: #3273dc;\n}\n\n/* line 115, src/sass/app.sass */\n.badge.is-link.is-light {\n  color: #2160c4;\n}\n\n/* line 117, src/sass/app.sass */\n.badge.is-link.is-light:not(.is-outlined) {\n  background-color: #eef3fc;\n}\n\n/* line 119, src/sass/app.sass */\n.badge.is-link.is-light.is-outlined {\n  border-color: #3273dc;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-info:not(.is-outlined) {\n  background-color: #3298dc;\n  color: #fff;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-info.is-outlined {\n  border-color: #3298dc;\n  color: #3298dc;\n}\n\n/* line 115, src/sass/app.sass */\n.badge.is-info.is-light {\n  color: #1d72aa;\n}\n\n/* line 117, src/sass/app.sass */\n.badge.is-info.is-light:not(.is-outlined) {\n  background-color: #eef6fc;\n}\n\n/* line 119, src/sass/app.sass */\n.badge.is-info.is-light.is-outlined {\n  border-color: #3298dc;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-success:not(.is-outlined) {\n  background-color: #48c774;\n  color: #fff;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-success.is-outlined {\n  border-color: #48c774;\n  color: #48c774;\n}\n\n/* line 115, src/sass/app.sass */\n.badge.is-success.is-light {\n  color: #257942;\n}\n\n/* line 117, src/sass/app.sass */\n.badge.is-success.is-light:not(.is-outlined) {\n  background-color: #effaf3;\n}\n\n/* line 119, src/sass/app.sass */\n.badge.is-success.is-light.is-outlined {\n  border-color: #48c774;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-warning:not(.is-outlined) {\n  background-color: #ffdd57;\n  color: rgba(0, 0, 0, 0.7);\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-warning.is-outlined {\n  border-color: #ffdd57;\n  color: #ffdd57;\n}\n\n/* line 115, src/sass/app.sass */\n.badge.is-warning.is-light {\n  color: #947600;\n}\n\n/* line 117, src/sass/app.sass */\n.badge.is-warning.is-light:not(.is-outlined) {\n  background-color: #fffbeb;\n}\n\n/* line 119, src/sass/app.sass */\n.badge.is-warning.is-light.is-outlined {\n  border-color: #ffdd57;\n}\n\n/* line 103, src/sass/app.sass */\n.badge.is-danger:not(.is-outlined) {\n  background-color: #f14668;\n  color: #fff;\n}\n\n/* line 107, src/sass/app.sass */\n.badge.is-danger.is-outlined {\n  border-color: #f14668;\n  color: #f14668;\n}\n\n/* line 115, src/sass/app.sass */\n.badge.is-danger.is-light {\n  color: #cc0f35;\n}\n\n/* line 117, src/sass/app.sass */\n.badge.is-danger.is-light:not(.is-outlined) {\n  background-color: #feecf0;\n}\n\n/* line 119, src/sass/app.sass */\n.badge.is-danger.is-light.is-outlined {\n  border-color: #f14668;\n}\n\n/* line 124, src/sass/app.sass */\n.tabs li {\n  position: relative;\n}\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
 
 /***/ }),
 
@@ -5841,6 +5968,36 @@ try {
   Function("r", "regeneratorRuntime = r")(runtime);
 }
 
+
+/***/ }),
+
+/***/ "./node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_bulma_badge_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./bulma-badge.css */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_bulma_badge_css__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_bulma_badge_css__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
@@ -7843,8 +8000,61 @@ var render = function() {
     "div",
     [
       _c("h1", { staticClass: "title" }, [_vm._v("Dashboard")]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "button",
+          on: {
+            click: function($event) {
+              return _vm.testNotifications()
+            }
+          }
+        },
+        [_vm._v("TEST!")]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "title is-3" }, [_vm._v("\nNotifications!\n")]),
+      _vm._v(" "),
+      _vm.notifications.length
+        ? _c(
+            "div",
+            [
+              _vm._l(_vm.notifications, function(notification) {
+                return _c(
+                  "div",
+                  {
+                    key: notification.id,
+                    staticClass: "columns has-text-left"
+                  },
+                  [
+                    _c("div", { staticClass: "column is-four-fifths " }, [
+                      _c("b", [_vm._v(_vm._s(notification.data))])
+                    ])
+                  ]
+                )
+              }),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass: "button",
+                  on: {
+                    click: function($event) {
+                      return _vm.markAllAsRead()
+                    }
+                  }
+                },
+                [_vm._v("Mark all as read.")]
+              )
+            ],
+            2
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _c("br"),
       _vm._v(
-        "\n" +
+        " \n" +
           _vm._s(_vm.user.name) +
           "\n" +
           _vm._s(_vm.user.email) +
@@ -7995,6 +8205,86 @@ var render = function() {
               "\n        You are not currently selling anything! Have you considered doing so?\n    "
             )
           ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.user.bids.length && !_vm.isLoading
+        ? _c(
+            "div",
+            [
+              _c("div", { staticClass: "title is-3" }, [
+                _vm._v("\n            Ongoing bids\n        ")
+              ]),
+              _vm._v(" "),
+              _vm._l(_vm.user.bids, function(bid) {
+                return _c(
+                  "div",
+                  { key: bid.id, staticClass: "columns has-text-left" },
+                  [
+                    _c("div", { staticClass: "column is-four-fifths " }, [
+                      _c("b", [_vm._v(_vm._s(bid.id))]),
+                      _vm._v(
+                        " " +
+                          _vm._s(bid.product_id) +
+                          "  €" +
+                          _vm._s(bid.amount) +
+                          "\n                    "
+                      )
+                    ])
+                  ]
+                )
+              }),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass: "modal",
+                  class: { "is-active": _vm.showModalFlag }
+                },
+                [
+                  _c("div", { staticClass: "modal-background" }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-card" }, [
+                    _c("header", { staticClass: "modal-card-head" }),
+                    _vm._v(" "),
+                    _c("section", { staticClass: "modal-card-body" }, [
+                      _c("p", [
+                        _vm._v(
+                          "Are you sure you wish to remove your advertisement for " +
+                            _vm._s(_vm.ad.name) +
+                            "? This process is irreversible."
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("footer", { staticClass: "modal-card-foot" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "button is-success",
+                          on: {
+                            click: function($event) {
+                              return _vm.deleteConfirm(_vm.ad.id)
+                            }
+                          }
+                        },
+                        [_vm._v("Confirm")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "button",
+                          on: { click: _vm.deleteCancel }
+                        },
+                        [_vm._v("Cancel")]
+                      )
+                    ])
+                  ])
+                ]
+              )
+            ],
+            2
+          )
         : _vm._e(),
       _vm._v(" "),
       !_vm.ads.length && _vm.isLoading
@@ -8859,6 +9149,24 @@ var render = function() {
                   ? _c(
                       "div",
                       [
+                        _c("button", { staticClass: "button is-primary" }, [
+                          _c("span", { staticClass: "icon is-size-4" }, [
+                            _c("i", { staticClass: "fas fa-bell" }, [
+                              _vm.notifications.length
+                                ? _c(
+                                    "span",
+                                    {
+                                      staticClass:
+                                        "badge is-bottom-right is-danger",
+                                      attrs: { title: "Badge top right" }
+                                    },
+                                    [_vm._v(_vm._s(_vm.notifications.length))]
+                                  )
+                                : _vm._e()
+                            ])
+                          ])
+                        ]),
+                        _vm._v(" "),
                         _c(
                           "router-link",
                           {

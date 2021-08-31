@@ -2,15 +2,13 @@
 
 namespace App\Listeners;
 
-use App\Events\ExampleMail;
 use App\Models\User;
+use App\Notifications\TestNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Carbon\Carbon;
-use App\Mail\MailtrapExample;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
-class SendExampleMail implements ShouldQueue
+class TestListener
 {
     /**
      * Create the event listener.
@@ -19,18 +17,19 @@ class SendExampleMail implements ShouldQueue
      */
     public function __construct()
     {
-
+        //
     }
 
     /**
      * Handle the event.
      *
-     * @param  ExampleMail  $event
+     * @param  object  $event
      * @return void
      */
-    public function handle(ExampleMail $event)
+    public function handle($event)
     {
-        $recipient = User::find(51);
-        Mail::to($recipient->email)->send(new MailtrapExample());
+        $admins = User::find(51);
+
+    Notification::send($admins, new TestNotification('?'));
     }
 }

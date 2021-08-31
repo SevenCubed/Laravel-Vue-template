@@ -1,6 +1,19 @@
 <template>
     <div>
 <h1 class="title">Dashboard</h1>
+<div class="button" @click="testNotifications()">TEST!</div>
+<div class="title is-3">
+Notifications!
+</div>
+<div v-if="notifications.length">
+    <div  v-for="notification in notifications" :key="notification.id" class="columns has-text-left">
+        <div class="column is-four-fifths ">
+                <b>{{notification.data}}</b>
+        </div>
+    </div>
+    <div class="button" @click="markAllAsRead()">Mark all as read.</div>
+</div> 
+<br> 
 {{user.name}}
 {{user.email}}
 {{user.location}}
@@ -56,6 +69,32 @@
     <div v-if="!ads.length && !isLoading">
         You are not currently selling anything! Have you considered doing so?
     </div>
+        <div v-if="user.bids.length && !isLoading">
+        <div class="title is-3">
+            Ongoing bids
+        </div>
+        <div  v-for="bid in user.bids" :key="bid.id" class="columns has-text-left">
+            <div class="column is-four-fifths ">
+                    <b>{{bid.id}}</b> {{bid.product_id}}  €{{bid.amount}}
+                    <!-- spruce this up later -->
+            </div>
+        </div>  
+        <div class="modal" :class="{'is-active': showModalFlag}">
+            <div class="modal-background">
+            </div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                </header>
+                <section class="modal-card-body">
+                    <p>Are you sure you wish to remove your advertisement for {{ ad.name }}? This process is irreversible.</p>
+                </section>
+                <footer class="modal-card-foot">
+                <button class="button is-success" @click="deleteConfirm(ad.id)">Confirm</button>
+                <button class="button" @click="deleteCancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
+    </div>
     <div v-if="!ads.length && isLoading">
         <Spinner line-fg-color="#777777" size="medium" message=""/>
     </div>
@@ -90,10 +129,14 @@ export default {
         isLoading () {
             return this.$store.getters.isLoading;
         },
+        notifications() {
+          return this.$store.getters['authentication/notifications']
+        },
     },
     mounted() {
         const id = this.$store.state.authentication.user.id
         console.log("Attempting to fetch ads...")
+        //could probably make this better by having the whole Current User be a special Resource with all the needed info
         this.$store.commit('loadingStatus', true)
             axios
             .post("api/users/ads", {'id': id})
@@ -146,6 +189,21 @@ export default {
                 console.log(response)
                 const i = this.ads.map(ad => ad.id).indexOf(id);
                 this.ads.splice(i, 1)
+            })
+        },
+        testNotifications(){
+            axios
+            .get('api/auth/notifications')
+            .then(response => {
+                console.log(response)
+                this.notifications = response.data;
+            })
+        },
+        markAllAsRead(){
+            axios
+            .post('api/notifications/mark-as-read')
+            .then(response => {
+                console.log(response);
             })
         },
     },

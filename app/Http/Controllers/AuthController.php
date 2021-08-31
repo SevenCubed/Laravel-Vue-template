@@ -52,6 +52,12 @@ class AuthController extends Controller
         return response()->json($user);
     }
     
+    public function notifications()
+    {
+        $notifications = auth()->user()->unreadNotifications;
+        return response()->json($notifications);
+    }
+
     /**
      * Log the user out (Invalidate the token).
      *

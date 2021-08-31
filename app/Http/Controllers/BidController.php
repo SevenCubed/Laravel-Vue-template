@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AdBidEvent;
 use Illuminate\Http\Request;
 use App\Models\Bid;
 use App\Http\Resources\BidResource;
@@ -14,8 +15,10 @@ class BidController extends Controller
         $bid = Bid::create($request->all());
         $lowerBids = $bid->product->bids->where('amount', '<', $bid->amount)->pluck('user_id')->toArray();
         if(count($lowerBids)){ //if any lower bids exist...
-            event(new OverbidEvent($lowerBids));  //dispatch a notification to all users attached to those lower bids. TODO: Make this opt-in, considering it can be really annoying  
+            OverbidEvent::dispatch($lowerBids);  //dispatch a notification to all users attached to those lower bids. TODO: Make this opt-in, considering it can be really annoying  
         }
+        $payload = [$bid->product, $bid->product->user, $bid->amount, $bid->user->name];
+        AdBidEvent::dispatch($payload);
         return response()->json(['message' => 'Bid placed!', 'new_bid' => new BidResource($bid)]);
     }
     public function update(Request $request, $id)

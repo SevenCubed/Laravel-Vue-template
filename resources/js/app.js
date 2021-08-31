@@ -15,7 +15,7 @@ import router from "./router";
 
 //Import Bulma CSS
 import "./../../node_modules/Bulma/CSS/bulma.css";
-
+import "./../../node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css"
 
 //Axios stuff for Sanctum auth
 import axios from 'axios';

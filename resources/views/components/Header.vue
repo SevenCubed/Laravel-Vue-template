@@ -55,6 +55,11 @@
               Login
               </router-link></div>
               <div v-if="authenticated">
+            <button class="button is-primary">
+              <span class="icon is-size-4">
+                <i class="fas fa-bell"><span v-if="notifications.length" title="Badge top right" class="badge is-bottom-right is-danger">{{notifications.length}}</span></i>
+              </span> 
+            </button>
             <router-link class="button is-primary" :to="{ name: 'Dashboard' }">
               Dashboard</router-link>
               <button class="button is-primary" @click="logout">
@@ -71,19 +76,24 @@
 
 <script setup>
 export default{
-      data(){
-      return {}
-      },
-      computed: {
+    data(){
+      return {
+      }
+    },
+    computed: {
         authenticated() {
           return this.$store.getters['authentication/authenticated']
         },
-      },
-          methods: {
+        notifications() {
+          return this.$store.getters['authentication/notifications']
+        },
+    },
+    methods: {
         logout() {
             this.$store.dispatch('authentication/logoutUser')
         }
     },
+
 }
 </script>
 

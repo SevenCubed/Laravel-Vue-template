@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Event;
 
 use App\Events\ExampleMail;
 use App\Events\OverbidEvent;
+use App\Events\AdBidEvent;
 use App\Listeners\SendExampleMail;
 use App\Listeners\SendOverbidNotification;
+use App\Listeners\SendAdBidNotification;
+use App\Listeners\TestListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -23,11 +26,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        ExampleMail::class => [
-            SendExampleMail::class,
-        ],
         OverbidEvent::class => [
             SendOverbidNotification::class,
+        ],
+        AdBidEvent::class => [
+            SendAdBidNotification::class,
+            TestListener::class,
         ],
     ];
 
