@@ -30,6 +30,7 @@ class BidController extends Controller
 
         return response()->json('Bid updated succesfully!');
     }
+    //TODO: RMB
     public function destroy($id)
     {
         $product = Bid::find($id);

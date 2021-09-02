@@ -31,7 +31,6 @@ class EventServiceProvider extends ServiceProvider
         ],
         AdBidEvent::class => [
             SendAdBidNotification::class,
-            TestListener::class,
         ],
     ];
 

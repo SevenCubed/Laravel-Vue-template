@@ -31,7 +31,7 @@ class AdBidNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database', 'mail'];
     }
 
     /**
@@ -59,7 +59,20 @@ class AdBidNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'data' => $this->product
+            'payload' => $this->product,
+            'amount' => $this->amount,
         ];
     }
+    /**     
+    *
+    * @param  mixed  $notifiable
+    * @return array
+    */
+   public function toDatabase($notifiable)
+   {
+       return [
+           'payload' => $this->product,
+           'amount' => $this->amount,
+       ];
+   }
 }

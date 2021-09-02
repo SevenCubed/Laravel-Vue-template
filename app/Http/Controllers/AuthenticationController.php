@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
+//TODO: Clean
 //This could probably be inside a User Controller, but I'm opting to keep it outside for now, to keep the learning process somewhat organized.
 //Users are used for a lot more in this project than just logging in, after all
 class AuthenticationController extends Controller

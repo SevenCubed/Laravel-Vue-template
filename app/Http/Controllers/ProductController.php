@@ -10,6 +10,8 @@ use App\Http\Resources\ProductCollection;
 use App\Models\Category;
 use App\Models\Image;
 
+//TODO: Clean
+
 class ProductController extends Controller
 {
     // public function __construct()
@@ -24,13 +26,13 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
-        // AFAIK the Resource Collection is already in json. It definitely seems to be that way in Tools->Network->Request->Response
+
         return new ProductCollection($products);
     }
 
     public function categories()
     {
+        //TODO: Json
         return Category::all();
     }
 
@@ -52,6 +54,7 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request)
     {
+        //TODO: Validation opschonen
         $validated = $request->validated();
         $product = Product::create([
             'name' => $validated['name'],
@@ -64,13 +67,13 @@ class ProductController extends Controller
         $name = $product->id . '-' . time();
         if ($validated['files']){
             $validated['files']->move(public_path('img/'), $name);
-            $image = Image::create([
+            Image::create([
                 'product_image_path' => ('img/' . $name),
                 'product_id' => $product->id,
             ]);
         }
         else {
-            $image = Image::create([
+            Image::create([
                 'product_image_path' => ('img/placeholder'),
                 'product_id' => $product->id,
             ]);
@@ -86,9 +89,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // CR :: return altijd een json response 'https://laravel.com/docs/8.x/responses#json-responses' 
-        $product = new ProductResource($product);
-        return response()->json($product);
+        return new ProductResource($product);
     }
 
     /**
@@ -111,6 +112,7 @@ class ProductController extends Controller
      */
     public function update(ProductStoreRequest $request, $id)
     {
+        //TODO: Fix, RMB, return $product
         // $request->validate([
         //     'name' => 'required',
         //     // 'files' => 'required',
@@ -135,6 +137,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
+        //TODO: RMB
         $product = Product::find($id);
         $product->delete();
 
