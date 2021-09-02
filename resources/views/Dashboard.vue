@@ -5,13 +5,14 @@
 <div class="title is-3">
 Notifications!
 </div>
-<div v-if="notifications.length">
-    <div  v-for="notification in notifications" :key="notification.id" class="columns has-text-left">
-        <div class="column is-four-fifths ">
-                <b>{{notification.message}}</b>
+<div v-if="notifications.length" class="block">
+    <div  v-for="notification in notifications" :key="notification.id" class="has-text-left is-fullwidth">
+        <div class="notification is-light is-small" :class="notification.data.type">
+              <button class="delete" @click="markAsRead(notification.id)"></button>
+                {{notification.data.message}}
         </div>
     </div>
-    <div class="button" @click="markAllAsRead()">Mark all as read.</div>
+    <div class="button block" @click="markAllAsRead()">Mark all as read.</div>
 </div> 
 <br> 
 {{user.name}}
@@ -193,17 +194,28 @@ export default {
         },
         testNotifications(){
             axios
-            .get('api/auth/notifications')
+            .get('api/notifications/test')
             .then(response => {
                 console.log(response)
                 this.notifications = response.data;
             })
         },
+        markAsRead(id){
+            axios
+            .post(`api/notifications/mark-as-read/${id}`)
+            .then(response => {
+                const i = this.notifications.map(notifications => notification.id).indexOf(id);
+                this.notifications.splice(i, 1)
+                //TODO: Make this go via store
+            })
+        },
         markAllAsRead(){
             axios
-            .post('api/notifications/mark-as-read')
+            .post('api/notifications/mark-all-as-read')
             .then(response => {
                 console.log(response);
+                this.notifications = [];
+                //TODO: Make this go via store
             })
         },
     },

@@ -52,11 +52,7 @@ class AuthController extends Controller
         return response()->json($user);
     }
     
-    public function notifications()
-    {
-        $notifications = auth()->user()->unreadNotifications;
-        return response()->json($notifications);
-    }
+
 
     /**
      * Log the user out (Invalidate the token).
@@ -77,7 +73,8 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        // dd("?");
+        //TODO: It's really curious that the browser feels the need to refrsh at nearly EVERY call, even seconds after calling a new JWT. 
+        //I think I'm doing something wrong with the initial token header, that is fixed by the refresh call/interceptor. Figure this out.
         return $this->respondWithToken( $this->guard()->refresh());
     }
 

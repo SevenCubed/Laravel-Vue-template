@@ -16,9 +16,11 @@ class TestNotification extends Notification
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($product, $amount, $buyerName)
     {
-        $this->data = $data;
+        $this->product = $product;
+        $this->amount = $amount;
+        $this->buyerName = $buyerName;
     }
 
     /**
@@ -54,8 +56,24 @@ class TestNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        $i = rand(0,3);
+        switch ($i) {
+            case 0:
+                $type = 'is-primary';
+                break;
+            case 1:
+                $type = 'is-info';
+                break;
+            case 2:
+                $type = 'is-warning';
+                break;
+            case 3:
+                $type = 'is-danger';
+                break;
+        }
         return [
-            'message' => "{$this->data->buyerName} has made a bid of €{$this->data->amount} on {$this->data->product->name} offered by {$this->data->seller}"
+            'message' => "{$this->buyerName} has made a bid of €{$this->amount} on {$this->product->name} offered by {$this->product->user->name}",
+            'type' => $type
         ];
     }
 }

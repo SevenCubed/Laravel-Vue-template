@@ -73,7 +73,7 @@ export default {
                 commit('SET_USER', response.data)
             });
             await axios
-            .get('api/auth/notifications',
+            .get('api/notifications/all',
             null,
             config)
             .then(response => {

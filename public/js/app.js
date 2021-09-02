@@ -2014,6 +2014,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
  //Custom package
 
@@ -2113,14 +2114,29 @@ __webpack_require__.r(__webpack_exports__);
     testNotifications: function testNotifications() {
       var _this4 = this;
 
-      axios.get('api/auth/notifications').then(function (response) {
+      axios.get('api/notifications/test').then(function (response) {
         console.log(response);
         _this4.notifications = response.data;
       });
     },
+    markAsRead: function markAsRead(id) {
+      var _this5 = this;
+
+      axios.post("api/notifications/mark-as-read/".concat(id)).then(function (response) {
+        var i = _this5.notifications.map(function (notifications) {
+          return notification.id;
+        }).indexOf(id);
+
+        _this5.notifications.splice(i, 1); //TODO: Make this go via store
+
+      });
+    },
     markAllAsRead: function markAllAsRead() {
-      axios.post('api/notifications/mark-as-read').then(function (response) {
+      var _this6 = this;
+
+      axios.post('api/notifications/mark-all-as-read').then(function (response) {
         console.log(response);
+        _this6.notifications = []; //TODO: Make this go via store
       });
     }
   }
@@ -4543,7 +4559,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
                 _context.next = 6;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/auth/notifications', null, config).then(function (response) {
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/notifications/all', null, config).then(function (response) {
                   console.log(response);
                   commit('SET_NOTIFICATIONS', response.data);
                 });
@@ -8019,18 +8035,38 @@ var render = function() {
       _vm.notifications.length
         ? _c(
             "div",
+            { staticClass: "block" },
             [
               _vm._l(_vm.notifications, function(notification) {
                 return _c(
                   "div",
                   {
                     key: notification.id,
-                    staticClass: "columns has-text-left"
+                    staticClass: "has-text-left is-fullwidth"
                   },
                   [
-                    _c("div", { staticClass: "column is-four-fifths " }, [
-                      _c("b", [_vm._v(_vm._s(notification.message))])
-                    ])
+                    _c(
+                      "div",
+                      {
+                        staticClass: "notification is-light is-small",
+                        class: notification.data.type
+                      },
+                      [
+                        _c("button", {
+                          staticClass: "delete",
+                          on: {
+                            click: function($event) {
+                              return _vm.markAsRead(notification.id)
+                            }
+                          }
+                        }),
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(notification.data.message) +
+                            "\n        "
+                        )
+                      ]
+                    )
                   ]
                 )
               }),
@@ -8038,7 +8074,7 @@ var render = function() {
               _c(
                 "div",
                 {
-                  staticClass: "button",
+                  staticClass: "button block",
                   on: {
                     click: function($event) {
                       return _vm.markAllAsRead()

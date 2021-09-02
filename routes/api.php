@@ -59,7 +59,10 @@ Route::middleware('api')->group(function () {
     Route::resource('bids', BidController::class);
 });
 
-Route::middleware('api')->post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markasread');
+Route::middleware('api')->post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markallasread');
+Route::middleware('api')->post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markasread');
+Route::middleware('api')->get('/notifications/test', [NotificationController::class, 'test'])->name('notifications.test');
+Route::middleware('api')->get('/notifications/all', [NotificationController::class, 'notifications'])->name('notifications.all');
 
 //JWT
 Route::group([
@@ -73,6 +76,5 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
-    Route::get('notifications', [AuthController::class, 'notifications']);
 });
 
