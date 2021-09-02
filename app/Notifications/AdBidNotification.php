@@ -59,8 +59,11 @@ class AdBidNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'payload' => $this->product,
+            'buyerName' => $this->buyerName,
             'amount' => $this->amount,
+            'seller' => $this->seller,
+            'productName' => $this->product->name,
+            'productID' => $this->product->id,
         ];
     }
     /**     

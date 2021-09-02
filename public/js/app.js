@@ -8029,7 +8029,7 @@ var render = function() {
                   },
                   [
                     _c("div", { staticClass: "column is-four-fifths " }, [
-                      _c("b", [_vm._v(_vm._s(notification.data))])
+                      _c("b", [_vm._v(_vm._s(notification.message))])
                     ])
                   ]
                 )

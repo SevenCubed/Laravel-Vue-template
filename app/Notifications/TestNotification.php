@@ -55,7 +55,7 @@ class TestNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'data' => $this->data
+            'message' => "{$this->data->buyerName} has made a bid of €{$this->data->amount} on {$this->data->product->name} offered by {$this->data->seller}"
         ];
     }
 }

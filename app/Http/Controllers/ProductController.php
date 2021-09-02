@@ -89,7 +89,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return new ProductResource($product);
+        //TODO: Ik weet dat ik deze had versimpelt naar "return ... json(ProductR..)", maar ik heb deze tijdelijk teruggedraaid omdat het onvoorziene problemen oplevert.
+        //Blijkbaar zit er toch een (subtiel) verschil tussen, omdat de app de Product->user niet meer kon vinden op een refresh.
+        $product = new ProductResource($product);
+        return response()->json($product);
     }
 
     /**
@@ -137,7 +140,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //TODO: RMB
+      
         $product = Product::find($id);
         $product->delete();
 

@@ -8,7 +8,7 @@ Notifications!
 <div v-if="notifications.length">
     <div  v-for="notification in notifications" :key="notification.id" class="columns has-text-left">
         <div class="column is-four-fifths ">
-                <b>{{notification.data}}</b>
+                <b>{{notification.message}}</b>
         </div>
     </div>
     <div class="button" @click="markAllAsRead()">Mark all as read.</div>
