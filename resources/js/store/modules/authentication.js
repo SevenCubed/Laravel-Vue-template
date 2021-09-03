@@ -61,9 +61,10 @@ export default {
             {
                 headers: 
                     {
-                        'Authorization': 'Bearer ' + JWT.token,
+                        'Authorization': 'Bearer ' + JWT,
                     }
             };
+            console.log('me config:', JWT)
             await axios
             .post('api/auth/me',
             null,
@@ -73,9 +74,7 @@ export default {
                 commit('SET_USER', response.data)
             });
             await axios
-            .get('api/notifications/all',
-            null,
-            config)
+            .get('api/notifications/all')
             .then(response => {
                 console.log(response)
                 commit('SET_NOTIFICATIONS', response.data)

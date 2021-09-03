@@ -2015,6 +2015,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
  //Custom package
 
@@ -2112,32 +2113,37 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     testNotifications: function testNotifications() {
-      var _this4 = this;
-
-      axios.get('api/notifications/test').then(function (response) {
-        console.log(response);
-        _this4.notifications = response.data;
-      });
+      axios.get('api/notifications/test').then(function (response) {});
     },
     markAsRead: function markAsRead(id) {
-      var _this5 = this;
+      var _this4 = this;
 
       axios.post("api/notifications/mark-as-read/".concat(id)).then(function (response) {
-        var i = _this5.notifications.map(function (notifications) {
+        console.log(response);
+
+        var i = _this4.notifications.map(function (notification) {
           return notification.id;
         }).indexOf(id);
 
-        _this5.notifications.splice(i, 1); //TODO: Make this go via store
+        var updated = _this4.notifications;
+        updated.splice(i, 1);
+
+        _this4.$store.commit('authentication/SET_NOTIFICATIONS', updated); //Curious where it would be best to put this. Before the Axios request would make the notification disappear even on an error, but be more responsive.
+        //Putting it after makes it slower and jankier (especially without a fadeout), but technically more accurate and less likely to cause frustration on an actual error.
 
       });
     },
     markAllAsRead: function markAllAsRead() {
-      var _this6 = this;
+      var _this5 = this;
 
       axios.post('api/notifications/mark-all-as-read').then(function (response) {
         console.log(response);
-        _this6.notifications = []; //TODO: Make this go via store
+
+        _this5.$store.commit('authentication/SET_NOTIFICATIONS', []);
       });
+    },
+    testingMe: function testingMe() {
+      axios.post('api/auth/me');
     }
   }
 });
@@ -3705,6 +3711,13 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 (axios__WEBPACK_IMPORTED_MODULE_6___default().defaults.withCredentials) = true;
+
+if (window.$cookies.isKey("JWT")) {
+  var JWT = window.$cookies.get("JWT").token;
+  console.log("Axios JWT?", JWT);
+  (axios__WEBPACK_IMPORTED_MODULE_6___default().defaults.headers.common.Authorization) = 'Bearer ' + JWT;
+}
+
 vue__WEBPACK_IMPORTED_MODULE_7__.default.use((vue_cookies__WEBPACK_IMPORTED_MODULE_1___default()));
 new vue__WEBPACK_IMPORTED_MODULE_7__.default({
   el: "#app",
@@ -4022,7 +4035,8 @@ axios__WEBPACK_IMPORTED_MODULE_0___default().interceptors.response.use(function 
     originalRequest._retry = true;
     var config = {
       headers: {
-        'Authorization': 'Bearer ' + JWT.token
+        'Authorization': 'Bearer ' + JWT.token //This **** header is supposed to be 'Bearer ' not 'Bearer: ' That's an hour lost on a colon, that officially makes me a programmer, right?
+
       }
     };
     return axios__WEBPACK_IMPORTED_MODULE_0___default().post('api/auth/refresh', null, config).then(function (response) {
@@ -4037,7 +4051,9 @@ axios__WEBPACK_IMPORTED_MODULE_0___default().interceptors.response.use(function 
 
       _index_js__WEBPACK_IMPORTED_MODULE_1__.default.commit('authentication/LOGIN_USER', JWT); // Reset headers
 
-      originalRequest.headers.Authorization = 'Bearer ' + window.$cookies.get("JWT").token; // Return original object
+      originalRequest.headers.Authorization = 'Bearer ' + JWT.token; //Reset Axios headers
+
+      (axios__WEBPACK_IMPORTED_MODULE_0___default().defaults.headers.common.Authorization) = 'Bearer ' + JWT.token; // Return original object
 
       return axios__WEBPACK_IMPORTED_MODULE_0___default()(originalRequest);
     });
@@ -4549,22 +4565,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 commit = _ref.commit;
                 config = {
                   headers: {
-                    'Authorization': 'Bearer ' + JWT.token
+                    'Authorization': 'Bearer ' + JWT
                   }
                 };
-                _context.next = 4;
+                console.log('me config:', JWT);
+                _context.next = 5;
                 return axios__WEBPACK_IMPORTED_MODULE_1___default().post('api/auth/me', null, config).then(function (response) {
                   commit('SET_USER', response.data);
                 });
 
-              case 4:
-                _context.next = 6;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/notifications/all', null, config).then(function (response) {
+              case 5:
+                _context.next = 7;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/notifications/all').then(function (response) {
                   console.log(response);
                   commit('SET_NOTIFICATIONS', response.data);
                 });
 
-              case 6:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -8028,6 +8045,19 @@ var render = function() {
           }
         },
         [_vm._v("TEST!")]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "button",
+          on: {
+            click: function($event) {
+              return _vm.testingMe()
+            }
+          }
+        },
+        [_vm._v("ME!")]
       ),
       _vm._v(" "),
       _c("div", { staticClass: "title is-3" }, [_vm._v("\nNotifications!\n")]),

@@ -2,6 +2,7 @@
     <div>
 <h1 class="title">Dashboard</h1>
 <div class="button" @click="testNotifications()">TEST!</div>
+<div class="button" @click="testingMe()">ME!</div>
 <div class="title is-3">
 Notifications!
 </div>
@@ -196,17 +197,19 @@ export default {
             axios
             .get('api/notifications/test')
             .then(response => {
-                console.log(response)
-                this.notifications = response.data;
             })
         },
         markAsRead(id){
             axios
             .post(`api/notifications/mark-as-read/${id}`)
             .then(response => {
-                const i = this.notifications.map(notifications => notification.id).indexOf(id);
-                this.notifications.splice(i, 1)
-                //TODO: Make this go via store
+                console.log(response)
+                const i = this.notifications.map(notification => notification.id).indexOf(id);
+                let updated = this.notifications
+                updated.splice(i,1)
+                this.$store.commit('authentication/SET_NOTIFICATIONS', updated) 
+                //Curious where it would be best to put this. Before the Axios request would make the notification disappear even on an error, but be more responsive.
+                //Putting it after makes it slower and jankier (especially without a fadeout), but technically more accurate and less likely to cause frustration on an actual error.
             })
         },
         markAllAsRead(){
@@ -214,9 +217,12 @@ export default {
             .post('api/notifications/mark-all-as-read')
             .then(response => {
                 console.log(response);
-                this.notifications = [];
-                //TODO: Make this go via store
+                this.$store.commit('authentication/SET_NOTIFICATIONS', [])
             })
+        },
+        testingMe(){
+            axios
+            .post('api/auth/me')
         },
     },
 };

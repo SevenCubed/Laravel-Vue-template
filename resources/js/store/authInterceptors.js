@@ -13,7 +13,8 @@ axios.interceptors.response.use((response) => {
             let config = {
                 headers:
                 {
-                    'Authorization': 'Bearer ' + JWT.token,
+                    'Authorization': 'Bearer ' + JWT.token, 
+                    //This **** header is supposed to be 'Bearer ' not 'Bearer: ' That's an hour lost on a colon, that officially makes me a programmer, right?
                 }
             };
             return axios.post('api/auth/refresh',
@@ -31,7 +32,9 @@ axios.interceptors.response.use((response) => {
                     // Put Token in State
                     store.commit('authentication/LOGIN_USER', JWT)
                     // Reset headers
-                    originalRequest.headers.Authorization = 'Bearer ' + window.$cookies.get("JWT").token
+                    originalRequest.headers.Authorization = 'Bearer ' + JWT.token
+                    //Reset Axios headers
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + JWT.token;
                     // Return original object
                     return axios(originalRequest);
                 });

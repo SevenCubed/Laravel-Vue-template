@@ -20,6 +20,11 @@ import "./../../node_modules/@creativebulma/bulma-badge/dist/bulma-badge.css"
 //Axios stuff for Sanctum auth
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+if(window.$cookies.isKey("JWT")){
+    const JWT = window.$cookies.get("JWT").token;
+    console.log("Axios JWT?", JWT)
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + JWT;
+}
 
 Vue.use(VueCookies);
 
