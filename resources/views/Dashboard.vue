@@ -1,19 +1,19 @@
 <template>
     <div>
 <h1 class="title">Dashboard</h1>
-<div class="button" @click="testNotifications()">TEST!</div>
-<div class="button" @click="testingMe()">ME!</div>
+<div class="button" @click="testNotifications()">FAKE NOTIFICATIONS!</div>
+<div class="button" @click="testingMe()">TEST AUTH/ME!</div>
 <div class="title is-3">
 Notifications!
 </div>
-<div v-if="notifications.length" class="block">
+<div v-if="notifications.length" class="block">   
+    <div class="button block" @click="markAllAsRead()">Mark all as read.</div>
     <div  v-for="notification in notifications" :key="notification.id" class="has-text-left is-fullwidth">
         <div class="notification is-light is-small" :class="notification.data.type">
               <button class="delete" @click="markAsRead(notification.id)"></button>
                 {{notification.data.message}}
         </div>
     </div>
-    <div class="button block" @click="markAllAsRead()">Mark all as read.</div>
 </div> 
 <br> 
 {{user.name}}
@@ -194,10 +194,15 @@ export default {
             })
         },
         testNotifications(){
-            axios
-            .get('api/notifications/test')
-            .then(response => {
-            })
+            let i = 0;
+            while (i<10) {
+                axios
+                .get('api/notifications/test') 
+                i++
+                //Jank, jank, jank, jank.
+            }
+
+
         },
         markAsRead(id){
             axios
@@ -223,6 +228,7 @@ export default {
         testingMe(){
             axios
             .post('api/auth/me')
+            //debug my JWT 401 errors
         },
     },
 };

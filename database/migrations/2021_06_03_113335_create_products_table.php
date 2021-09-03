@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->text('description');
             $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('price');
-            $table->enum('status', ['sold','bidding', 'open']);
+            $table->enum('status', ['open', 'bidding', 'reserved', 'sold', 'sent']);
             $table->timestamps();
         });
     }

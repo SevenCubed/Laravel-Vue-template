@@ -14,9 +14,7 @@
             <div class="column is-three-quarters">
                 <div class="box">
                     <h1 class='title is-5 is-capitalized'>{{product.name}}</h1>
-                    <div v-if="product.user.id == currentUser.id">This is YOUR ad!
-                        <router-link class="is-capitalized" :to="{name: 'Update Product', params: { id: product.id }}">Edit?</router-link>
-                    </div>
+
                     <p class="has-text-grey is-size-7"><i class="fas fa-clock"></i> since {{product.created_at}}</p>
                     €{{product.price}}
                     <figure class="image is-4by3">
@@ -29,7 +27,16 @@
                     </div>
                 </div>
             </div>
-            <div class="column is-one-quarter">
+            <div v-if="product.user.id == currentUser.id" class="column is-one-quarter">
+                <div class="box">
+                    <p class="title is-6">YOUR ad!</p>                    
+                    <p class="is-7"><router-link class="is-capitalized" :to="{name: 'Update Product', params: { id: product.id }}">Edit?</router-link>                    </p>
+                </div>
+                <div class="box">
+                    
+                </div>
+            </div>
+            <div v-if="product.user.id != currentUser.id" class="column is-one-quarter">
                 <div class="box">
                     <p class="title is-6">{{product.user.name}}</p>
                     <p class="is-7">{{userActive}}</p>
