@@ -30,11 +30,12 @@ Notifications!
             
         </li>
     </ol>
+    <!-- ADS -->
     <div v-if="ads.length && !isLoading">
         <div class="title is-3">
-            Current ads
+            Current Open Ads
         </div>
-            <div  v-for="ad in ads" :key="ad.id" class="columns has-text-left">
+            <div  v-for="ad in openAds" :key="ad.id" class="columns has-text-left">
                 <div class="column is-four-fifths ">
                 <router-link class="is-clickable" tag="div"
                     :to="{
@@ -45,6 +46,7 @@ Notifications!
                         <!-- spruce this up later -->
                 </router-link>
                 </div>
+                <div class="column">{{ad.bids.length ? "€" + ad.bids.map(bid => bid.amount).reduce((a,b)=>(a>b)?a:b) : 'No bid'}}</div>
                 <div class="column">
                 <router-link :to="{name: 'Update Product', params: { id: ad.id }}">
                     <i class="fas fa-edit"></i>
@@ -68,7 +70,7 @@ Notifications!
             </div>
         </div>
     </div>
-    <div v-if="!ads.length && !isLoading">
+    <div v-if="!openAds.length && !isLoading">
         You are not currently selling anything! Have you considered doing so?
     </div>
         <div v-if="user.bids.length && !isLoading">
@@ -133,6 +135,14 @@ export default {
         },
         notifications() {
           return this.$store.getters['authentication/notifications']
+        },
+        openAds() {
+            if(this.ads.length){
+            return this.ads.filter((ad) => {    return ad.status.includes('open');  })
+            }
+            else{
+                return [];
+            }
         },
     },
     mounted() {

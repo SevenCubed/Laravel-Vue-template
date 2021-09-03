@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Bid;
 use App\Http\Resources\BidResource;
 use App\Events\OverbidEvent;
+use App\Models\User;
 
 class BidController extends Controller
 {
@@ -37,5 +38,15 @@ class BidController extends Controller
         $product->delete();
 
         return response()->json('Bid withdrawn!');
+    }
+    public function mock(Request $request)
+    {
+        $user_id = rand(0,50);
+        $amount = rand(100,10000);
+        Bid::create([
+            'product_id' => $request['product_id'],
+            'amount' => $amount,
+            'user_id' => $user_id,
+        ]);
     }
 }

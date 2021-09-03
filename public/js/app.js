@@ -2016,6 +2016,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
  //Custom package
 
@@ -2040,6 +2042,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     notifications: function notifications() {
       return this.$store.getters['authentication/notifications'];
+    },
+    openAds: function openAds() {
+      if (this.ads.length) {
+        return this.ads.filter(function (ad) {
+          return ad.status.includes('open');
+        });
+      } else {
+        return [];
+      }
     }
   },
   mounted: function mounted() {
@@ -3243,6 +3254,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
  //Custom package
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -3336,6 +3364,11 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.successes.bid = response.data;
       });
+    },
+    mockBid: function mockBid() {
+      var data = new FormData();
+      data.append('product_id', this.product.id);
+      axios.post('api/bids/mock', data);
     },
     updateBid: function updateBid() {
       var _this3 = this;
@@ -8153,10 +8186,10 @@ var render = function() {
             "div",
             [
               _c("div", { staticClass: "title is-3" }, [
-                _vm._v("\n            Current ads\n        ")
+                _vm._v("\n            Current Open Ads\n        ")
               ]),
               _vm._v(" "),
-              _vm._l(_vm.ads, function(ad) {
+              _vm._l(_vm.openAds, function(ad) {
                 return _c(
                   "div",
                   { key: ad.id, staticClass: "columns has-text-left" },
@@ -8191,6 +8224,23 @@ var render = function() {
                       ],
                       1
                     ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "column" }, [
+                      _vm._v(
+                        _vm._s(
+                          ad.bids.length
+                            ? "€" +
+                                ad.bids
+                                  .map(function(bid) {
+                                    return bid.amount
+                                  })
+                                  .reduce(function(a, b) {
+                                    return a > b ? a : b
+                                  })
+                            : "No bid"
+                        )
+                      )
+                    ]),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -8277,7 +8327,7 @@ var render = function() {
           )
         : _vm._e(),
       _vm._v(" "),
-      !_vm.ads.length && !_vm.isLoading
+      !_vm.openAds.length && !_vm.isLoading
         ? _c("div", [
             _vm._v(
               "\n        You are not currently selling anything! Have you considered doing so?\n    "
@@ -9907,7 +9957,84 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "box" })
+                  _c("div", { staticClass: "box" }, [
+                    _c("div", { staticClass: "block" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "button is-warning",
+                          on: {
+                            click: function($event) {
+                              return _vm.mockBid()
+                            }
+                          }
+                        },
+                        [_vm._v("Mock Bid")]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "block" },
+                      _vm._l(_vm.orderedBids, function(bid) {
+                        return _vm.product.bids.length
+                          ? _c(
+                              "div",
+                              {
+                                key: bid.id,
+                                staticClass: "columns is-multiline is-size-7"
+                              },
+                              [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "column is-two-fifths has-text-weight-semibold has-text-left"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\r\n                                " +
+                                        _vm._s(bid.user) +
+                                        "\r\n                            "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "column has-text-weight-semibold is-one-fifth"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\r\n                                €" +
+                                        _vm._s(bid.amount) +
+                                        "\r\n                            "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "column is-one-fifth" },
+                                  [
+                                    _vm._v(
+                                      "\r\n                                " +
+                                        _vm._s(bid.timestamp) +
+                                        " \r\n                            "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _vm._m(0, true)
+                              ]
+                            )
+                          : _vm._e()
+                      }),
+                      0
+                    )
+                  ])
                 ])
               : _vm._e(),
             _vm._v(" "),
@@ -9937,7 +10064,7 @@ var render = function() {
                     !_vm.userHasBid
                       ? _c("div", { staticClass: "block" }, [
                           _c("div", { staticClass: "level" }, [
-                            _vm._m(0),
+                            _vm._m(1),
                             _vm._v(" "),
                             _c("div", { staticClass: "level-right" }, [
                               _c("div", { staticClass: "level-item" }, [
@@ -9991,7 +10118,7 @@ var render = function() {
                                     )
                                   : _vm._e(),
                                 _vm._v(" "),
-                                _vm._m(1)
+                                _vm._m(2)
                               ]
                             )
                           ]),
@@ -10082,7 +10209,7 @@ var render = function() {
                                     )
                                   : _vm._e(),
                                 _vm._v(" "),
-                                _vm._m(2)
+                                _vm._m(3)
                               ]
                             )
                           ]),
@@ -10240,6 +10367,18 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "column is-one-fifth " }, [
+      _c("button", { staticClass: "button is-small is-link is-outlined" }, [
+        _c("span", { staticClass: "icon is-small" }, [
+          _c("i", { staticClass: "fas fa-envelope is-small" })
+        ])
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

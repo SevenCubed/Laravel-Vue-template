@@ -58,6 +58,7 @@ Route::middleware('api')->group(function () {
 Route::middleware('api')->group(function () {
     Route::resource('bids', BidController::class);
 });
+Route::middleware('api')->post('/bids/mock', [BidController::class, 'mock'])->name('bids.mock');
 
 Route::middleware('api')->post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markallasread');
 Route::middleware('api')->post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markasread');

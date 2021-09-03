@@ -32,8 +32,25 @@
                     <p class="title is-6">YOUR ad!</p>                    
                     <p class="is-7"><router-link class="is-capitalized" :to="{name: 'Update Product', params: { id: product.id }}">Edit?</router-link>                    </p>
                 </div>
+                <!-- this part could have just been a "bidlist" component, probably -->
                 <div class="box">
-                    
+                    <div class="block">
+                        <button class="button is-warning" @click="mockBid()">Mock Bid</button>
+                    </div>
+                    <div class="block"> 
+                        <div class="columns is-multiline is-size-7" v-for="bid in orderedBids" :key="bid.id" v-if="product.bids.length">
+                            <div class="column is-two-fifths has-text-weight-semibold has-text-left">
+                                {{bid.user}}
+                            </div>
+                            <div class="column has-text-weight-semibold is-one-fifth">
+                                €{{bid.amount}}
+                            </div>
+                            <div class="column is-one-fifth">
+                                {{bid.timestamp}} 
+                            </div>
+                            <div class="column is-one-fifth "><button class="button is-small is-link is-outlined"><span class="icon is-small"><i class="fas fa-envelope is-small"></i></span></button></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div v-if="product.user.id != currentUser.id" class="column is-one-quarter">
@@ -189,12 +206,12 @@ export default {
                 data.append('user_id', this.currentUser.id)
                 axios.post('api/bids', data)
                 .then(response => {
-                console.log(response)
-                this.errors.bid = '';
-                this.isBidding = false;
-                this.isSuccess = true;
-                this.successes.bid = response.data.message
-                this.product.bids.push(response.data.new_bid)
+                    console.log(response)
+                    this.errors.bid = '';
+                    this.isBidding = false;
+                    this.isSuccess = true;
+                    this.successes.bid = response.data.message
+                    this.product.bids.push(response.data.new_bid)
                 })
             }
         },
@@ -211,6 +228,11 @@ export default {
                 this.product.bids.splice(i, 1)
                 this.successes.bid = response.data;
             })
+        },
+        mockBid() {
+            const data = new FormData();
+            data.append('product_id', this.product.id)
+            axios.post('api/bids/mock', data)
         },
         updateBid() {
              if(this.placedBid < this.product.price){
