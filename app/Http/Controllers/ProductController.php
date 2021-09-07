@@ -143,7 +143,42 @@ class ProductController extends Controller
       
         $product = Product::find($id);
         $product->delete();
-
         return response()->json('Product succesfully deleted!');
     }
+
+    public function reserve(Request $request)
+    {
+        $product = Product::find($request['product_id']);
+        $product->update([
+            'status' => 'reserved',
+            'reserved_bid_id' => $request['bid_id'],
+        ]);
+        return response()->json('Product reserved!');
+
+    }
+
+    public function paid(Request $request)
+    {
+        $product = Product::find($request['product_id']);
+        $product->update([
+            'status' => 'sold',
+        ]);
+        //Queue up an event that will delete the ad in X amount of time, to allow for any late problems with the transaction
+        //Alternatively, make an extra step that requires postal sending confirmation (status = sent), then put the event there
+        return response()->json('Sale Confirmed!');
+
+    }
+
+    public function reset(Request $request)
+    {
+        $product = Product::find($request['product_id']);
+        $product->update([
+            'status' => 'open',
+            'reserved_bid_id' => null
+        ]);
+
+        return response()->json('Product reset!');
+
+    }
+
 }

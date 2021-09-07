@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\BidResource;
 use Illuminate\Support\Facades\DB;
+use App\Models\Bid;
 
 class ProductResource extends JsonResource
 {
@@ -35,6 +36,7 @@ class ProductResource extends JsonResource
             'created_at' => $this->created_at->format('j F Y, H:i'),
             'updated_at' => $this->updated_at,
             'bids' => BidResource::collection($this->bids),
+            'reserved_bid' => $this->reserved_bid_id ? Bid::find($this->reserved_bid_id) : null,
         ];
     }
 }

@@ -55,6 +55,11 @@ Route::get('/categories', [ProductController::class, 'categories'])->name('categ
 Route::middleware('api')->group(function () {
     Route::resource('products', ProductController::class);
 });
+
+Route::middleware('api')->post('/products/reserve', [ProductController::class, 'reserve'])->name('products.reserve');
+Route::middleware('api')->post('/products/paid', [ProductController::class, 'paid'])->name('products.paid');
+Route::middleware('api')->post('/products/reset', [ProductController::class, 'reset'])->name('products.reset');
+
 Route::middleware('api')->group(function () {
     Route::resource('bids', BidController::class);
 });

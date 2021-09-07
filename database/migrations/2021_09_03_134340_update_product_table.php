@@ -14,7 +14,8 @@ class UpdateProductTable extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->foreignId('reserved_bid_id')->references('id')->on('bids')->default(1);
+            $table->bigInteger('reserved_bid_id')->unsigned()->nullable()->default(null);
+            $table->foreign('reserved_bid_id')->references('id')->on('bids');
         });
     }
 

@@ -32,6 +32,7 @@ Notifications!
     </ol>
     <!-- ADS -->
     <div v-if="ads.length && !isLoading">
+        <!-- OPEN -->
         <div class="title is-3">
             Current Open Ads
         </div>
@@ -46,6 +47,7 @@ Notifications!
                         <!-- spruce this up later -->
                 </router-link>
                 </div>
+                <!-- I could make a conditional link here, so the highest bid can immediately be accepted -->
                 <div class="column">{{ad.bids.length ? "€" + ad.bids.map(bid => bid.amount).reduce((a,b)=>(a>b)?a:b) : 'No bid'}}</div>
                 <div class="column">
                 <router-link :to="{name: 'Update Product', params: { id: ad.id }}">
@@ -69,8 +71,59 @@ Notifications!
                 </footer>
             </div>
         </div>
+        <!-- RESERVED -->
+         <div class="title is-3">
+            Current Reserved Ads
+        </div>
+            <div  v-for="ad in reservedAds" :key="ad.id" class="columns has-text-left">
+                <div class="column is-four-fifths ">
+                <router-link class="is-clickable" tag="div"
+                    :to="{
+                        name: 'ProductDetails',
+                        params: { id: ad.id, initProduct: ad }
+                    }">
+                        <b>{{ad.id}}</b> {{ad.name}}  €{{ad.price}}
+                        <!-- spruce this up later -->
+                </router-link>
+                </div>
+                <div class="column">€{{ad.reserved_bid.amount}}</div> 
+
+                <i class="fas fa-check-square column is-clickable" @click="mockBidPayment(ad)"></i>            
+            </div>
+        <div class="modal" :class="{'is-active': showModalFlag}">
+            <div class="modal-background">
+            </div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                </header>
+                <section class="modal-card-body">
+                    <p>Are you sure you wish to remove your advertisement for {{ ad.name }}? This process is irreversible.</p>
+                </section>
+                <footer class="modal-card-foot">
+                <button class="button is-success" @click="deleteConfirm(ad.id)">Confirm</button>
+                <button class="button" @click="deleteCancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
+                <!-- SOLD -->
+         <div class="title is-3">
+            Current sold Ads
+        </div>
+            <div  v-for="ad in soldAds" :key="ad.id" class="columns has-text-left">
+                <div class="column is-four-fifths ">
+                <router-link class="is-clickable" tag="div"
+                    :to="{
+                        name: 'ProductDetails',
+                        params: { id: ad.id, initProduct: ad }
+                    }">
+                        <b>{{ad.id}}</b> {{ad.name}}  €{{ad.price}}
+                </router-link>
+                </div>
+                <div class="column">€{{ad.reserved_bid.amount}}</div> 
+               <i class="fas fa-recycle column is-clickable" @click="resetPayment(ad)"></i>            
+                </div>
     </div>
-    <div v-if="!openAds.length && !isLoading">
+    <div v-if="!ads.length && !isLoading">
         You are not currently selling anything! Have you considered doing so?
     </div>
         <div v-if="user.bids.length && !isLoading">
@@ -139,6 +192,22 @@ export default {
         openAds() {
             if(this.ads.length){
             return this.ads.filter((ad) => {    return ad.status.includes('open');  })
+            }
+            else{
+                return [];
+            }
+        },
+        reservedAds(){ //There's got to be a cleaner way to do this..
+            if(this.ads.length){
+            return this.ads.filter((ad) => {    return ad.status.includes('reserved');  })
+            }
+            else{
+                return [];
+            }
+        },
+        soldAds(){ //There's got to be a cleaner way to do this..
+            if(this.ads.length){
+            return this.ads.filter((ad) => {    return ad.status.includes('sold');  })
             }
             else{
                 return [];
@@ -213,6 +282,26 @@ export default {
             }
 
 
+        },
+        mockBidPayment(ad){
+            const data = new FormData();
+            console.log(ad)
+            data.append('product_id', ad.id)
+            axios.post(`api/products/paid`, data)
+            .then(response => {
+                console.log(response)
+                ad.status = "sold" //I know from experience how annoying it is when the frontend tells you something happened, but nothing changed on the backend. Hence why I'm putting these things in the .then, instead of executing them directly
+            })
+        },
+        resetPayment(ad){
+            //debug only, though this is also a useful idea if the buyer decides to retract their bid, or something happens
+            const data = new FormData();
+            data.append('product_id', ad.id)
+            axios.post(`api/products/reset`, data)
+            .then(response => {
+                console.log(response)
+                ad.status = "open" //As above
+            })
         },
         markAsRead(id){
             axios

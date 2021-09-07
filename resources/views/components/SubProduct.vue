@@ -48,7 +48,7 @@
                             <div class="column is-one-fifth">
                                 {{bid.timestamp}} 
                             </div>
-                            <div class="column is-one-fifth "><button class="button is-small is-link is-outlined"><span class="icon is-small"><i class="fas fa-envelope is-small"></i></span></button></div>
+                            <div class="column is-one-fifth "><button class="button is-small is-link is-outlined" @click="acceptBid(bid)"><span class="icon is-small"><i class="fas fa-envelope is-small"></i></span></button></div>
                         </div>
                     </div>
                 </div>
@@ -258,6 +258,23 @@ export default {
                 })
             }
         },
+        acceptBid(bid){
+            const product = this.product.id
+            const seller = this.product.user.id
+            const data = new FormData();
+            data.append('amount', bid.amount)
+            data.append('buyer_id', bid.user_id)
+            data.append('bid_id', bid.id)
+            data.append('seller_id', seller)
+            data.append('product_id', product)
+            axios.post(`api/products/reserve`, data)
+            .then(res => {
+                this.$router.push({
+                        name: 'Dashboard'
+                });   
+            })
+        },
+
         toggleEdit() {
             if(!this.editOpen) {
             const i = this.product.bids.map(bid => bid.user_id).indexOf(this.currentUser.id)
